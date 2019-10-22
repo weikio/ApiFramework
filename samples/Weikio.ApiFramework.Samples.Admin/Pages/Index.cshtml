@@ -1,0 +1,28 @@
+﻿@page
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@model Weikio.ApiFramework.Samples.Admin.Pages.IndexModel
+@{
+}
+
+<body>
+<h2>Current endpoints:</h2>
+<ul>
+    @foreach (var endpoint in Model.EndpointManager.Endpoints)
+    {
+        <li>@endpoint.Route - @endpoint.Function.FunctionDefinition.Name</li>
+    }
+
+</ul>
+
+<form method="post">
+    <input type="submit" value="Add endpoint">
+</form>
+
+<h2>Available functions:</h2>
+<ul>
+    @foreach (var function in Model.Functions)
+    {
+        <li>@function.ToString()</li>
+    }
+</ul>
+</body>

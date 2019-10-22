@@ -1,0 +1,17 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="NSwag.AspNetCore" Version="13.1.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\Plugins\Weikio.ApiFramework.Plugins.HelloWorld\Weikio.ApiFramework.Plugins.HelloWorld.csproj" />
+    <ProjectReference Include="..\..\src\Weikio.ApiFramework.AspNetCore\Weikio.ApiFramework.AspNetCore.csproj" />
+    <ProjectReference Include="..\..\src\Weikio.ApiFramework.Core\Weikio.ApiFramework.Core.csproj" />
+  </ItemGroup>
+
+</Project>

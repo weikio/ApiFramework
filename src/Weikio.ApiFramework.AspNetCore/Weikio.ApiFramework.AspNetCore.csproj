@@ -1,0 +1,17 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Weikio.ApiFramework.Core\Weikio.ApiFramework.Core.csproj" />
+    <ProjectReference Include="..\Weikio.ApiFramework.Abstractions\Weikio.ApiFramework.Abstractions.csproj" />
+    <ProjectReference Include="..\Weikio.ApiFramework.FunctionProviders.PluginFramework\Weikio.ApiFramework.FunctionProviders.PluginFramework.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+  </ItemGroup>
+  
+</Project>

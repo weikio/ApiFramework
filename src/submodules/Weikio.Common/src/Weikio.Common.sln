@@ -1,0 +1,28 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Weikio.Common", "Weikio.Common\Weikio.Common.csproj", "{37F8A491-B6E2-45E5-BD92-13C798C2245A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Weikio.AspNetCore.StartupTasks", "Weikio.AspNetCore.StartupTasks\Weikio.AspNetCore.StartupTasks.csproj", "{B93A6EEF-9C6F-4601-937E-C7DA42290A3F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Weikio.AspNetCore.Common", "Weikio.AspNetCore.Common\Weikio.AspNetCore.Common.csproj", "{7463D4E7-CE8D-4A75-BBC2-A5BF2032C143}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{37F8A491-B6E2-45E5-BD92-13C798C2245A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{37F8A491-B6E2-45E5-BD92-13C798C2245A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{37F8A491-B6E2-45E5-BD92-13C798C2245A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{37F8A491-B6E2-45E5-BD92-13C798C2245A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B93A6EEF-9C6F-4601-937E-C7DA42290A3F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B93A6EEF-9C6F-4601-937E-C7DA42290A3F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B93A6EEF-9C6F-4601-937E-C7DA42290A3F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B93A6EEF-9C6F-4601-937E-C7DA42290A3F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7463D4E7-CE8D-4A75-BBC2-A5BF2032C143}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7463D4E7-CE8D-4A75-BBC2-A5BF2032C143}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7463D4E7-CE8D-4A75-BBC2-A5BF2032C143}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7463D4E7-CE8D-4A75-BBC2-A5BF2032C143}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal

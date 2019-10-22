@@ -1,0 +1,55 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.28803.352
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FunctionFramework.Core", "..\..\src\FunctionFramework.Core\FunctionFramework.Core.csproj", "{F9E7779D-4DCE-4C98-AEEE-B5FA5D74FBBE}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RuntimeConfiguration", "RuntimeConfiguration.csproj", "{1F1D2382-AA22-404E-806D-AA53D16A41D8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FunctionFramework.Plugins.HelloWorld", "..\..\src\Plugins\FunctionFramework.Plugins.HelloWorld\FunctionFramework.Plugins.HelloWorld.csproj", "{1A76EBD9-5C0E-49A7-82F5-525955865499}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Weikio.AspNetCore.StartupTasks", "..\..\..\Common\Weikio.AspNetCore.StartupTasks\Weikio.AspNetCore.StartupTasks.csproj", "{8A3DF8DF-1D55-454E-9D0D-1B3FF42B381B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Weikio.Common", "..\..\..\Common\Weikio.Common\Weikio.Common.csproj", "{F5A5B3C2-81B7-4D88-8F53-353ED462AB44}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Weikio.AspNetCore.Common", "..\..\..\Common\Weikio.AspNetCore.Common\Weikio.AspNetCore.Common.csproj", "{4900678A-2C1F-400E-AFFA-1AA846A1FDA2}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{F9E7779D-4DCE-4C98-AEEE-B5FA5D74FBBE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F9E7779D-4DCE-4C98-AEEE-B5FA5D74FBBE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F9E7779D-4DCE-4C98-AEEE-B5FA5D74FBBE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F9E7779D-4DCE-4C98-AEEE-B5FA5D74FBBE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1F1D2382-AA22-404E-806D-AA53D16A41D8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1F1D2382-AA22-404E-806D-AA53D16A41D8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1F1D2382-AA22-404E-806D-AA53D16A41D8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1F1D2382-AA22-404E-806D-AA53D16A41D8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1A76EBD9-5C0E-49A7-82F5-525955865499}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1A76EBD9-5C0E-49A7-82F5-525955865499}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1A76EBD9-5C0E-49A7-82F5-525955865499}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1A76EBD9-5C0E-49A7-82F5-525955865499}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8A3DF8DF-1D55-454E-9D0D-1B3FF42B381B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8A3DF8DF-1D55-454E-9D0D-1B3FF42B381B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8A3DF8DF-1D55-454E-9D0D-1B3FF42B381B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8A3DF8DF-1D55-454E-9D0D-1B3FF42B381B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F5A5B3C2-81B7-4D88-8F53-353ED462AB44}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F5A5B3C2-81B7-4D88-8F53-353ED462AB44}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F5A5B3C2-81B7-4D88-8F53-353ED462AB44}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F5A5B3C2-81B7-4D88-8F53-353ED462AB44}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4900678A-2C1F-400E-AFFA-1AA846A1FDA2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4900678A-2C1F-400E-AFFA-1AA846A1FDA2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4900678A-2C1F-400E-AFFA-1AA846A1FDA2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4900678A-2C1F-400E-AFFA-1AA846A1FDA2}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {C41EB018-759B-4AF9-B6A8-19E1525D6E11}
+	EndGlobalSection
+EndGlobal

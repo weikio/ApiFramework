@@ -1,0 +1,13 @@
+﻿namespace FunctionFramework.Plugins.DynamicHelloWorld
+{
+    public class DynamicHelloWorldWithParametersFunction
+    {
+        public string PostFix {get;set;} = "##POSTFIX##";
+        public int? Age {get;set;} = ##AGE##;
+        
+        public string SayHello(string name)
+        {
+            return $"Hello {name} Postfix: {PostFix}, age: {Age.GetValueOrDefault()}";
+        }
+    }
+}

@@ -1,0 +1,25 @@
+﻿namespace FunctionFramework.Plugins.DynamicHelloWorld
+{
+    public class DynamicHelloWorldFunction
+    {
+        public string SayHello()
+        {
+            return "Dynamic Hello from Function Framework!";
+        }
+
+        public DynamicReturnMessage CreateMessage(string name)
+        {
+            return new DynamicReturnMessage($"Hello {name}");
+        }
+    }
+
+    public class DynamicReturnMessage
+    {
+        public DynamicReturnMessage(string result)
+        {
+            Result = result;
+        }
+
+        public string Result { get; set; }
+    }
+}

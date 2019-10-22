@@ -1,0 +1,6 @@
+[submodule "src/submodules/Weikio.Common"]
+	path = src/submodules/Weikio.Common
+	url = https://github.com/weikio/Common.git
+[submodule "src/submodules/Weikio.PluginFramework"]
+	path = src/submodules/Weikio.PluginFramework
+	url = https://github.com/weikio/PluginFramework.git
