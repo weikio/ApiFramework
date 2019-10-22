@@ -8,7 +8,7 @@ namespace Weikio.ApiFramework.Plugins.HealthCheck
     {
         public Task<HealthCheckResult> CheckHealthAsync(HealthCheckContext context, CancellationToken cancellationToken = new CancellationToken())
         {
-            var isBroken = SometimesWorkingFunction.IsBroken();
+            var isBroken = SometimesWorkingApi.IsBroken();
 
             if (isBroken)
             {

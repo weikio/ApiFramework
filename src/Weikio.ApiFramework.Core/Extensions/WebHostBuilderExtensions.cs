@@ -8,7 +8,7 @@ namespace Weikio.ApiFramework.Core.Extensions
 {
     public static class WebHostBuilderExtensions
     {
-        public static IWebHostBuilder AddFunctionFrameworkJsonConfigurationFile(this IWebHostBuilder webHostBuilder, string filePath = "functionframework.json")
+        public static IWebHostBuilder AddApiFrameworkJsonConfigurationFile(this IWebHostBuilder webHostBuilder, string filePath = "apiframework.json")
         {
             webHostBuilder.ConfigureAppConfiguration((context, configBuilder) =>
             {

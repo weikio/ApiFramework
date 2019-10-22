@@ -5,9 +5,9 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Weikio.ApiFramework.ApiProviders.PluginFramework\Weikio.ApiFramework.ApiProviders.PluginFramework.csproj" />
     <ProjectReference Include="..\Weikio.ApiFramework.Core\Weikio.ApiFramework.Core.csproj" />
     <ProjectReference Include="..\Weikio.ApiFramework.Abstractions\Weikio.ApiFramework.Abstractions.csproj" />
-    <ProjectReference Include="..\Weikio.ApiFramework.FunctionProviders.PluginFramework\Weikio.ApiFramework.FunctionProviders.PluginFramework.csproj" />
   </ItemGroup>
 
   <ItemGroup>

@@ -4,16 +4,16 @@ namespace Weikio.ApiFramework.Abstractions
 {
     public class EndpointConfiguration
     {
-        public EndpointConfiguration(string route, string function, object configuration, IHealthCheck healthCheck)
+        public EndpointConfiguration(string route, string api, object configuration, IHealthCheck healthCheck)
         {
             Route = route;
-            Function = function;
+            Api = api;
             Configuration = configuration;
             HealthCheck = healthCheck;
         }
 
         public string Route { get; }
-        public string Function { get; }
+        public string Api { get; }
         public object Configuration { get; }
         public IHealthCheck HealthCheck { get; }
     }

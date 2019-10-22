@@ -27,22 +27,22 @@ namespace Weikio.ApiFramework.Samples.ReferenceConflict
             var mvcBuilder = services.AddMvc(options => { })
                 .SetCompatibilityVersion(CompatibilityVersion.Latest);
 
-            services.AddFunctionFramework(mvcBuilder, options =>
+            services.AddApiFramework(mvcBuilder, options =>
                 {
                     options.AutoResolveEndpoints = false;
-                    options.FunctionAddressBase = "/api";
-                    options.AutoResolveFunctions = false;
+                    options.ApiAddressBase = "/api";
+                    options.AutoResolveApis = false;
                 })
-                .AddFunction(
+                .AddApi(
                     @"C:\dev\projects\Weikio\src\FunctionFramework\src\Plugins\Weikio.ApiFramework.Plugins.JsonNetOld\bin\Debug\netstandard2.0\Weikio.ApiFramework.Plugins.JsonNetOld.dll")
-                .AddFunction(
+                .AddApi(
                     @"C:\dev\projects\Weikio\src\FunctionFramework\src\Plugins\Weikio.ApiFramework.Plugins.JsonNetNew\bin\Debug\netstandard2.0\Weikio.ApiFramework.Plugins.JsonNetNew.dll")
                 .AddEndpoint("/new", "Weikio.ApiFramework.Plugins.JsonNetNew",
                     new {HelloString = "Hey there from first configuration"})
                 .AddEndpoint("/old", "Weikio.ApiFramework.Plugins.JsonNetOld",
                     new {HelloString = "This is the second configuration"});
 
-            services.AddSwaggerDocument(document => { document.Title = "Function Framework"; });
+            services.AddSwaggerDocument(document => { document.Title = "Api Framework"; });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -57,7 +57,7 @@ namespace Weikio.ApiFramework.Samples.ReferenceConflict
             app.UseRouting();
 
             app.UseResponseCaching();
-            app.UseFunctionFrameworkResponseCaching();
+            app.UseApiFrameworkResponseCaching();
 
             app.UseSwagger();
             app.UseSwaggerUi3();

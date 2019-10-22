@@ -13,22 +13,22 @@ using Weikio.AspNetCore.StartupTasks;
 namespace Weikio.ApiFramework.Core.StartupTasks
 {
     /// <summary>
-    /// Startup task which initializes all the endpoints when run. The task isn't automatically run, usually it is started by <see cref="FunctionDefinitionsStartupTask"/>.
+    /// Startup task which initializes all the endpoints when run. The task isn't automatically run, usually it is started by <see cref="ApiDefinitionsStartupTask"/>.
     /// TODO: This shouldn't be a startup task. Maybe interface & implementation which can be called when needed. The question is if this should initialize all the plugins as they can take a long time.
     /// </summary>
     public class EndpointStartupTask : IStartupTask
     {
         private readonly EndpointConfigurationManager _endpointConfigurationManager;
         private readonly EndpointManager _endpointManager;
-        private readonly IFunctionProvider _functionProvider;
-        private readonly FunctionFrameworkOptions _options;
+        private readonly IApiProvider _apiProvider;
+        private readonly ApiFrameworkOptions _options;
 
         public EndpointStartupTask(EndpointManager endpointManager,
-            EndpointConfigurationManager endpointConfigurationManager, IFunctionProvider functionProvider, IOptions<FunctionFrameworkOptions> options)
+            EndpointConfigurationManager endpointConfigurationManager, IApiProvider apiProvider, IOptions<ApiFrameworkOptions> options)
         {
             _endpointManager = endpointManager;
             _endpointConfigurationManager = endpointConfigurationManager;
-            _functionProvider = functionProvider;
+            _apiProvider = apiProvider;
             _options = options.Value;
         }
 
@@ -48,7 +48,7 @@ namespace Weikio.ApiFramework.Core.StartupTasks
 
             foreach (var endpointConfiguration in initialEndpoints)
             {
-                var function = await _functionProvider.Get(endpointConfiguration.Function);
+                var function = await _apiProvider.Get(endpointConfiguration.Api);
 
                 var endpoint = new Endpoint(endpointConfiguration.Route, function, endpointConfiguration.Configuration,
                     GetHealthCheckFactory(function, endpointConfiguration));
@@ -59,12 +59,12 @@ namespace Weikio.ApiFramework.Core.StartupTasks
 
             if (initialEndpoints.Any() == false && _options.AutoResolveEndpoints)
             {
-                var functions = await _functionProvider.List();
+                var functions = await _apiProvider.List();
 
                 foreach (var functionDefinition in functions)
                 {
-                    var function = await _functionProvider.Get(functionDefinition);
-                    var endpoint = new Endpoint(_options.FunctionAddressBase, function, null, GetHealthCheckFactory(function));
+                    var function = await _apiProvider.Get(functionDefinition);
+                    var endpoint = new Endpoint(_options.ApiAddressBase, function, null, GetHealthCheckFactory(function));
 
                     _endpointManager.AddEndpoint(endpoint);
 
@@ -80,16 +80,16 @@ namespace Weikio.ApiFramework.Core.StartupTasks
             _endpointManager.Update();
         }
 
-        private Func<Endpoint, Task<IHealthCheck>> GetHealthCheckFactory(Function function, EndpointConfiguration endpointConfiguration = null)
+        private Func<Endpoint, Task<IHealthCheck>> GetHealthCheckFactory(Api api, EndpointConfiguration endpointConfiguration = null)
         {
             if (endpointConfiguration?.HealthCheck != null)
             {
                 return endpoint => Task.FromResult(endpoint.HealthCheck);
             }
 
-            if (function.HealthCheckFactory != null)
+            if (api.HealthCheckFactory != null)
             {
-                return endpoint => function.HealthCheckFactory(endpoint);
+                return endpoint => api.HealthCheckFactory(endpoint);
             }
 
             IHealthCheck result = new EmptyHealthCheck();

@@ -15,7 +15,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Weikio.ApiFramework.Admin",
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Weikio.ApiFramework.AspNetCore", "Weikio.ApiFramework.AspNetCore\Weikio.ApiFramework.AspNetCore.csproj", "{74D5A0AA-D1A1-47E5-8316-4022D0E655F9}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Weikio.ApiFramework.FunctionProviders.PluginFramework", "Weikio.ApiFramework.FunctionProviders.PluginFramework\Weikio.ApiFramework.FunctionProviders.PluginFramework.csproj", "{A0F0B1E8-A4EB-4ED8-A945-F258A86B2F79}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Weikio.ApiFramework.ApiProviders.PluginFramework", "Weikio.ApiFramework.ApiProviders.PluginFramework\Weikio.ApiFramework.ApiProviders.PluginFramework.csproj", "{A0F0B1E8-A4EB-4ED8-A945-F258A86B2F79}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Weikio.ApiFramework.Samples.CodeConfiguration", "..\samples\Weikio.ApiFramework.Samples.CodeConfiguration\Weikio.ApiFramework.Samples.CodeConfiguration.csproj", "{BB95A971-E3AD-4AE5-8F64-661ED463F093}"
 EndProject

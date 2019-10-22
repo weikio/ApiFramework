@@ -31,38 +31,37 @@ namespace RuntimeConfiguration
 
             var mvcBuilder = services.AddMvc(options =>
                 {
-                    options.Filters.Add(new FunctionConfigurationActionFilter());
+                    options.Filters.Add(new ApiConfigurationActionFilter());
                 })
                 .SetCompatibilityVersion(CompatibilityVersion.Latest);
 
-            services.AddFunctionFramework(mvcBuilder, options =>
+            services.AddApiFramework(mvcBuilder, options =>
                 {
                     options.AutoResolveEndpoints = false;
-                    options.AutoResolveFunctions = false;
+                    options.AutoResolveApis = false;
                 })
-                .AddFunction(typeof(Weikio.ApiFramework.Plugins.Broken.FunctionFactory))
-                .AddFunction(typeof(Weikio.ApiFramework.Plugins.HelloWorld.HelloWorldFunction))
-                .AddFunction(typeof(Weikio.ApiFramework.Plugins.JsonNetNew.NewJsonFunction))
-                .AddFunction(typeof(Weikio.ApiFramework.Plugins.JsonNetOld.OldJsonFunction))
-                .AddFunction(typeof(FunctionFactory))
-                .AddFunction(typeof(FunctionFactory))
-                .AddFunction(typeof(Weikio.ApiFramework.Plugins.HealthCheck.SometimesWorkingFunction))
+                .AddApi(typeof(Weikio.ApiFramework.Plugins.Broken.ApiFactory))
+                .AddApi(typeof(Weikio.ApiFramework.Plugins.HelloWorld.HelloWorldApi))
+                .AddApi(typeof(Weikio.ApiFramework.Plugins.JsonNetNew.NewJsonApi))
+                .AddApi(typeof(Weikio.ApiFramework.Plugins.JsonNetOld.OldJsonApi))
+                .AddApi(typeof(ApiFactory))
+                .AddApi(typeof(Weikio.ApiFramework.Plugins.HealthCheck.SometimesWorkingApi))
                 .AddEndpoint("/sometimesworks", "HealthCheck")
                 .AddEndpoint("/notworking", "Broken", healthCheck: new CustomHealthCheck())
                 .AddEndpoint("/working", "HelloWorld", new {HelloString = "Fast Hellou!!!"});
 
             services.AddOpenApiDocument(document =>
             {
-                document.Title = "Function Framework";
-                document.ApiGroupNames = new[] {"function_framework_function"};
-                document.DocumentName = "func";
+                document.Title = "Api Framework";
+                document.ApiGroupNames = new[] {"api_framework_function"};
+                document.DocumentName = "api";
             });
 
             services.AddOpenApiDocument(document =>
             {
-                document.Title = "Function Framework";
-                document.ApiGroupNames = new[] {"function_framework_admin"};
-                document.DocumentName = "func_admin";
+                document.Title = "Api Framework";
+                document.ApiGroupNames = new[] {"api_framework_admin"};
+                document.DocumentName = "api_admin";
             });
 
             services.AddOpenApiDocument(document =>
@@ -83,7 +82,7 @@ namespace RuntimeConfiguration
 
             app.UseRouting();
             app.UseResponseCaching();
-            app.UseFunctionFrameworkResponseCaching();
+            app.UseApiFrameworkResponseCaching();
 
             app.UseOpenApi();
             app.UseSwaggerUi3();
@@ -95,7 +94,7 @@ namespace RuntimeConfiguration
                 endpoints
                     .MapHealthChecks("/myhealth",
                         new HealthCheckOptions()
-                            {Predicate = (check) => check.Tags.Contains("function_framework_endpoint")});
+                            {Predicate = (check) => check.Tags.Contains("api_framework_endpoint")});
 
                 endpoints.MapRazorPages();
                 endpoints.MapControllerRoute("default", "{controller=Home}/{action=Index}/{id?}");

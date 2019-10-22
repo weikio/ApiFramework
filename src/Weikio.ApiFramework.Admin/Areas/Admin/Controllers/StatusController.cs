@@ -7,7 +7,7 @@ namespace Weikio.ApiFramework.Admin.Areas.Admin.Controllers
 {
     [ApiController]
     [Route("/admin/api/status")]
-    [ApiExplorerSettings(GroupName = "function_framework_admin")]
+    [ApiExplorerSettings(GroupName = "api_framework_admin")]
     public class StatusController : ControllerBase
     {
         private readonly StatusProvider _statusProvider;
@@ -23,7 +23,7 @@ namespace Weikio.ApiFramework.Admin.Areas.Admin.Controllers
 
             var result = new StatusDto
             {
-                SystemStatus = status.EndpointManagerStatusEnum, AvailableFunctions = status.AvailableFunctions, Endpoints = new List<EndpointDto>()
+                SystemStatus = status.EndpointManagerStatusEnum, AvailableFunctions = status.AvailableApis, Endpoints = new List<EndpointDto>()
             };
 
             foreach (var endpoint in status.Endpoints)

@@ -5,7 +5,7 @@ namespace Weikio.ApiFramework.Core.Extensions
 {
     public static class ApplicationPartManagerExtensions
     {
-        public static void AddFunctionFrameworkFeatures(this ApplicationPartManager manager, System.Func<EndpointManager> endpoints)
+        public static void AddApiFrameworkFeatures(this ApplicationPartManager manager, System.Func<EndpointManager> endpoints)
         {
             //manager.FeatureProviders.Add(new FunctionFeatureProvider(endpoints));
         }

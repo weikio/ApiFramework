@@ -10,10 +10,10 @@ namespace Weikio.ApiFramework.Abstractions
     public class Endpoint
     {
         public string Route { get; }
-        public Function Function { get; }
+        public Api Api { get; }
         public object Configuration { get; private set; }
         public Func<Endpoint, Task<IHealthCheck>> HealthCheckFactory { get; }
-        public List<Type> FunctionTypes { get; private set; }
+        public List<Type> ApiTypes { get; private set; }
 
         public IHealthCheck HealthCheck { get; private set; }
 
@@ -31,14 +31,14 @@ namespace Weikio.ApiFramework.Abstractions
             }
         }
 
-        public Endpoint(string route, Function function, object configuration = null, Func<Endpoint, Task<IHealthCheck>> healthCheckFactory = null)
+        public Endpoint(string route, Api api, object configuration = null, Func<Endpoint, Task<IHealthCheck>> healthCheckFactory = null)
         {
             Route = route;
-            Function = function;
+            Api = api;
             Configuration = configuration;
             HealthCheckFactory = healthCheckFactory;
 
-            FunctionTypes = new List<Type>();
+            ApiTypes = new List<Type>();
             Status = new EndpointStatus();
         }
 
@@ -48,10 +48,10 @@ namespace Weikio.ApiFramework.Abstractions
 
             try
             {
-                var dynamicFunctions = await InitializeFunction();
-                FunctionTypes.AddRange(dynamicFunctions);
+                var dynamicApis = await InitializeApi();
+                ApiTypes.AddRange(dynamicApis);
 
-                FunctionTypes.AddRange(Function.FunctionTypes);
+                ApiTypes.AddRange(Api.ApiTypes);
 
                 if (HealthCheckFactory != null)
                 {
@@ -75,44 +75,24 @@ namespace Weikio.ApiFramework.Abstractions
 //            }
         }
 
-        private async Task<List<Type>> InitializeFunction()
+        private async Task<List<Type>> InitializeApi()
         {
             var result = new List<Type>();
 
-            if (Function.Initializer == null)
+            if (Api.Initializer == null)
             {
                 return result;
             }
 
-            var task = Function.Initializer(this); //.Invoke(null, arguments.ToArray());
-            var createdFunctions = await task;
+            var task = Api.Initializer(this); //.Invoke(null, arguments.ToArray());
+            var createdApis = await task;
 
-            result.AddRange(createdFunctions);
-
-//            foreach (var factoryType in Function.FactoryTypes)
-//            {
-//                var functionFactoryMethod = FindFunctionFactoryMethod(factoryType);
-//
-//                var parameters = functionFactoryMethod.GetParameters();
-//                var arguments = new List<object>();
-//
-//                foreach (var p in parameters)
-//                {
-//                    var argument = Configuration;
-//
-//                    arguments.Add(argument);
-//                }
-//
-//                var task = (Task<IEnumerable<Type>>) functionFactoryMethod.Invoke(null, arguments.ToArray());
-//                var createdFunctions = await task;
-//
-//                result.AddRange(createdFunctions);
-//            }
+            result.AddRange(createdApis);
 
             return result;
         }
 
-        private MethodInfo FindFunctionFactoryMethod(Type factoryType)
+        private MethodInfo FindApiFactoryMethod(Type factoryType)
         {
             var methods = factoryType.GetMethods().ToList();
 

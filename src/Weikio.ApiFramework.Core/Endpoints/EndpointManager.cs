@@ -71,7 +71,7 @@ namespace Weikio.ApiFramework.Core.Endpoints
 //
 //            if (functionDefinition == null)
 //            {
-//                throw new InvalidOperationException($"Function '{functionName}' is not available.");
+//                throw new InvalidOperationException($"Api '{functionName}' is not available.");
 //            }
 //
 //            var endpoint = new Endpoint(route, functionDefinition, null);

@@ -3,7 +3,7 @@ using Newtonsoft.Json;
 
 namespace Weikio.ApiFramework.Plugins.JsonNetOld
 {
-    public class OldJsonFunction
+    public class OldJsonApi
     {
         public Version ReturnVersion()
         {

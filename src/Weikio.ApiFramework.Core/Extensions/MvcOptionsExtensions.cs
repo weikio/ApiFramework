@@ -4,7 +4,7 @@ namespace Weikio.ApiFramework.Core.Extensions
 {
     public static class MvcOptionsExtensions
     {
-        public static void AddFunctionFrameworkConventions(this MvcOptions options)
+        public static void AddApiFrameworkConventions(this MvcOptions options)
         {
             //services.ConfigureWithDependencies<MvcOptions, SomeConvention>((options, convention) =>
             //{

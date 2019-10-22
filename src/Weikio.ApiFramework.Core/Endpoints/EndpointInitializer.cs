@@ -13,10 +13,10 @@ namespace Weikio.ApiFramework.Core.Endpoints
     public class EndpointInitializer
     {
         private readonly ILogger<EndpointInitializer> _logger;
-        private readonly FunctionChangeNotifier _changeNotifier;
-        private readonly FunctionFrameworkOptions _options;
+        private readonly ApiChangeNotifier _changeNotifier;
+        private readonly ApiFrameworkOptions _options;
 
-        public EndpointInitializer(ILogger<EndpointInitializer> logger, FunctionChangeNotifier changeNotifier, IOptions<FunctionFrameworkOptions> options)
+        public EndpointInitializer(ILogger<EndpointInitializer> logger, ApiChangeNotifier changeNotifier, IOptions<ApiFrameworkOptions> options)
         {
             _logger = logger;
             _changeNotifier = changeNotifier;

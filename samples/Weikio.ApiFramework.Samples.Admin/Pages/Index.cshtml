@@ -9,7 +9,7 @@
 <ul>
     @foreach (var endpoint in Model.EndpointManager.Endpoints)
     {
-        <li>@endpoint.Route - @endpoint.Function.FunctionDefinition.Name</li>
+        <li>@endpoint.Route - @endpoint.Api.ApiDefinition.Name</li>
     }
 
 </ul>

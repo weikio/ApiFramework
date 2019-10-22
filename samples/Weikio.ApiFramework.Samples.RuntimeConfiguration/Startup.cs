@@ -26,13 +26,13 @@ namespace RuntimeConfiguration
 
             var mvcBuilder = services.AddMvc(options =>
                 {
-                    options.Filters.Add(new FunctionConfigurationActionFilter());
+                    options.Filters.Add(new ApiConfigurationActionFilter());
                 })
                 .SetCompatibilityVersion(CompatibilityVersion.Latest);
 
-            services.AddFunctionFramework(mvcBuilder, options => { options.AutoResolveEndpoints = false; });
+            services.AddApiFramework(mvcBuilder, options => { options.AutoResolveEndpoints = false; });
 
-            services.AddSwaggerDocument(document => { document.Title = "Function Framework"; });
+            services.AddSwaggerDocument(document => { document.Title = "Api Framework"; });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -47,7 +47,7 @@ namespace RuntimeConfiguration
             app.UseRouting();
 
             app.UseResponseCaching();
-            app.UseFunctionFrameworkResponseCaching();
+            app.UseApiFrameworkResponseCaching();
 
             app.UseSwagger();
             app.UseSwaggerUi3();

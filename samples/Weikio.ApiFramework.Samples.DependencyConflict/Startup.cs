@@ -30,24 +30,24 @@ namespace Weikio.ApiFramework.Samples.DependencyConflict
             var mvcBuilder = services.AddMvc(options => { })
                 .SetCompatibilityVersion(CompatibilityVersion.Latest);
 
-            services.AddFunctionFramework(mvcBuilder, options =>
+            services.AddApiFramework(mvcBuilder, options =>
                 {
                     options.AutoResolveEndpoints = false;
-                    options.FunctionAddressBase = "/api";
-                    options.AutoResolveFunctions = false;
+                    options.ApiAddressBase = "/api";
+                    options.AutoResolveApis = false;
                 })
-                .AddFunction(
+                .AddApi(
                     @"C:\dev\projects\Weik.io\src\FunctionFramework\src\Plugins\Weikio.ApiFramework.Plugins.Logger\bin\Debug\netstandard2.0\Weikio.ApiFramework.Plugins.Logger.dll")
-                .AddFunction(
+                .AddApi(
                     @"C:\dev\projects\Weik.io\src\FunctionFramework\src\Plugins\Weikio.ApiFramework.Plugins.OldLogger\bin\Debug\netstandard2.0\Weikio.ApiFramework.Plugins.OldLogger.dll")
-                .AddFunction(typeof(HostLoggerFunction))
+                .AddApi(typeof(HostLoggerFunction))
                 .AddEndpoint("/new", "Weikio.ApiFramework.Plugins.Logger")
                 .AddEndpoint("/old", "Weikio.ApiFramework.Plugins.OldLogger")
                 .AddEndpoint("/host", "DependencyConflict");
 
 //                .AddEndpoint("/old", "Weikio.ApiFramework.Plugins.JsonNetOld", new {HelloString = "This is the second configuration"});
 
-            services.AddSwaggerDocument(document => { document.Title = "Function Framework"; });
+            services.AddSwaggerDocument(document => { document.Title = "Api Framework"; });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -62,7 +62,7 @@ namespace Weikio.ApiFramework.Samples.DependencyConflict
             app.UseRouting();
 
             app.UseResponseCaching();
-            app.UseFunctionFrameworkResponseCaching();
+            app.UseApiFrameworkResponseCaching();
 
             app.UseSwagger();
             app.UseSwaggerUi3();

@@ -14,7 +14,7 @@ namespace Weikio.ApiFramework.Samples.JsonConfiguration
         public static IWebHostBuilder CreateWebHostBuilder(string[] args)
         {
             return WebHost.CreateDefaultBuilder(args)
-                .AddFunctionFrameworkJsonConfigurationFile()
+                .AddApiFrameworkJsonConfigurationFile()
                 .UseStartup<Startup>();
         }
     }

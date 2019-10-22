@@ -11,18 +11,18 @@ namespace Weikio.ApiFramework.Core.Configuration
     public class AppConfigurationEndpointConfigurationProvider : IEndpointConfigurationProvider
     {
         private readonly IConfiguration _configuration;
-        private readonly IFunctionProvider _functionProvider;
+        private readonly IApiProvider _apiProvider;
 
-        public AppConfigurationEndpointConfigurationProvider(IConfiguration configuration, IFunctionProvider functionProvider)
+        public AppConfigurationEndpointConfigurationProvider(IConfiguration configuration, IApiProvider apiProvider)
         {
             _configuration = configuration;
-            _functionProvider = functionProvider;
+            _apiProvider = apiProvider;
         }
 
         public async Task<List<EndpointConfiguration>> GetEndpointConfiguration()
         {
             var result = new List<EndpointConfiguration>();
-            var functionFrameworkSection = _configuration.GetSection("FunctionFramework");
+            var functionFrameworkSection = _configuration.GetSection("ApiFramework");
             var hasConfig = functionFrameworkSection?.GetChildren()?.Any() == true;
 
             if (hasConfig == false)
@@ -39,12 +39,12 @@ namespace Weikio.ApiFramework.Core.Configuration
 
             foreach (var endpointSection in endpointsSection.GetChildren())
             {
-                var definition = new FunctionDefinition(endpointSection.GetValue<string>("Function"), new Version(1, 0, 0, 0));
+                var definition = new ApiDefinition(endpointSection.GetValue<string>("Api"), new Version(1, 0, 0, 0));
 
                 var route = endpointSection.Key;
 
                 var functionConfigSection = endpointSection.GetSection("Configuration");
-                var functionConfiguration = await GetFunctionConfiguration(functionConfigSection, definition);
+                var functionConfiguration = await GetApiConfiguration(functionConfigSection, definition);
 
                 var endpointConfiguration = new EndpointConfiguration(route, definition.Name, functionConfiguration, new EmptyHealthCheck());
 
@@ -54,7 +54,7 @@ namespace Weikio.ApiFramework.Core.Configuration
             return result;
         }
 
-        private async Task<Dictionary<Type, object>> GetFunctionConfiguration(IConfigurationSection rootConfigSection, FunctionDefinition definition)
+        private async Task<Dictionary<Type, object>> GetApiConfiguration(IConfigurationSection rootConfigSection, ApiDefinition definition)
         {
             return null;
 

@@ -8,12 +8,12 @@ namespace Weikio.ApiFramework.Core
     public class StatusProvider
     {
         private readonly EndpointManager _endpointManager;
-        private readonly IFunctionProvider _functionProvider;
+        private readonly IApiProvider _apiProvider;
 
-        public StatusProvider(EndpointManager endpointManager, IFunctionProvider functionProvider)
+        public StatusProvider(EndpointManager endpointManager, IApiProvider apiProvider)
         {
             _endpointManager = endpointManager;
-            _functionProvider = functionProvider;
+            _apiProvider = apiProvider;
         }
 
         public async Task<Status> Get()
@@ -22,7 +22,7 @@ namespace Weikio.ApiFramework.Core
             {
                 Endpoints = _endpointManager.Endpoints.ToList(),
                 EndpointManagerStatusEnum = _endpointManager.Status,
-                AvailableFunctions = await _functionProvider.List()
+                AvailableApis = await _apiProvider.List()
             };
 
             return result;

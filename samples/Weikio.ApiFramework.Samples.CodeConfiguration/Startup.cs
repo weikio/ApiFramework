@@ -34,10 +34,10 @@ namespace Weikio.ApiFramework.Samples.CodeConfiguration
 //                options.AutoResolveEndpoints = false;
 //            });
 
-            services.AddFunctionFramework(mvcBuilder, options =>
+            services.AddApiFramework(mvcBuilder, options =>
                 {
                     options.AutoResolveEndpoints = false;
-                    options.FunctionAddressBase = "/myapi";
+                    options.ApiAddressBase = "/myapi";
 //
 //                options.Endpoints = new List<(string Route, string FunctionAssemblyName, object Configuration)>()
 //                {
@@ -66,7 +66,7 @@ namespace Weikio.ApiFramework.Samples.CodeConfiguration
 //                options.FunctionAssemblies = new List<string>() {typeof(Weikio.ApiFramework.Plugins.HelloWorld.HelloWorldFunction).Assembly.Location};
 //            });
 
-            services.AddSwaggerDocument(document => { document.Title = "Function Framework"; });
+            services.AddSwaggerDocument(document => { document.Title = "Api Framework"; });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -81,7 +81,7 @@ namespace Weikio.ApiFramework.Samples.CodeConfiguration
             app.UseRouting();
 
             app.UseResponseCaching();
-            app.UseFunctionFrameworkResponseCaching();
+            app.UseApiFrameworkResponseCaching();
 
             app.UseSwagger();
             app.UseSwaggerUi3();
@@ -93,7 +93,7 @@ namespace Weikio.ApiFramework.Samples.CodeConfiguration
                 endpoints
                     .MapHealthChecks("/myhealth",
                         new HealthCheckOptions()
-                            {Predicate = (check) => check.Tags.Contains("function_framework_endpoint")});
+                            {Predicate = (check) => check.Tags.Contains("api_framework_endpoint")});
 
                 endpoints.MapRazorPages();
                 endpoints.MapControllerRoute("default", "{controller=Home}/{action=Index}/{id?}");

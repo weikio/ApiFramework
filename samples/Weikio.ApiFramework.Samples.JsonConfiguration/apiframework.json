@@ -1,0 +1,9 @@
+{
+  "ApiFramework": {
+    "Endpoints": {
+      "/hello" : {
+        "Api":  "ApiFramework.Plugins.HelloWorld" 
+      }
+    }
+  }
+}

@@ -18,8 +18,8 @@ namespace Weikio.ApiFramework.Core.Extensions
 {
     public static class ServiceCollectionExtensions
     {
-        public static IFunctionFrameworkBuilder AddFunctionFrameworkCore(this IServiceCollection services,
-            IMvcBuilder mvcBuilder, Action<FunctionFrameworkOptions> setupAction = null)
+        public static IApiFrameworkBuilder AddApiFrameworkCore(this IServiceCollection services,
+            IMvcBuilder mvcBuilder, Action<ApiFrameworkOptions> setupAction = null)
         {
 //            var options = new FunctionFrameworkOptions();
 //            if (setupAction != null)
@@ -27,73 +27,27 @@ namespace Weikio.ApiFramework.Core.Extensions
 //                setupAction(options);
 //            }
 //            
-            var builder = new FunctionFrameworkBuilder(services);
+            var builder = new ApiFrameworkBuilder(services);
 
-//
-//            FunctionHttpVerbResolver.GetHttpVerb = options.HttpVerbResolver;
-//            FunctionLocator.IsFunction = options.FunctionResolver;
-
-//            if (options.FunctionProvider != null)
-//            {
-//                services.AddSingleton(options.FunctionProvider);
-//            }
-//            else if (options.FunctionProvider == null && options.FunctionAssemblies?.Any() == true)
-//            {
-//                var assemblyCatalogs = new List<IPluginCatalog>();
-//                foreach (var functionAssembly in options.FunctionAssemblies)
-//                {
-//                    var assemblyCatalog = new AssemblyPluginCatalog(functionAssembly);
-//                    assemblyCatalogs.Add(assemblyCatalog);
-//                }
-//
-//                var compositeCatalog = new CompositePluginCatalog(assemblyCatalogs.ToArray());
-//                var functionProvider = new PluginFrameworkFunctionProvider(compositeCatalog);
-//
-//                services.AddSingleton<IFunctionProvider>(functionProvider);
-//            }
-//            else if (options.FunctionProvider == null && options.AutoResolveFunctions)
-//            {
-//                var binDirectory = Path.GetDirectoryName(Assembly.GetEntryAssembly().Location);
-//                var pluginCatalog = new FolderPluginCatalog(binDirectory, FunctionLocator.IsFunction);
-//
-//                var functionProvider = new PluginFrameworkFunctionProvider(pluginCatalog);
-//                services.AddSingleton<IFunctionProvider>(functionProvider);
-//            }
-
-            services.AddTransient<IStartupFilter, FunctionFrameworkStartupFilter>();
+            services.AddTransient<IStartupFilter, ApiFrameworkStartupFilter>();
 
 //            services.AddSingleton<PluginManager>();
 //            services.AddTransient(ctx => ctx.GetService<PluginManager>().Functions);
-            services.AddSingleton<FunctionChangeNotifier>();
+            services.AddSingleton<ApiChangeNotifier>();
             services.AddSingleton<EndpointConfigurationManager>();
 
             services.AddSingleton<EndpointManager>();
             services.AddTransient(ctx => ctx.GetService<EndpointManager>().Endpoints);
             services.AddSingleton<EndpointInitializer>();
 
-            //var configurationMonitor = new ConfigurationMonitor(functionFrameworkSection, endpointManager);
-//            services.AddSingleton<ConfigurationMonitor>();
-
-//            services.AddSingleton<IActionDescriptorChangeProvider>(ctx =>
-//            {
-////                var configManager = ctx.GetRequiredService<ConfigurationMonitor>();
-//
-//                return new FunctionChangeProvider(() => configManager.GetReloadToken());
-//            });
-
-//            services.AddSingleton<IActionDescriptorChangeProvider>(FunctionDescriptorChangeProvider.Instance);
-//            services.AddSingleton<FunctionDescriptorChangeProvider>();
-//            var wellKnownChangeToken = new WellKnownChangeToken();
-            services.AddSingleton<FunctionChangeToken>();
+            services.AddSingleton<ApiChangeToken>();
             services.AddSingleton<IActionDescriptorChangeProvider, ActionDescriptorChangeProvider>();
 
             services.AddHttpContextAccessor();
 
-            //var (plugins, pluginEndpoints) = services.AddFunctionFrameworkPlugins(configuration, options);
-
-            services.AddSingleton<FunctionControllerConvention>();
-            services.AddSingleton<FunctionActionConvention>();
-            services.AddSingleton<FunctionFeatureProvider>();
+            services.AddSingleton<ApiControllerConvention>();
+            services.AddSingleton<ApiActionConvention>();
+            services.AddSingleton<ApiFeatureProvider>();
 
             // Services for running background tasks like endpoint initializations
             services.AddHostedService<QueuedHostedService>();
@@ -102,15 +56,15 @@ namespace Weikio.ApiFramework.Core.Extensions
             services.AddSingleton<HealthProbe>();
 
             services.AddHealthChecks()
-                .AddCheck<EndpointHeathCheck>("function_framework_endpoint", HealthStatus.Degraded, new[] { "function_framework_endpoint" });
+                .AddCheck<EndpointHeathCheck>("api_framework_endpoint", HealthStatus.Degraded, new[] { "api_framework_endpoint" });
 
             builder.Services.AddSingleton<IHealthCheckPublisher, HealthPublisher>();
 
             services.AddSingleton<IEndpointConfigurationProvider>(provider =>
             {
                 var result = new CodeBasedEndpointConfigurationProvider();
-                var configurationOptions = provider.GetService<IOptions<FunctionFrameworkOptions>>();
-                FunctionFrameworkOptions options = null;
+                var configurationOptions = provider.GetService<IOptions<ApiFrameworkOptions>>();
+                ApiFrameworkOptions options = null;
 
                 if (configurationOptions != null)
                 {
@@ -118,12 +72,12 @@ namespace Weikio.ApiFramework.Core.Extensions
                 }
                 else
                 {
-                    options = new FunctionFrameworkOptions();
+                    options = new ApiFrameworkOptions();
                 }
 
                 foreach (var endpoint in options.Endpoints)
                 {
-                    var endpointConfiguration = new EndpointConfiguration(endpoint.Route, endpoint.FunctionAssemblyName,
+                    var endpointConfiguration = new EndpointConfiguration(endpoint.Route, endpoint.ApiAssemblyName,
                         endpoint.Configuration, endpoint.HealthCheck);
 
                     result.Add(endpointConfiguration);
@@ -142,12 +96,12 @@ namespace Weikio.ApiFramework.Core.Extensions
                 return result;
             });
 
-            services.ConfigureWithDependencies<MvcOptions, FunctionControllerConvention>((mvcOptions, convention) =>
+            services.ConfigureWithDependencies<MvcOptions, ApiControllerConvention>((mvcOptions, convention) =>
             {
                 mvcOptions.Conventions.Add(convention);
             });
 
-            services.ConfigureWithDependencies<MvcOptions, FunctionActionConvention>((mvcOptions, convention) =>
+            services.ConfigureWithDependencies<MvcOptions, ApiActionConvention>((mvcOptions, convention) =>
             {
                 mvcOptions.Conventions.Add(convention);
             });
@@ -163,7 +117,7 @@ namespace Weikio.ApiFramework.Core.Extensions
 
             mvcBuilder.AddMvcOptions(o =>
             {
-                o.Filters.Add(new FunctionConfigurationActionFilter());
+                o.Filters.Add(new ApiConfigurationActionFilter());
             });
 
             //mvcBuilder.ConfigureApplicationPartManager(m => m.AddFunctionFrameworkFeatures(() => services.BuildServiceProvider().GetRequiredService<EndpointManager>()));
@@ -184,20 +138,20 @@ namespace Weikio.ApiFramework.Core.Extensions
             }
 
             services.AddStartupTasks(true,
-                new StartupTasksHealthCheckParameters() { HealthCheckName = "Function Framework startup tasks" });
+                new StartupTasksHealthCheckParameters() { HealthCheckName = "Api Framework startup tasks" });
         }
 
         //public static (FunctionCatalog, EndpointCollection) AddFunctionFrameworkPlugins(
         //    this IServiceCollection services, IConfiguration configuration, FunctionFrameworkOptions options)
         //{
-        //    //var functionFrameworkSection = configuration.GetSection("FunctionFramework");
+        //    //var functionFrameworkSection = configuration.GetSection("ApiFramework");
         //    //var hasConfig = functionFrameworkSection?.GetChildren()?.Any() == true;
 
         //    //if (hasConfig == false)
         //    //{
         //    //    if (options.RequireConfiguration)
         //    //    {
-        //    //        throw new InvalidOperationException($"FunctionFramework section is not defined.");
+        //    //        throw new InvalidOperationException($"ApiFramework section is not defined.");
         //    //    }
 
         //    //    options.UseConfiguration = false;
@@ -265,10 +219,10 @@ namespace Weikio.ApiFramework.Core.Extensions
         //    //{
         //    //    foreach (var endpoint in options.Endpoints)
         //    //    {
-        //    //        var plugin = pluginManager.Functions.FirstOrDefault(x => string.Equals(x.Name, endpoint.FunctionAssemblyName));
+        //    //        var plugin = pluginManager.Functions.FirstOrDefault(x => string.Equals(x.Name, endpoint.ApiAssemblyName));
         //    //        if (plugin == null)
         //    //        {
-        //    //            throw new InvalidOperationException($"Couldn't locate function assembly {endpoint.FunctionAssemblyName} for endpoint {endpoint.Route}");
+        //    //            throw new InvalidOperationException($"Couldn't locate function assembly {endpoint.ApiAssemblyName} for endpoint {endpoint.Route}");
         //    //        }
 
         //    //        var route = endpoint.Route;

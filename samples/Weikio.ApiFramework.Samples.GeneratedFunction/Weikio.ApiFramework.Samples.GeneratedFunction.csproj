@@ -10,9 +10,9 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\Plugins\Weikio.ApiFramework.Plugins.DynamicHelloWorld\Weikio.ApiFramework.Plugins.DynamicHelloWorld.csproj" />
+    <ProjectReference Include="..\..\src\Weikio.ApiFramework.ApiProviders.PluginFramework\Weikio.ApiFramework.ApiProviders.PluginFramework.csproj" />
     <ProjectReference Include="..\..\src\Weikio.ApiFramework.AspNetCore\Weikio.ApiFramework.AspNetCore.csproj" />
     <ProjectReference Include="..\..\src\Weikio.ApiFramework.Core\Weikio.ApiFramework.Core.csproj" />
-    <ProjectReference Include="..\..\src\Weikio.ApiFramework.FunctionProviders.PluginFramework\Weikio.ApiFramework.FunctionProviders.PluginFramework.csproj" />
   </ItemGroup>
 
 </Project>

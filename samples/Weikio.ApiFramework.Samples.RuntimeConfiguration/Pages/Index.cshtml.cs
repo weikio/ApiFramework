@@ -10,12 +10,12 @@ namespace RuntimeConfiguration.Pages
     public class IndexModel : PageModel
     {
         private readonly EndpointManager _endpointManager;
-        private readonly IFunctionProvider _functionProvider;
+        private readonly IApiProvider _apiProvider;
 
-        public IndexModel(EndpointManager endpointManager, IFunctionProvider functionProvider)
+        public IndexModel(EndpointManager endpointManager, IApiProvider apiProvider)
         {
             _endpointManager = endpointManager;
-            _functionProvider = functionProvider;
+            _apiProvider = apiProvider;
         }
 
         public EndpointManager EndpointManager
@@ -25,16 +25,16 @@ namespace RuntimeConfiguration.Pages
 
         public async Task<ActionResult> OnGet()
         {
-            Functions = await _functionProvider.List();
+            Functions = await _apiProvider.List();
 
             return Page();
         }
 
-        public List<FunctionDefinition> Functions { get; set; }
+        public List<ApiDefinition> Functions { get; set; }
 
         public async Task<ActionResult> OnPost()
         {
-            var function = await _functionProvider.Get("Weikio.ApiFramework.Plugins.HelloWorld");
+            var function = await _apiProvider.Get("Weikio.ApiFramework.Plugins.HelloWorld");
             var newEndpoint = new Endpoint("/test", function, null);
             newEndpoint.Initialize();
 

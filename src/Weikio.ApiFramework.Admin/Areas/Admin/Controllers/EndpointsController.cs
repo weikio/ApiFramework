@@ -11,20 +11,20 @@ namespace Weikio.ApiFramework.Admin.Areas.Admin.Controllers
 {
     [ApiController]
     [Route("/admin/api/endpoints")]
-    [ApiExplorerSettings(GroupName = "function_framework_admin")]
+    [ApiExplorerSettings(GroupName = "api_framework_admin")]
     public class EndpointsController : ControllerBase
     {
         private readonly EndpointCollection _endpoints;
         private readonly EndpointInitializer _endpointInitializer;
-        private readonly IFunctionProvider _functionProvider;
+        private readonly IApiProvider _apiProvider;
         private readonly EndpointManager _endpointManager;
 
-        public EndpointsController(EndpointCollection endpoints, EndpointInitializer endpointInitializer, IFunctionProvider functionProvider,
+        public EndpointsController(EndpointCollection endpoints, EndpointInitializer endpointInitializer, IApiProvider apiProvider,
             EndpointManager endpointManager)
         {
             _endpoints = endpoints;
             _endpointInitializer = endpointInitializer;
-            _functionProvider = functionProvider;
+            _apiProvider = apiProvider;
             _endpointManager = endpointManager;
         }
 
@@ -54,8 +54,8 @@ namespace Weikio.ApiFramework.Admin.Areas.Admin.Controllers
         [HttpPost("")]
         public async Task<ActionResult> Add([FromBody] NewEndpointDto endpointDto)
         {
-            var functionDefinition = new FunctionDefinition(endpointDto.Function.Name, Version.Parse(endpointDto.Function.Version));
-            var function = await _functionProvider.Get(functionDefinition);
+            var functionDefinition = new ApiDefinition(endpointDto.Api.Name, Version.Parse(endpointDto.Api.Version));
+            var function = await _apiProvider.Get(functionDefinition);
 
 //            var configuration = System.Text.Json.JsonSerializer.Deserialize<Dictionary<string, object>>(endpointDto.JsonConfiguration);
 //            

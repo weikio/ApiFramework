@@ -5,7 +5,7 @@ using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Weikio.ApiFramework.Abstractions;
 using Weikio.ApiFramework.Core.Configuration;
 using Weikio.ApiFramework.Core.Extensions;
-using Weikio.ApiFramework.FunctionProviders.PluginFramework;
+using Weikio.ApiFramework.ApiProviders.PluginFramework;
 using Weikio.PluginFramework;
 using Weikio.PluginFramework.Catalogs;
 
@@ -13,29 +13,29 @@ namespace Weikio.ApiFramework.AspNetCore
 {
     public static class ServiceCollectionExtensions
     {
-        public static IFunctionFrameworkBuilder AddFunctionFramework(this IServiceCollection services, IMvcBuilder mvcBuilder,
-            Action<FunctionFrameworkAspNetCoreOptions> setupAction = null)
+        public static IApiFrameworkBuilder AddApiFramework(this IServiceCollection services, IMvcBuilder mvcBuilder,
+            Action<ApiFrameworkAspNetCoreOptions> setupAction = null)
         {
-            var builder = services.AddFunctionFrameworkCore(mvcBuilder);
+            var builder = services.AddApiFrameworkCore(mvcBuilder);
             builder.AddPluginFramework();
 
             if (setupAction != null)
             {
-                var functionFrameworkAspnetCoreOptions = new FunctionFrameworkAspNetCoreOptions();
-                setupAction(functionFrameworkAspnetCoreOptions);
+                var apiFrameworkAspNetCoreOptions = new ApiFrameworkAspNetCoreOptions();
+                setupAction(apiFrameworkAspNetCoreOptions);
 
-                var setupFunctionFramework = new Action<FunctionFrameworkOptions>(options =>
+                var setupApiFramework = new Action<ApiFrameworkOptions>(options =>
                 {
-                    options.FunctionAddressBase = functionFrameworkAspnetCoreOptions.FunctionAddressBase;
-                    options.AutoResolveEndpoints = functionFrameworkAspnetCoreOptions.AutoResolveEndpoints;
-                    options.Endpoints = functionFrameworkAspnetCoreOptions.Endpoints;
+                    options.ApiAddressBase = apiFrameworkAspNetCoreOptions.ApiAddressBase;
+                    options.AutoResolveEndpoints = apiFrameworkAspNetCoreOptions.AutoResolveEndpoints;
+                    options.Endpoints = apiFrameworkAspNetCoreOptions.Endpoints;
                 });
 
-                builder.Services.Configure(setupFunctionFramework);
+                builder.Services.Configure(setupApiFramework);
 
-                var setupPluginFramework = new Action<PluginFrameworkFunctionProviderOptions>(options =>
+                var setupPluginFramework = new Action<PluginFrameworkApiProviderOptions>(options =>
                 {
-                    options.AutoResolveFunctions = functionFrameworkAspnetCoreOptions.AutoResolveFunctions;
+                    options.AutoResolveApis = apiFrameworkAspNetCoreOptions.AutoResolveApis;
                 });
 
                 builder.Services.Configure(setupPluginFramework);
@@ -44,12 +44,12 @@ namespace Weikio.ApiFramework.AspNetCore
             return builder;
         }
 
-        public static IFunctionFrameworkBuilder AddEndpoint(this IFunctionFrameworkBuilder builder, string route, string function, object configuration = null,
+        public static IApiFrameworkBuilder AddEndpoint(this IApiFrameworkBuilder builder, string route, string api, object configuration = null,
             IHealthCheck healthCheck = null)
         {
             builder.Services.AddTransient(services =>
             {
-                var endpointConfiguration = new EndpointConfiguration(route, function, configuration, healthCheck);
+                var endpointConfiguration = new EndpointConfiguration(route, api, configuration, healthCheck);
 
                 return endpointConfiguration;
             });
@@ -57,7 +57,7 @@ namespace Weikio.ApiFramework.AspNetCore
             return builder;
         }
 
-        public static IFunctionFrameworkBuilder AddFunction(this IFunctionFrameworkBuilder builder, string assemblyPath)
+        public static IApiFrameworkBuilder AddApi(this IApiFrameworkBuilder builder, string assemblyPath)
         {
             builder.Services.AddTransient<IPluginCatalog>(services =>
             {
@@ -69,7 +69,7 @@ namespace Weikio.ApiFramework.AspNetCore
             return builder;
         }
 
-        public static IFunctionFrameworkBuilder AddFunction(this IFunctionFrameworkBuilder builder, Assembly assembly)
+        public static IApiFrameworkBuilder AddApi(this IApiFrameworkBuilder builder, Assembly assembly)
         {
             builder.Services.AddTransient<IPluginCatalog>(services =>
             {
@@ -83,11 +83,11 @@ namespace Weikio.ApiFramework.AspNetCore
             return builder;
         }
 
-        public static IFunctionFrameworkBuilder AddFunction(this IFunctionFrameworkBuilder builder, Type functionType)
+        public static IApiFrameworkBuilder AddApi(this IApiFrameworkBuilder builder, Type apiType)
         {
             builder.Services.AddTransient<IPluginCatalog>(services =>
             {
-                var assemblyCatalog = new TypePluginCatalog(functionType);
+                var assemblyCatalog = new TypePluginCatalog(apiType);
 
                 return assemblyCatalog;
             });

@@ -1,6 +1,6 @@
 ﻿namespace FunctionFramework.Plugins.DynamicHelloWorld
 {
-    public class DynamicHelloWorldWithParametersFunction
+    public class DynamicHelloWorldWithParametersApi
     {
         public string PostFix {get;set;} = "##POSTFIX##";
         public int? Age {get;set;} = ##AGE##;
