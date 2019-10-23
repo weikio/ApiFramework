@@ -35,17 +35,15 @@ namespace Weikio.ApiFramework.Samples.GeneratedFunction
                 options.AutoResolveEndpoints = false;
 
                 options.Endpoints =
-                    new List<(string Route, string FunctionAssemblyName, object Configuration, IHealthCheck healthCheck)>()
+                    new List<(string Route, string FunctionAssemblyName, object Configuration, IHealthCheck healthCheck)>
                     {
                         ("/dynamictest", "Weikio.ApiFramework.Plugins.DynamicHelloWorld", new
                         {
-                            HelloString = "Hey there from first configuration", postFix = "test!", age = 20, complex =
-                                new
-                                {
-                                    Another = "Hey there",
-                                    MyParameters = new List<string>() {"first", "second"}
-                                }
-                        }, new EmptyHealthCheck()),
+                            HelloString = "Hey there from first configuration",
+                            postFix = "test!",
+                            age = 20,
+                            complex = new { Another = "Hey there", MyParameters = new List<string> { "first", "second" } }
+                        }, new EmptyHealthCheck())
                     };
             });
 
@@ -56,17 +54,22 @@ namespace Weikio.ApiFramework.Samples.GeneratedFunction
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())
+            {
                 app.UseDeveloperExceptionPage();
+            }
             else
+
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
+            {
                 app.UseHsts();
+            }
 
             app.UseRouting();
 
             app.UseResponseCaching();
             app.UseApiFrameworkResponseCaching();
 
-            app.UseSwagger();
+            app.UseOpenApi();
             app.UseSwaggerUi3();
 
             app.UseHttpsRedirection();

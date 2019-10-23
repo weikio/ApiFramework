@@ -1,8 +1,23 @@
 {
   "ApiFramework": {
     "Endpoints": {
-      "/hello" : {
-        "Api":  "ApiFramework.Plugins.HelloWorld" 
+      "/hello": {
+        "Api": "Weikio.ApiFramework.Plugins.HelloWorld"
+      },
+      "dynamicHello": {
+        "Api": "Weikio.ApiFramework.Plugins.DynamicHelloWorld",
+        "Configuration": {
+          "HelloString": "Hey there from first configuration",
+          "postFix": "test!",
+          "age": 20,
+          "complex": {
+            "Another": "Hey there",
+            "MyParameters": [
+              "first",
+              "second"
+            ]
+          }
+        }
       }
     }
   }

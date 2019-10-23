@@ -13,6 +13,11 @@ namespace Weikio.ApiFramework.AspNetCore
 {
     public static class ServiceCollectionExtensions
     {
+        public static IApiFrameworkBuilder AddApiFramework(this IMvcBuilder mvcBuilder, Action<ApiFrameworkAspNetCoreOptions> setupAction = null)
+        {
+            return mvcBuilder.Services.AddApiFramework(mvcBuilder, setupAction);
+        }
+        
         public static IApiFrameworkBuilder AddApiFramework(this IServiceCollection services, IMvcBuilder mvcBuilder,
             Action<ApiFrameworkAspNetCoreOptions> setupAction = null)
         {

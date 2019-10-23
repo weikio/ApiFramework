@@ -22,10 +22,9 @@ namespace Weikio.ApiFramework.Samples.JsonConfiguration
         {
             services.AddResponseCaching();
 
-            var mvcBuilder = services.AddMvc()
-                .SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
-
-            services.AddApiFramework(mvcBuilder, options => { });
+            services.AddMvc()
+                .SetCompatibilityVersion(CompatibilityVersion.Version_3_0)
+                .AddApiFramework(options => options.AutoResolveApis = true);
 
             services.AddSwaggerDocument(document => { document.Title = "Api Framework"; });
         }
@@ -34,19 +33,30 @@ namespace Weikio.ApiFramework.Samples.JsonConfiguration
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
             if (env.IsDevelopment())
+            {
                 app.UseDeveloperExceptionPage();
+            }
             else
+
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
+            {
                 app.UseHsts();
+            }
+
+            app.UseRouting();
 
             app.UseResponseCaching();
             app.UseApiFrameworkResponseCaching();
 
-            app.UseSwagger();
+            app.UseOpenApi();
             app.UseSwaggerUi3();
 
             app.UseHttpsRedirection();
-            app.UseMvc();
+            app.UseEndpoints(endpoints =>
+            {
+                endpoints.MapRazorPages();
+                endpoints.MapControllerRoute("default", "{controller=Home}/{action=Index}/{id?}");
+            });
         }
     }
 }
