@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.Design;
+using System.Dynamic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
@@ -45,7 +46,7 @@ namespace Weikio.ApiFramework.Core.Configuration
                 var route = endpointSection.Key;
 
                 var functionConfigSection = endpointSection.GetSection("Configuration");
-                var functionConfiguration = await GetApiConfiguration(endpointSection, definition, _configuration);
+                var functionConfiguration = GetApiConfiguration(functionConfigSection);
 
                 var endpointConfiguration = new EndpointConfiguration(route, definition.Name, functionConfiguration, new EmptyHealthCheck());
 
@@ -55,80 +56,14 @@ namespace Weikio.ApiFramework.Core.Configuration
             return result;
         }
 
-        public class SourceSettings
+        private IDictionary<string, object> GetApiConfiguration(IConfigurationSection configuration)
         {
-            public Dictionary<string, object> Configuration { get; set; } = new Dictionary<string, object>(); 
-        }
-        
-        private async Task<Dictionary<string, object>> GetApiConfiguration(IConfigurationSection rootConfigSection, ApiDefinition definition,
-            IConfiguration configuration)
-        {
-            var result = new SourceSettings();
-
-            if (rootConfigSection == null)
+            if (configuration == null)
             {
                 return null;
             }
-
-
-
-            try
-            {
-                var damn = rootConfigSection.GetValue<string>("Configuration");
-                var rgr = _configuration.GetValue<string>("ApiFramework");
-                
-                var settings = _configuration
-                                                         .GetSection("ApiFramework")
-                                                         .Get<System.Text.Json.JsonElement>();
-//                string json = System.Text.Json.JsonSerializer.Serialize(settings);
-                
-//                var duh = rootConfigSection.Get<string>();
-//
-//
-//                var configJson = _configuration.Get<string>(options => options.BindNonPublicProperties = true);
-//                rootConfigSection.Bind(result);
-//                var values = rootConfigSection
-//                    .GetChildren()
-//                    .ToList();
-//
-//                foreach (var value in values)
-//                {
-//                
-//                }
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-
-                throw;
-            }
-
-            return null;
-
-//
-//            foreach (var configSection in rootConfigSection.GetChildren())
-//            {
-//                var function = await _functionProvider.Get(definition);
-//
-//                if (function == null)
-//                {
-//                    continue;
-//                }
-//
-//                var configType = function.ConfigurationTypes
-//                    .OrderBy(t => t.FullName)
-//                    .FirstOrDefault(t => t.Name == configSection.Key);
-//
-//                if (configType == null)
-//                {
-//                    continue;
-//                }
-//
-//                var config = configSection.Get(configType);
-//                result.Add(configType, config);
-//            }
-//
-//            return result;
+            
+            return configuration.ToDictionary();
         }
     }
 }

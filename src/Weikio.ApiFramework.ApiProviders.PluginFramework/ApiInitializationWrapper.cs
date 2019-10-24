@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Dynamic;
 using System.Linq;
 using System.Reflection;
 using System.Text.Json;
@@ -41,9 +42,9 @@ namespace Weikio.ApiFramework.ApiProviders.PluginFramework
 
                 var result = new List<Type>();
 
-                Dictionary<string, object> configurationDictionary;
+                IDictionary<string, object> configurationDictionary;
 
-                if (endpoint.Configuration is Dictionary<string, object> configuration)
+                if (endpoint.Configuration is IDictionary<string, object> configuration)
                 {
                     configurationDictionary = configuration;
                 }
@@ -74,6 +75,14 @@ namespace Weikio.ApiFramework.ApiProviders.PluginFramework
                         }
 
                         var configurationValue = configurationDictionary[methodParameter.Name];
+
+                        if (configurationValue is string)
+                        {
+                            var configurationValueAsMethodParameterType = Convert.ChangeType(configurationValue, methodParameter.ParameterType);
+                            arguments.Add(configurationValueAsMethodParameterType);
+                            
+                            continue;
+                        }
 
                         var json = JsonSerializer.Serialize(configurationValue);
 

@@ -4,7 +4,7 @@
       "/hello": {
         "Api": "Weikio.ApiFramework.Plugins.HelloWorld"
       },
-      "dynamicHello": {
+      "/dynamicHello": {
         "Api": "Weikio.ApiFramework.Plugins.DynamicHelloWorld",
         "Configuration": {
           "HelloString": "Hey there from first configuration",
