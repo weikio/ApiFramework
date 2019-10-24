@@ -2,3 +2,7 @@
 	path = src/submodules/Weikio.Common
 	url = https://github.com/weikio/Common.git
 	branch = master
+[submodule "Weikio.PluginFramework"]
+	path = src/submodules/Weikio.PluginFramework
+	url = https://github.com/weikio/PluginFramework.git
+	branch = master
