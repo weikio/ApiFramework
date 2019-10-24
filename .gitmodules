@@ -1,4 +1,0 @@
-[submodule "Weikio.Common"]
-	path = .\\src\\submodules\\Weikio.Common
-	url = https://github.com/weikio/Common.git
-	branch = master
