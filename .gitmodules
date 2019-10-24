@@ -1,0 +1,4 @@
+[submodule "Weikio.PluginFramework"]
+	path = .\\src\\submodules\\Weikio.PluginFramework
+	url = https://github.com/weikio/PluginFramework.git
+	branch = master
