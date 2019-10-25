@@ -11,6 +11,6 @@ namespace Weikio.ApiFramework.Admin.Areas.Admin.Controllers
         [System.Text.Json.Serialization.JsonConverter(typeof(System.Text.Json.Serialization.JsonStringEnumConverter))]
         public EndpointManagerStatusEnum SystemStatus { get; set; }
 
-        public List<ApiDefinition> AvailableFunctions { get; set; }
+        public List<ApiDefinition> AvailableApis { get; set; }
     }
 }

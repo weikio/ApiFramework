@@ -13,9 +13,9 @@ namespace Weikio.ApiFramework.Core.Configuration
             _configurationProviders = configurationProviders;
         }
 
-        public async Task<List<EndpointConfiguration>> GetEndpointConfigurations()
+        public async Task<List<EndpointDefinition>> GetEndpointConfigurations()
         {
-            var result = new List<EndpointConfiguration>();
+            var result = new List<EndpointDefinition>();
 
             foreach (var endpointConfigurationProvider in _configurationProviders)
             {

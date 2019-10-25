@@ -5,6 +5,6 @@ namespace Weikio.ApiFramework.Abstractions
 {
     public interface IEndpointConfigurationProvider
     {
-        Task<List<EndpointConfiguration>> GetEndpointConfiguration();
+        Task<List<EndpointDefinition>> GetEndpointConfiguration();
     }
 }

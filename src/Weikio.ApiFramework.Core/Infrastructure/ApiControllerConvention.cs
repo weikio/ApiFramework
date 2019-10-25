@@ -26,15 +26,15 @@ namespace Weikio.ApiFramework.Core.Infrastructure
         {
             var endpoints = _endpointManager.Endpoints;
 
-            List<(Type ControllerType, List<Endpoint> Endpoints)> functionControllers = endpoints
+            List<(Type ControllerType, List<Endpoint> Endpoints)> apiControllers = endpoints
                 .SelectMany(p => p.ApiTypes.Select(t => new { Endpoint = p, ControllerType = t }))
                 .GroupBy(c => c.ControllerType)
                 .Select(g => (g.Key, g.Select(c => c.Endpoint).ToList()))
                 .ToList();
 
-            foreach (var functionController in functionControllers)
+            foreach (var apiController in apiControllers)
             {
-                if (!controller.ControllerType.IsAssignableFrom(functionController.ControllerType))
+                if (!controller.ControllerType.IsAssignableFrom(apiController.ControllerType))
                 {
                     continue;
                 }
@@ -44,7 +44,7 @@ namespace Weikio.ApiFramework.Core.Infrastructure
                     controller.Selectors.Clear();
                 }
 
-                var controllerName = functionController.ControllerType.Name;
+                var controllerName = apiController.ControllerType.Name;
 
                 // Todo: Provide interface for configuring the controller naming
                 if (controllerName.EndsWith("Api"))
@@ -55,7 +55,7 @@ namespace Weikio.ApiFramework.Core.Infrastructure
                 var controllerNameParts = controllerName.Split('_');
                 controller.ControllerName = controllerNameParts.Last();
 
-                foreach (var endpoint in functionController.Endpoints)
+                foreach (var endpoint in apiController.Endpoints)
                 {
                     var template = GetRouteTemplate(endpoint.Route);
 
@@ -100,7 +100,7 @@ namespace Weikio.ApiFramework.Core.Infrastructure
                     controller.Selectors.Add(item);
                 }
 
-                controller.ApiExplorer = new ApiExplorerModel { IsVisible = true, GroupName = "api_framework_function" };
+                controller.ApiExplorer = new ApiExplorerModel { IsVisible = true, GroupName = "api_framework_endpoint" };
             }
         }
 

@@ -81,7 +81,7 @@ namespace Weikio.ApiFramework.ApiProviders.PluginFramework
                 }
                 catch (Exception e)
                 {
-                    _logger.LogError("Failed to initialize {Endpoint} with {HealthCheck}", endpoint, healthCheckFactoryMethod);
+                    _logger.LogError(e, "Failed to initialize {Endpoint} with {HealthCheck}", endpoint, healthCheckFactoryMethod);
 
                     throw;
                 }

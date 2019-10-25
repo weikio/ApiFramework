@@ -40,7 +40,7 @@ namespace Weikio.ApiFramework.Samples.DependencyConflict
                     @"C:\dev\projects\Weik.io\src\FunctionFramework\src\Plugins\Weikio.ApiFramework.Plugins.Logger\bin\Debug\netstandard2.0\Weikio.ApiFramework.Plugins.Logger.dll")
                 .AddApi(
                     @"C:\dev\projects\Weik.io\src\FunctionFramework\src\Plugins\Weikio.ApiFramework.Plugins.OldLogger\bin\Debug\netstandard2.0\Weikio.ApiFramework.Plugins.OldLogger.dll")
-                .AddApi(typeof(HostLoggerFunction))
+                .AddApi(typeof(HostLoggerApi))
                 .AddEndpoint("/new", "Weikio.ApiFramework.Plugins.Logger")
                 .AddEndpoint("/old", "Weikio.ApiFramework.Plugins.OldLogger")
                 .AddEndpoint("/host", "DependencyConflict");
@@ -87,11 +87,11 @@ namespace Weikio.ApiFramework.Samples.DependencyConflict
         }
     }
 
-    public class HostLoggerFunction
+    public class HostLoggerApi
     {
-        private readonly ILogger<HostLoggerFunction> _logger;
+        private readonly ILogger<HostLoggerApi> _logger;
 
-        public HostLoggerFunction(ILogger<HostLoggerFunction> logger)
+        public HostLoggerApi(ILogger<HostLoggerApi> logger)
         {
             _logger = logger;
         }

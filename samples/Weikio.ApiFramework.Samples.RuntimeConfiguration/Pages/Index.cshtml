@@ -18,11 +18,11 @@
     <input type="submit" value="Add endpoint">
 </form>
 
-<h2>Available functions:</h2>
+<h2>Available apis:</h2>
 <ul>
-    @foreach (var function in Model.Functions)
+    @foreach (var apiDefinition in Model.Apis)
     {
-        <li>@function.ToString()</li>
+        <li>@apiDefinition.ToString()</li>
     }
 </ul>
 </body>

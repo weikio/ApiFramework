@@ -6,20 +6,20 @@ namespace Weikio.ApiFramework.Core.Configuration
 {
     public class CodeBasedEndpointConfigurationProvider : IEndpointConfigurationProvider
     {
-        private readonly List<EndpointConfiguration> _configurations = new List<EndpointConfiguration>();
+        private readonly List<EndpointDefinition> _configurations = new List<EndpointDefinition>();
 
         public CodeBasedEndpointConfigurationProvider()
         {
         }
 
-        public CodeBasedEndpointConfigurationProvider Add(EndpointConfiguration configuration)
+        public CodeBasedEndpointConfigurationProvider Add(EndpointDefinition definition)
         {
-            _configurations.Add(configuration);
+            _configurations.Add(definition);
 
             return this;
         }
 
-        public Task<List<EndpointConfiguration>> GetEndpointConfiguration()
+        public Task<List<EndpointDefinition>> GetEndpointConfiguration()
         {
             return Task.FromResult(_configurations);
         }

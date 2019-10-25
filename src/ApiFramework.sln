@@ -31,7 +31,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Admin", "Admin", "{DAED3582
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Weikio.ApiFramework.Plugins.DynamicHelloWorld", "Plugins\Weikio.ApiFramework.Plugins.DynamicHelloWorld\Weikio.ApiFramework.Plugins.DynamicHelloWorld.csproj", "{75DA1426-2B38-4B9D-BF42-A70871F5105C}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Weikio.ApiFramework.Samples.GeneratedFunction", "..\samples\Weikio.ApiFramework.Samples.GeneratedFunction\Weikio.ApiFramework.Samples.GeneratedFunction.csproj", "{41E37F06-DB2C-46EE-A4F4-44504F394DF2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Weikio.ApiFramework.Samples.GeneratedApi", "..\samples\Weikio.ApiFramework.Samples.GeneratedApi\Weikio.ApiFramework.Samples.GeneratedApi.csproj", "{41E37F06-DB2C-46EE-A4F4-44504F394DF2}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Weikio.ApiFramework.Plugins.JsonNetOld", "Plugins\Weikio.ApiFramework.Plugins.JsonNetOld\Weikio.ApiFramework.Plugins.JsonNetOld.csproj", "{B38A6D29-D203-4E67-AFFD-592E5000C14A}"
 EndProject

@@ -25,17 +25,17 @@ namespace RuntimeConfiguration.Pages
 
         public async Task<ActionResult> OnGet()
         {
-            Functions = await _apiProvider.List();
+            Apis = await _apiProvider.List();
 
             return Page();
         }
 
-        public List<ApiDefinition> Functions { get; set; }
+        public List<ApiDefinition> Apis { get; set; }
 
         public async Task<ActionResult> OnPost()
         {
-            var function = await _apiProvider.Get("Weikio.ApiFramework.Plugins.HelloWorld");
-            var newEndpoint = new Endpoint("/test", function, null);
+            var api = await _apiProvider.Get("Weikio.ApiFramework.Plugins.HelloWorld");
+            var newEndpoint = new Endpoint("/test", api, null);
             newEndpoint.Initialize();
 
             EndpointManager.AddEndpoint(newEndpoint);

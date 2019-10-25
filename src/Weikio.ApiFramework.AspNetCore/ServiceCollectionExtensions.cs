@@ -54,7 +54,7 @@ namespace Weikio.ApiFramework.AspNetCore
         {
             builder.Services.AddTransient(services =>
             {
-                var endpointConfiguration = new EndpointConfiguration(route, api, configuration, healthCheck);
+                var endpointConfiguration = new EndpointDefinition(route, api, configuration, healthCheck);
 
                 return endpointConfiguration;
             });

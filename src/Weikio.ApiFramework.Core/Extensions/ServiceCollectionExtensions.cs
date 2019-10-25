@@ -77,13 +77,13 @@ namespace Weikio.ApiFramework.Core.Extensions
 
                 foreach (var endpoint in options.Endpoints)
                 {
-                    var endpointConfiguration = new EndpointConfiguration(endpoint.Route, endpoint.ApiAssemblyName,
+                    var endpointConfiguration = new EndpointDefinition(endpoint.Route, endpoint.ApiAssemblyName,
                         endpoint.Configuration, endpoint.HealthCheck);
 
                     result.Add(endpointConfiguration);
                 }
 
-                var registeredEndpoints = provider.GetServices(typeof(EndpointConfiguration)).Cast<EndpointConfiguration>().ToList();
+                var registeredEndpoints = provider.GetServices(typeof(EndpointDefinition)).Cast<EndpointDefinition>().ToList();
 
                 if (registeredEndpoints?.Any() == true)
                 {

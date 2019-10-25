@@ -11,7 +11,7 @@ namespace Weikio.ApiFramework.Core.Configuration
     {
         public bool RequireConfiguration { get; set; } = false;
         public bool UseConfiguration { get; set; } = true;
-        public string ApiAddressBase { get; set; } = "/functions";
+        public string ApiAddressBase { get; set; } = "/api";
 
         public Func<ActionModel, string> HttpVerbResolver { get; set; } = ApiHttpVerbResolver.GetHttpVerb;
 

@@ -54,12 +54,12 @@ namespace Weikio.ApiFramework.Admin.Areas.Admin.Controllers
         [HttpPost("")]
         public async Task<ActionResult> Add([FromBody] NewEndpointDto endpointDto)
         {
-            var functionDefinition = new ApiDefinition(endpointDto.Api.Name, Version.Parse(endpointDto.Api.Version));
-            var function = await _apiProvider.Get(functionDefinition);
+            var apiDefinition = new ApiDefinition(endpointDto.Api.Name, Version.Parse(endpointDto.Api.Version));
+            var api = await _apiProvider.Get(apiDefinition);
 
 //            var configuration = System.Text.Json.JsonSerializer.Deserialize<Dictionary<string, object>>(endpointDto.JsonConfiguration);
 //            
-            var endpoint = new Endpoint(endpointDto.Route, function, endpointDto.JsonConfiguration);
+            var endpoint = new Endpoint(endpointDto.Route, api, endpointDto.JsonConfiguration);
 
             _endpointManager.AddEndpoint(endpoint);
 

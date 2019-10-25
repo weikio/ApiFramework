@@ -10,7 +10,7 @@ using Weikio.PluginFramework;
 namespace Weikio.ApiFramework.ApiProviders.PluginFramework
 {
     /// <summary>
-    /// Api provider which uses Plugin Framework for providing functions
+    /// Api provider which uses Plugin Framework for providing apis
     /// </summary>
     public class PluginFrameworkApiProvider : IApiProvider
     {

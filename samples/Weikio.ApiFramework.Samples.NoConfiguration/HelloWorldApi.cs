@@ -1,10 +1,10 @@
 ﻿namespace Weikio.ApiFramework.Samples.NoConfiguration
 {
-    public class HelloWorldFunction
+    public class HelloWorldApi
     {
         public string SayHello()
         {
-            return "Hello Function Framework!";
+            return "Hello Api Framework!";
         }
     }
 }

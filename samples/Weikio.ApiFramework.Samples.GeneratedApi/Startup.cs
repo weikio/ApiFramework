@@ -10,7 +10,7 @@ using Weikio.ApiFramework.AspNetCore;
 using Weikio.ApiFramework.Core.Extensions;
 using Weikio.ApiFramework.Core.HealthChecks;
 
-namespace Weikio.ApiFramework.Samples.GeneratedFunction
+namespace Weikio.ApiFramework.Samples.GeneratedApi
 {
     public class Startup
     {
@@ -35,7 +35,7 @@ namespace Weikio.ApiFramework.Samples.GeneratedFunction
                 options.AutoResolveEndpoints = false;
 
                 options.Endpoints =
-                    new List<(string Route, string FunctionAssemblyName, object Configuration, IHealthCheck healthCheck)>
+                    new List<(string Route, string ApiAssemblyName, object Configuration, IHealthCheck healthCheck)>
                     {
                         ("/dynamictest", "Weikio.ApiFramework.Plugins.DynamicHelloWorld", new
                         {

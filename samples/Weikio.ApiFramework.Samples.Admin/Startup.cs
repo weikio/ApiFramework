@@ -53,7 +53,7 @@ namespace RuntimeConfiguration
             services.AddOpenApiDocument(document =>
             {
                 document.Title = "Api Framework";
-                document.ApiGroupNames = new[] {"api_framework_function"};
+                document.ApiGroupNames = new[] {"api_framework_endpoint"};
                 document.DocumentName = "api";
             });
 

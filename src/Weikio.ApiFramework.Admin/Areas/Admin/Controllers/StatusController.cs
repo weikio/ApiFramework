@@ -23,7 +23,7 @@ namespace Weikio.ApiFramework.Admin.Areas.Admin.Controllers
 
             var result = new StatusDto
             {
-                SystemStatus = status.EndpointManagerStatusEnum, AvailableFunctions = status.AvailableApis, Endpoints = new List<EndpointDto>()
+                SystemStatus = status.EndpointManagerStatusEnum, AvailableApis = status.AvailableApis, Endpoints = new List<EndpointDto>()
             };
 
             foreach (var endpoint in status.Endpoints)

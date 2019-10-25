@@ -13,30 +13,28 @@ namespace Weikio.ApiFramework.Core.Configuration
     public class AppConfigurationEndpointConfigurationProvider : IEndpointConfigurationProvider
     {
         private readonly IConfiguration _configuration;
-        private readonly IApiProvider _apiProvider;
 
-        public AppConfigurationEndpointConfigurationProvider(IConfiguration configuration, IApiProvider apiProvider)
+        public AppConfigurationEndpointConfigurationProvider(IConfiguration configuration)
         {
             _configuration = configuration;
-            _apiProvider = apiProvider;
         }
 
-        public async Task<List<EndpointConfiguration>> GetEndpointConfiguration()
+        public Task<List<EndpointDefinition>> GetEndpointConfiguration()
         {
-            var result = new List<EndpointConfiguration>();
-            var functionFrameworkSection = _configuration.GetSection("ApiFramework");
-            var hasConfig = functionFrameworkSection?.GetChildren()?.Any() == true;
+            var result = new List<EndpointDefinition>();
+            var apiFrameworkConfigurationSection = _configuration.GetSection("ApiFramework");
+            var hasConfig = apiFrameworkConfigurationSection?.GetChildren()?.Any() == true;
 
             if (hasConfig == false)
             {
-                return result;
+                return Task.FromResult(result);
             }
 
-            var endpointsSection = functionFrameworkSection?.GetSection("Endpoints");
+            var endpointsSection = apiFrameworkConfigurationSection?.GetSection("Endpoints");
 
             if (endpointsSection == null)
             {
-                return result;
+                return Task.FromResult(result);
             }
 
             foreach (var endpointSection in endpointsSection.GetChildren())
@@ -45,15 +43,15 @@ namespace Weikio.ApiFramework.Core.Configuration
 
                 var route = endpointSection.Key;
 
-                var functionConfigSection = endpointSection.GetSection("Configuration");
-                var functionConfiguration = GetApiConfiguration(functionConfigSection);
+                var endpointConfigurationSection = endpointSection.GetSection("Configuration");
+                var endpointConfiguration = GetApiConfiguration(endpointConfigurationSection);
 
-                var endpointConfiguration = new EndpointConfiguration(route, definition.Name, functionConfiguration, new EmptyHealthCheck());
+                var endpointDefinition = new EndpointDefinition(route, definition.Name, endpointConfiguration, new EmptyHealthCheck());
 
-                result.Add(endpointConfiguration);
+                result.Add(endpointDefinition);
             }
 
-            return result;
+            return Task.FromResult(result);
         }
 
         private IDictionary<string, object> GetApiConfiguration(IConfigurationSection configuration)

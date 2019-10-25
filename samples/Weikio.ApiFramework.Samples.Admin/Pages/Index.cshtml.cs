@@ -26,19 +26,19 @@ namespace Weikio.ApiFramework.Samples.Admin.Pages
 
         public async Task<ActionResult> OnGet()
         {
-            Functions = await _apiProvider.List();
+            Apis = await _apiProvider.List();
 
             return Page();
         }
 
-        public List<ApiDefinition> Functions { get; set; }
+        public List<ApiDefinition> Apis { get; set; }
 
         public async Task<ActionResult> OnPost()
         {
-            var firstFunctionDef = (await _apiProvider.List()).First();
-            var firstFunction = await _apiProvider.Get(firstFunctionDef);
+            var firstApiDef = (await _apiProvider.List()).First();
+            var firstApi = await _apiProvider.Get(firstApiDef);
 
-            var newEndpoint = new Endpoint("/test", firstFunction, null);
+            var newEndpoint = new Endpoint("/test", firstApi, null);
             await newEndpoint.Initialize();
 
             EndpointManager.AddEndpoint(newEndpoint);

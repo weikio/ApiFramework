@@ -48,10 +48,10 @@ namespace Weikio.ApiFramework.Core.StartupTasks
 
             foreach (var endpointConfiguration in initialEndpoints)
             {
-                var function = await _apiProvider.Get(endpointConfiguration.Api);
+                var api = await _apiProvider.Get(endpointConfiguration.Api);
 
-                var endpoint = new Endpoint(endpointConfiguration.Route, function, endpointConfiguration.Configuration,
-                    GetHealthCheckFactory(function, endpointConfiguration));
+                var endpoint = new Endpoint(endpointConfiguration.Route, api, endpointConfiguration.Configuration,
+                    GetHealthCheckFactory(api, endpointConfiguration));
 
                 _endpointManager.AddEndpoint(endpoint);
                 endpointsAdded = true;
@@ -80,9 +80,9 @@ namespace Weikio.ApiFramework.Core.StartupTasks
             _endpointManager.Update();
         }
 
-        private Func<Endpoint, Task<IHealthCheck>> GetHealthCheckFactory(Api api, EndpointConfiguration endpointConfiguration = null)
+        private Func<Endpoint, Task<IHealthCheck>> GetHealthCheckFactory(Api api, EndpointDefinition endpointDefinition = null)
         {
-            if (endpointConfiguration?.HealthCheck != null)
+            if (endpointDefinition?.HealthCheck != null)
             {
                 return endpoint => Task.FromResult(endpoint.HealthCheck);
             }
