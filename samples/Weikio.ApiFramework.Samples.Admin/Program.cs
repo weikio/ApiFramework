@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 
-namespace RuntimeConfiguration
+namespace Weikio.ApiFramework.Samples.Admin
 {
     public class Program
     {

@@ -1,18 +1,26 @@
-﻿using System.Threading;
+﻿using System;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Diagnostics.HealthChecks;
+using Microsoft.Extensions.Hosting;
+using Microsoft.IdentityModel.Tokens;
+using Weikio.ApiFramework.Admin;
 using Weikio.ApiFramework.AspNetCore;
 using Weikio.ApiFramework.Core.Extensions;
 using Weikio.ApiFramework.Core.Infrastructure;
-using Weikio.ApiFramework.Plugins.DynamicHelloWorld;
+using Weikio.ApiFramework.Plugins.Broken;
+using Weikio.ApiFramework.Plugins.HealthCheck;
+using Weikio.ApiFramework.Plugins.HelloWorld;
+using Weikio.ApiFramework.Plugins.JsonNetNew;
+using Weikio.ApiFramework.Plugins.JsonNetOld;
 
-namespace RuntimeConfiguration
+namespace Weikio.ApiFramework.Samples.Admin
 {
     public class Startup
     {
@@ -35,32 +43,59 @@ namespace RuntimeConfiguration
                 })
                 .SetCompatibilityVersion(CompatibilityVersion.Latest);
 
+            services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+                .AddCookie();
+
+            services
+                .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+                .AddJwtBearer();
+
+            services.AddAuthorization(options =>
+            {
+                options.AddPolicy("custom", policy =>
+                {
+                    policy.RequireAuthenticatedUser();
+
+                    policy.RequireAssertion(context =>
+                    {
+                        var res = false;
+
+                        return res;
+                    });
+                });
+            });
+
             services.AddApiFramework(mvcBuilder, options =>
                 {
                     options.AutoResolveEndpoints = false;
                     options.AutoResolveApis = false;
                 })
-                .AddApi(typeof(Weikio.ApiFramework.Plugins.Broken.ApiFactory))
-                .AddApi(typeof(Weikio.ApiFramework.Plugins.HelloWorld.HelloWorldApi))
-                .AddApi(typeof(Weikio.ApiFramework.Plugins.JsonNetNew.NewJsonApi))
-                .AddApi(typeof(Weikio.ApiFramework.Plugins.JsonNetOld.OldJsonApi))
                 .AddApi(typeof(ApiFactory))
-                .AddApi(typeof(Weikio.ApiFramework.Plugins.HealthCheck.SometimesWorkingApi))
+                .AddApi(typeof(HelloWorldApi))
+                .AddApi(typeof(NewJsonApi))
+                .AddApi(typeof(OldJsonApi))
+                .AddApi(typeof(Weikio.ApiFramework.Plugins.DynamicHelloWorld.ApiFactory))
+                .AddApi(typeof(SometimesWorkingApi))
                 .AddEndpoint("/sometimesworks", "HealthCheck")
                 .AddEndpoint("/notworking", "Broken", healthCheck: new CustomHealthCheck())
-                .AddEndpoint("/working", "HelloWorld", new {HelloString = "Fast Hellou!!!"});
+                .AddEndpoint("/working", "HelloWorld", new { HelloString = "Fast Hellou!!!" })
+                .AddAdmin(options =>
+                {
+                    options.EndpointApiPolicy = "custom";
+                    options.EndpointAdminRouteRoot = "myadmin/here/itis";
+                });
 
             services.AddOpenApiDocument(document =>
             {
                 document.Title = "Api Framework";
-                document.ApiGroupNames = new[] {"api_framework_endpoint"};
+                document.ApiGroupNames = new[] { "api_framework_endpoint" };
                 document.DocumentName = "api";
             });
 
             services.AddOpenApiDocument(document =>
             {
                 document.Title = "Api Framework";
-                document.ApiGroupNames = new[] {"api_framework_admin"};
+                document.ApiGroupNames = new[] { "api_framework_admin" };
                 document.DocumentName = "api_admin";
             });
 
@@ -72,13 +107,17 @@ namespace RuntimeConfiguration
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())
+            {
                 app.UseDeveloperExceptionPage();
+            }
             else
+            {
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
+            }
 
             app.UseRouting();
             app.UseResponseCaching();
@@ -92,24 +131,11 @@ namespace RuntimeConfiguration
             app.UseEndpoints(endpoints =>
             {
                 endpoints
-                    .MapHealthChecks("/myhealth",
-                        new HealthCheckOptions()
-                            {Predicate = (check) => check.Tags.Contains("api_framework_endpoint")});
+                    .MapHealthChecks("/myhealth", new HealthCheckOptions { Predicate = check => check.Tags.Contains("api_framework_endpoint") });
 
                 endpoints.MapRazorPages();
-                endpoints.MapControllerRoute("default", "{controller=Home}/{action=Index}/{id?}");
+                endpoints.MapDefaultControllerRoute();
             });
-        }
-    }
-
-    public class CustomHealthCheck : IHealthCheck
-    {
-        public Task<HealthCheckResult> CheckHealthAsync(HealthCheckContext context,
-            CancellationToken cancellationToken = new CancellationToken())
-        {
-            var result = new HealthCheckResult(HealthStatus.Degraded, "External");
-
-            return Task.FromResult(result);
         }
     }
 }
