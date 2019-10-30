@@ -4,6 +4,7 @@ using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
+using Microsoft.Extensions.Logging;
 using Weikio.ApiFramework.Abstractions;
 using Weikio.PluginFramework.Abstractions;
 
@@ -18,20 +19,26 @@ namespace Weikio.ApiFramework.ApiProviders.PluginFramework
         private readonly IPluginExporter _exporter;
         private readonly IApiInitializationWrapper _initializationWrapper;
         private readonly IApiHealthCheckWrapper _healthCheckWrapper;
+        private readonly ILogger<PluginFrameworkApiProvider> _logger;
 
         public PluginFrameworkApiProvider(IPluginCatalog pluginCatalog, IPluginExporter exporter, IApiInitializationWrapper initializationWrapper,
-            IApiHealthCheckWrapper healthCheckWrapper)
+            IApiHealthCheckWrapper healthCheckWrapper, ILogger<PluginFrameworkApiProvider> logger)
         {
             _pluginCatalog = pluginCatalog;
             _exporter = exporter;
             _initializationWrapper = initializationWrapper;
             _healthCheckWrapper = healthCheckWrapper;
+            _logger = logger;
         }
 
         public async Task Initialize()
         {
+            _logger.LogDebug("Initializing PluginFrameworkApiProvider by initializing the {PluginCatalog}", _pluginCatalog);
+
             await _pluginCatalog.Initialize();
             IsInitialized = true;
+
+            _logger.LogDebug("PluginFrameworkApiProvider initialized");
         }
 
         public bool IsInitialized { get; private set; }
@@ -58,6 +65,8 @@ namespace Weikio.ApiFramework.ApiProviders.PluginFramework
 
         public async Task<Api> Get(ApiDefinition definition)
         {
+            _logger.LogDebug("Getting api by {ApiDefinition}", definition);
+
             var pluginDefinition = await _pluginCatalog.Get(definition.Name, definition.Version);
 
             if (pluginDefinition == null)
@@ -105,7 +114,14 @@ namespace Weikio.ApiFramework.ApiProviders.PluginFramework
             var plugin = await _exporter.Get(pluginDefinition, typeTaggers);
 
             var initializersTypes = plugin.PluginTypes.Where(x => x.Tag == "Factory").Select(x => x.Type).ToList();
+            _logger.LogDebug("Found {InitializerTypeCount} initializers for {ApiDefinition}", initializersTypes.Count, definition);
+            
             var healthCheckType = plugin.PluginTypes.Where(x => x.Tag == "HealthCheck").Select(x => x.Type).FirstOrDefault();
+
+            if (healthCheckType != null)
+            {
+                _logger.LogDebug("Found {HealthCheckType} health check for {ApiDefinition}", healthCheckType, definition);
+            }
 
             var initializerMethods = new List<MethodInfo>();
 
@@ -125,10 +141,12 @@ namespace Weikio.ApiFramework.ApiProviders.PluginFramework
             var initializer = _initializationWrapper.Wrap(initializerMethods);
             var healthCheckRunner = _healthCheckWrapper.Wrap(healthCheckFactoryMethod);
 
-            var api = new Api(definition, plugin.PluginTypes.Where(x => x.Tag == "Api").Select(x => x.Type).ToList(),
+            var result = new Api(definition, plugin.PluginTypes.Where(x => x.Tag == "Api").Select(x => x.Type).ToList(),
                 initializer, healthCheckRunner);
+            
+            _logger.LogDebug("Got {Api} from {ApiDefinition}", result, definition);
 
-            return api;
+            return result;
         }
 
         public async Task<Api> Get(string name, Version version)
