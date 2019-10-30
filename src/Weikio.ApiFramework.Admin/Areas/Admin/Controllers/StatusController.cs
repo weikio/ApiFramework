@@ -8,6 +8,7 @@ namespace Weikio.ApiFramework.Admin.Areas.Admin.Controllers
     [ApiController]
     [Route("/admin/api/status")]
     [ApiExplorerSettings(GroupName = "api_framework_admin")]
+    [ResponseCache(NoStore = true)]
     public class StatusController : ControllerBase
     {
         private readonly StatusProvider _statusProvider;

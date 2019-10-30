@@ -12,6 +12,7 @@ namespace Weikio.ApiFramework.Admin.Areas.Admin.Controllers
     [ApiController]
     [Route("/admin/api/endpoints")]
     [ApiExplorerSettings(GroupName = "api_framework_admin")]
+    [ResponseCache(NoStore = true)]
     public class EndpointsController : ControllerBase
     {
         private readonly EndpointCollection _endpoints;
