@@ -7,7 +7,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Options;
 using Weikio.ApiFramework.Abstractions;
-using Weikio.PluginFramework;
+using Weikio.PluginFramework.Abstractions;
 using Weikio.PluginFramework.Catalogs;
 
 namespace Weikio.ApiFramework.ApiProviders.PluginFramework

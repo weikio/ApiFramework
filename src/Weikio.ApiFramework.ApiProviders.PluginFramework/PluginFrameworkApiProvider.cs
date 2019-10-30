@@ -5,7 +5,7 @@ using System.Reflection;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Weikio.ApiFramework.Abstractions;
-using Weikio.PluginFramework;
+using Weikio.PluginFramework.Abstractions;
 
 namespace Weikio.ApiFramework.ApiProviders.PluginFramework
 {

@@ -28,12 +28,14 @@
     <PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="3.0.0" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="3.0.0" />
     <PackageReference Include="MinVer" Version="2.0.0" />
+    <PackageReference Include="Weikio.AspNetCore.Common" Version="1.0.0-alpha.*"/>
+    <PackageReference Include="Weikio.AspNetCore.StartupTasks" Version="1.0.0-alpha.*"/>
   </ItemGroup>
   
   <ItemGroup>
-    <ProjectReference Include="..\submodules\Weikio.Common\src\Weikio.AspNetCore.StartupTasks\Weikio.AspNetCore.StartupTasks.csproj" />
     <ProjectReference Include="..\Weikio.ApiFramework.Abstractions\Weikio.ApiFramework.Abstractions.csproj" />
   </ItemGroup>
+  
   <ItemGroup>
     <None Include="../../docs/logo_256.png" Pack="true" Visible="false" PackagePath="" />
   </ItemGroup>

@@ -6,7 +6,7 @@ using Weikio.ApiFramework.Abstractions;
 using Weikio.ApiFramework.Core.Configuration;
 using Weikio.ApiFramework.Core.Extensions;
 using Weikio.ApiFramework.ApiProviders.PluginFramework;
-using Weikio.PluginFramework;
+using Weikio.PluginFramework.Abstractions;
 using Weikio.PluginFramework.Catalogs;
 
 namespace Weikio.ApiFramework.AspNetCore
