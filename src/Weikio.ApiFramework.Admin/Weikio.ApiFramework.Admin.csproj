@@ -30,7 +30,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Weikio.ApiFramework.AspNetCore" Version="1.0.0-alpha.0.*"/>
+    <PackageReference Include="Weikio.ApiFramework.AspNetCore" Version="1.0.0-alpha.*"/>
     <PackageReference Include="MinVer" Version="2.0.0" />
   </ItemGroup>
 
