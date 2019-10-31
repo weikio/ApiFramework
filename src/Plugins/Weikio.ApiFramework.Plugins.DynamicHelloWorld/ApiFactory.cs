@@ -10,7 +10,7 @@ namespace Weikio.ApiFramework.Plugins.DynamicHelloWorld
 {
     public static class ApiFactory
     {
-        public static async Task<IEnumerable<Type>> Create()
+        public static async Task<IEnumerable<Type>> Create(string endpointRoute)
         {
             var generator = new AssemblyGenerator();
 

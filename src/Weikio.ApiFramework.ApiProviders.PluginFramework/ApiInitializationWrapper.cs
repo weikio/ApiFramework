@@ -67,6 +67,14 @@ namespace Weikio.ApiFramework.ApiProviders.PluginFramework
 
                     foreach (var methodParameter in methodParameters)
                     {
+                        if (string.Equals(methodParameter.Name, "endpointroute", StringComparison.InvariantCultureIgnoreCase) &&
+                            methodParameter.ParameterType == typeof(string))
+                        {
+                            arguments.Add(endpoint.Route);
+
+                            continue;
+                        };
+                        
                         if (!configurationDictionary.ContainsKey(methodParameter.Name))
                         {
                             arguments.Add(GetDefaultValue(methodParameter.ParameterType));
