@@ -75,6 +75,17 @@ namespace Weikio.ApiFramework.ApiProviders.PluginFramework
                             continue;
                         };
                         
+                        if (string.Equals(methodParameter.Name, "configuration", StringComparison.InvariantCultureIgnoreCase) &&
+                            methodParameter.ParameterType != typeof(string))
+                        {
+                            var arg = JsonSerializer.Deserialize(JsonSerializer.Serialize(configurationDictionary), methodParameter.ParameterType);
+                            arguments.Add(arg);
+
+                            continue;
+                        };
+
+                        
+                        
                         if (!configurationDictionary.ContainsKey(methodParameter.Name))
                         {
                             arguments.Add(GetDefaultValue(methodParameter.ParameterType));
