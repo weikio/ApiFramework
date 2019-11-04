@@ -79,21 +79,57 @@ namespace Weikio.ApiFramework.Core.Infrastructure
 
                     if (endpointConfiguration != null)
                     {
-                        // It should be ok to use reflection here. The convention is only run when something changes.
-                        var configProperty = controller.ControllerType.GetProperties().FirstOrDefault(p => p.Name == "Configuration");
-
-                        if (configProperty != null)
+                        // TODO: Maybe rethink this. Configuration works well if there is only single object by handling multiple parameters is hard
+                        if (endpoint.Configuration is IDictionary<string, object> dictionary && dictionary.Count > 1)
                         {
-                            // Create configuration setter delegate. This is executed from <see cref="ApiConfigurationActionFilter"/>
-                            var convertedConfigValue =
-                                JsonSerializer.Deserialize(JsonSerializer.Serialize(endpointConfiguration),
-                                    configProperty.PropertyType);
-                            item.EndpointMetadata.Add(convertedConfigValue);
-
-                            item.EndpointMetadata.Add(new Action<object>(obj =>
+                            var controllerProperties = controller.ControllerType.GetProperties().ToList();
+                            var setters = new List<Action<object>>();
+                            
+                            foreach (var keyValue in dictionary)
                             {
-                                configProperty.SetValue(obj, convertedConfigValue);
-                            }));
+                                var prop = controllerProperties.FirstOrDefault(x => string.Equals(x.Name, keyValue.Key, StringComparison.InvariantCultureIgnoreCase));
+
+                                if (prop == null)
+                                {
+                                    continue;
+                                }
+                                
+                                var convertedConfigValue = JsonSerializer.Deserialize(JsonSerializer.Serialize(keyValue.Value), prop.PropertyType);
+                                item.EndpointMetadata.Add(convertedConfigValue);
+                                
+                                setters.Add(obj =>
+                                {
+                                    prop.SetValue(obj, convertedConfigValue);
+                                } );
+                            }
+
+                            if (setters.Any())
+                            {
+                                item.EndpointMetadata.Add(new Action<object>(obj =>
+                                {
+                                    foreach (var setter in setters)
+                                    {
+                                        setter.Invoke(obj);
+                                    }
+                                }));
+                            }
+                        }
+                        else
+                        {
+                            // It should be ok to use reflection here. The convention is only run when something changes.
+                            var configProperty = controller.ControllerType.GetProperties().FirstOrDefault(p => p.Name == "Configuration");
+
+                            if (configProperty != null)
+                            {
+                                // Create configuration setter delegate. This is executed from <see cref="ApiConfigurationActionFilter"/>
+                                var convertedConfigValue = JsonSerializer.Deserialize(JsonSerializer.Serialize(endpointConfiguration), configProperty.PropertyType);
+                                item.EndpointMetadata.Add(convertedConfigValue);
+
+                                item.EndpointMetadata.Add(new Action<object>(obj =>
+                                {
+                                    configProperty.SetValue(obj, convertedConfigValue);
+                                }));
+                            }
                         }
                     }
 
