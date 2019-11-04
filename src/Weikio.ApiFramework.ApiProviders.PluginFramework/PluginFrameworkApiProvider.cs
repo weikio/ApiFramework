@@ -56,7 +56,11 @@ namespace Weikio.ApiFramework.ApiProviders.PluginFramework
 
             foreach (var pluginDefinition in pluginDefinitions)
             {
-                var apiDefinition = new ApiDefinition(pluginDefinition.Name, pluginDefinition.Version);
+                var apiDefinition = new ApiDefinition(pluginDefinition.Name, pluginDefinition.Version)
+                {
+                    Description = pluginDefinition.Description, ProductVersion = pluginDefinition.ProductVersion
+                };
+
                 result.Add(apiDefinition);
             }
 
