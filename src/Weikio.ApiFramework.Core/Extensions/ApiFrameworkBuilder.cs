@@ -8,12 +8,12 @@ namespace Weikio.ApiFramework.Core.Extensions
     {
         public ApiFrameworkBuilder(IServiceCollection services)
         {
-            Services = services;
-
             if (services == null)
             {
                 throw new ArgumentNullException(nameof(services));
             }
+
+            Services = services;
         }
 
         public IServiceCollection Services { get; }

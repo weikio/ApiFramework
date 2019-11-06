@@ -6,8 +6,8 @@
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Authors>Weik.io</Authors>
     <Company>Weik.io</Company>
-    <Description>Abstractions for Weikio.ApiFramework.</Description>
-    <PackageDescription>Abstractions for Weikio.ApiFramework.</PackageDescription>
+    <Description>Abstractions for Api Framework.</Description>
+    <PackageDescription>Abstractions for Api Framework.</PackageDescription>
     <PackageProjectUrl>https://www.weik.io</PackageProjectUrl>
     <Copyright>©2019 Weik.io</Copyright>
     <PackageId>Weikio.ApiFramework.Abstractions</PackageId>
@@ -17,7 +17,7 @@
     <RepositoryUrl>https://github.com/weikio/Weikio.ApiFramework</RepositoryUrl>
     <PackageTags>api;open api;functions</PackageTags>
     <PackageIcon>logo_256.png</PackageIcon>
-    <Title>Weikio.ApiFramework Abstractions</Title>
+    <Title>Api Framework Abstractions</Title>
     <MinVerMinimumMajorMinor>1.0</MinVerMinimumMajorMinor>    
   </PropertyGroup>
 

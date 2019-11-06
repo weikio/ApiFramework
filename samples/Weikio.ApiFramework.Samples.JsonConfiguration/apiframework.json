@@ -1,21 +1,18 @@
 {
   "ApiFramework": {
     "Endpoints": {
-      "/hello": {
-        "Api": "Weikio.ApiFramework.Plugins.HelloWorld"
-      },
-      "/dynamicHello": {
-        "Api": "Weikio.ApiFramework.Plugins.DynamicHelloWorld",
+      "/l7": {
+        "Api": "Weikio.ApiFramework.Plugins.Odbc",
         "Configuration": {
-          "HelloString": "Hey there from first configuration",
-          "postFix": "test!",
-          "age": 20,
-          "complex": {
-            "Another": "Hey there",
-            "MyParameters": [
-              "first",
-              "second"
-            ]
+          "OdbcOptions": {
+            "ConnectionString": "dsn=myodbc",
+            "Tables": []
+          },
+          "SqlCommands": {
+            "GetColors": {
+              "CommandText": "select distinct color from SalesLT.Product where color is not null",
+              "DataTypeName": "ColorItem"
+            }
           }
         }
       }
