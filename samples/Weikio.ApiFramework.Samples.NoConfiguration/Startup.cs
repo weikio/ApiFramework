@@ -26,7 +26,7 @@ namespace Weikio.ApiFramework.Samples.NoConfiguration
             var mvcBuilder = services.AddMvc()
                 .SetCompatibilityVersion(CompatibilityVersion.Latest);
 
-            services.AddApiFramework(mvcBuilder);
+            services.AddApiFramework();
 
             services.AddSwaggerDocument(document => { document.Title = "Api Framework"; });
         }
@@ -35,10 +35,15 @@ namespace Weikio.ApiFramework.Samples.NoConfiguration
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
             if (env.IsDevelopment())
+            {
                 app.UseDeveloperExceptionPage();
+            }
             else
+
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
+            {
                 app.UseHsts();
+            }
 
             app.UseRouting();
 
@@ -49,6 +54,7 @@ namespace Weikio.ApiFramework.Samples.NoConfiguration
             app.UseSwaggerUi3();
 
             app.UseHttpsRedirection();
+
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapRazorPages();

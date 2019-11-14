@@ -30,7 +30,7 @@ namespace Weikio.ApiFramework.Samples.DependencyConflict
             var mvcBuilder = services.AddMvc(options => { })
                 .SetCompatibilityVersion(CompatibilityVersion.Latest);
 
-            services.AddApiFramework(mvcBuilder, options =>
+            services.AddApiFramework(options =>
                 {
                     options.AutoResolveEndpoints = false;
                     options.ApiAddressBase = "/api";
@@ -54,10 +54,13 @@ namespace Weikio.ApiFramework.Samples.DependencyConflict
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())
+            {
                 app.UseDeveloperExceptionPage();
+            }
             else
-                // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
+            {
                 app.UseHsts();
+            }
 
             app.UseRouting();
 

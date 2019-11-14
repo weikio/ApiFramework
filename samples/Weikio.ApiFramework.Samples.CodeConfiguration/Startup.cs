@@ -34,10 +34,11 @@ namespace Weikio.ApiFramework.Samples.CodeConfiguration
 //                options.AutoResolveEndpoints = false;
 //            });
 
-            services.AddApiFramework(mvcBuilder, options =>
+            services.AddApiFramework(options =>
                 {
                     options.AutoResolveEndpoints = false;
                     options.ApiAddressBase = "/myapi";
+
 //
 //                options.Endpoints = new List<(string Route, string FunctionAssemblyName, object Configuration)>()
 //                {
@@ -46,6 +47,7 @@ namespace Weikio.ApiFramework.Samples.CodeConfiguration
 //                };
                 })
                 .AddEndpoint("/withhealth", "Weikio.ApiFramework.Plugins.HealthCheck");
+
 //                .AddEndpoint("/test", "Weikio.ApiFramework.Plugins.HelloWorld", new {HelloString = "Hey there from first configuration"})
 //                .AddEndpoint("/otherEndpoint", "Weikio.ApiFramework.Plugins.HelloWorld", new {HelloString = "This is the second configuration"});
             ;
@@ -73,10 +75,15 @@ namespace Weikio.ApiFramework.Samples.CodeConfiguration
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())
+            {
                 app.UseDeveloperExceptionPage();
+            }
             else
+
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
+            {
                 app.UseHsts();
+            }
 
             app.UseRouting();
 
@@ -92,8 +99,7 @@ namespace Weikio.ApiFramework.Samples.CodeConfiguration
             {
                 endpoints
                     .MapHealthChecks("/myhealth",
-                        new HealthCheckOptions()
-                            {Predicate = (check) => check.Tags.Contains("api_framework_endpoint")});
+                        new HealthCheckOptions { Predicate = check => check.Tags.Contains("api_framework_endpoint") });
 
                 endpoints.MapRazorPages();
                 endpoints.MapControllerRoute("default", "{controller=Home}/{action=Index}/{id?}");

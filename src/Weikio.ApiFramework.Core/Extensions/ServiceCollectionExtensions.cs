@@ -19,20 +19,12 @@ namespace Weikio.ApiFramework.Core.Extensions
     public static class ServiceCollectionExtensions
     {
         public static IApiFrameworkBuilder AddApiFrameworkCore(this IServiceCollection services,
-            IMvcBuilder mvcBuilder, Action<ApiFrameworkOptions> setupAction = null)
+            Action<ApiFrameworkOptions> setupAction = null)
         {
-//            var options = new FunctionFrameworkOptions();
-//            if (setupAction != null)
-//            {
-//                setupAction(options);
-//            }
-//            
             var builder = new ApiFrameworkBuilder(services);
 
             services.AddTransient<IStartupFilter, ApiFrameworkStartupFilter>();
 
-//            services.AddSingleton<PluginManager>();
-//            services.AddTransient(ctx => ctx.GetService<PluginManager>().Functions);
             services.AddSingleton<ApiChangeNotifier>();
             services.AddSingleton<EndpointConfigurationManager>();
 
@@ -99,28 +91,15 @@ namespace Weikio.ApiFramework.Core.Extensions
             services.ConfigureWithDependencies<MvcOptions, ApiControllerConvention>((mvcOptions, convention) =>
             {
                 mvcOptions.Conventions.Add(convention);
+                mvcOptions.Filters.Add(new ApiConfigurationActionFilter());
             });
 
             services.ConfigureWithDependencies<MvcOptions, ApiActionConvention>((mvcOptions, convention) =>
             {
                 mvcOptions.Conventions.Add(convention);
             });
-
-//            services.AddSingleton(options);
+            
             TryAddStartupTasks(services);
-
-            //services.ConfigureWithDependencies<MvcOptions, FunctionActionConvention>((mvcOptions, convention) =>
-            //{
-            //    //mvcOptions.
-            //    //mvcOptions.Conventions.Add(convention);
-            //});
-
-            mvcBuilder.AddMvcOptions(o =>
-            {
-                o.Filters.Add(new ApiConfigurationActionFilter());
-            });
-
-            //mvcBuilder.ConfigureApplicationPartManager(m => m.AddFunctionFrameworkFeatures(() => services.BuildServiceProvider().GetRequiredService<EndpointManager>()));
 
             if (setupAction != null)
             {

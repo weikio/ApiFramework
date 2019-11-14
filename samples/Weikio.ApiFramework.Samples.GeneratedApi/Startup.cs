@@ -30,7 +30,7 @@ namespace Weikio.ApiFramework.Samples.GeneratedApi
             var mvcBuilder = services.AddMvc(options => { })
                 .SetCompatibilityVersion(CompatibilityVersion.Latest);
 
-            services.AddApiFramework(mvcBuilder, options =>
+            services.AddApiFramework(options =>
             {
                 options.AutoResolveEndpoints = false;
 

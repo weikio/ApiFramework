@@ -65,7 +65,7 @@ namespace Weikio.ApiFramework.Samples.Admin
                 });
             });
 
-            services.AddApiFramework(mvcBuilder, options =>
+            services.AddApiFramework(options =>
                 {
                     options.AutoResolveEndpoints = false;
                     options.AutoResolveApis = false;
@@ -79,6 +79,7 @@ namespace Weikio.ApiFramework.Samples.Admin
                 .AddEndpoint("/sometimesworks", "HealthCheck")
                 .AddEndpoint("/notworking", "Broken", healthCheck: new CustomHealthCheck())
                 .AddEndpoint("/working", "HelloWorld", new { HelloString = "Fast Hellou!!!" })
+                .AddEndpoint("/working2", "HelloWorld", new { HelloString = "Another configuration Hellou!!!" })
                 .AddAdmin(options =>
                 {
                     options.EndpointApiPolicy = "custom";

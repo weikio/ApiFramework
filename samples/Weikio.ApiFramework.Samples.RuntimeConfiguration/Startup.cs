@@ -30,7 +30,7 @@ namespace RuntimeConfiguration
                 })
                 .SetCompatibilityVersion(CompatibilityVersion.Latest);
 
-            services.AddApiFramework(mvcBuilder, options => { options.AutoResolveEndpoints = false; });
+            services.AddApiFramework(options => { options.AutoResolveEndpoints = false; });
 
             services.AddSwaggerDocument(document => { document.Title = "Api Framework"; });
         }
@@ -39,10 +39,15 @@ namespace RuntimeConfiguration
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
             if (env.IsDevelopment())
+            {
                 app.UseDeveloperExceptionPage();
+            }
             else
+
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
+            {
                 app.UseHsts();
+            }
 
             app.UseRouting();
 
@@ -53,6 +58,7 @@ namespace RuntimeConfiguration
             app.UseSwaggerUi3();
 
             app.UseHttpsRedirection();
+
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapRazorPages();

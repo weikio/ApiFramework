@@ -27,7 +27,7 @@ namespace Weikio.ApiFramework.Samples.ReferenceConflict
             var mvcBuilder = services.AddMvc(options => { })
                 .SetCompatibilityVersion(CompatibilityVersion.Latest);
 
-            services.AddApiFramework(mvcBuilder, options =>
+            services.AddApiFramework(options =>
                 {
                     options.AutoResolveEndpoints = false;
                     options.ApiAddressBase = "/api";
@@ -38,9 +38,9 @@ namespace Weikio.ApiFramework.Samples.ReferenceConflict
                 .AddApi(
                     @"C:\dev\projects\Weikio\src\FunctionFramework\src\Plugins\Weikio.ApiFramework.Plugins.JsonNetNew\bin\Debug\netstandard2.0\Weikio.ApiFramework.Plugins.JsonNetNew.dll")
                 .AddEndpoint("/new", "Weikio.ApiFramework.Plugins.JsonNetNew",
-                    new {HelloString = "Hey there from first configuration"})
+                    new { HelloString = "Hey there from first configuration" })
                 .AddEndpoint("/old", "Weikio.ApiFramework.Plugins.JsonNetOld",
-                    new {HelloString = "This is the second configuration"});
+                    new { HelloString = "This is the second configuration" });
 
             services.AddSwaggerDocument(document => { document.Title = "Api Framework"; });
         }
@@ -49,10 +49,15 @@ namespace Weikio.ApiFramework.Samples.ReferenceConflict
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())
+            {
                 app.UseDeveloperExceptionPage();
+            }
             else
+
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
+            {
                 app.UseHsts();
+            }
 
             app.UseRouting();
 

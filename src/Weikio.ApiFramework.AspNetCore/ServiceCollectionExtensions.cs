@@ -15,13 +15,13 @@ namespace Weikio.ApiFramework.AspNetCore
     {
         public static IApiFrameworkBuilder AddApiFramework(this IMvcBuilder mvcBuilder, Action<ApiFrameworkAspNetCoreOptions> setupAction = null)
         {
-            return mvcBuilder.Services.AddApiFramework(mvcBuilder, setupAction);
+            return mvcBuilder.Services.AddApiFramework(setupAction);
         }
         
-        public static IApiFrameworkBuilder AddApiFramework(this IServiceCollection services, IMvcBuilder mvcBuilder,
+        public static IApiFrameworkBuilder AddApiFramework(this IServiceCollection services,
             Action<ApiFrameworkAspNetCoreOptions> setupAction = null)
         {
-            var builder = services.AddApiFrameworkCore(mvcBuilder);
+            var builder = services.AddApiFrameworkCore();
             builder.AddPluginFramework();
 
             if (setupAction != null)
