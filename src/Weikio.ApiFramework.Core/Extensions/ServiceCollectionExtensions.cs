@@ -27,9 +27,7 @@ namespace Weikio.ApiFramework.Core.Extensions
             services.AddSingleton(provider =>
             {
                 var configurationOptions = provider.GetService<IOptions<ApiFrameworkOptions>>();
-                ApiFrameworkOptions options;
-
-                options = configurationOptions != null ? configurationOptions.Value : new ApiFrameworkOptions();
+                var options = configurationOptions != null ? configurationOptions.Value : new ApiFrameworkOptions();
 
                 if (options.ApiProvider == null)
                 {
@@ -37,6 +35,19 @@ namespace Weikio.ApiFramework.Core.Extensions
                 }
 
                 return options.ApiProvider;
+            });
+
+            services.AddSingleton(provider =>
+            {
+                var configurationOptions = provider.GetService<IOptions<ApiFrameworkOptions>>();
+                var options = configurationOptions != null ? configurationOptions.Value : new ApiFrameworkOptions();
+
+                if (options.EndpointHttpVerbResolver != null)
+                {
+                    return options.EndpointHttpVerbResolver;
+                }
+                
+                return new DefaultEndpointHttpVerbResolver();
             });
             
             services.AddTransient<IStartupFilter, ApiFrameworkStartupFilter>();

@@ -11,14 +11,14 @@ namespace Weikio.ApiFramework.Core.Infrastructure
     public class  ApiActionConvention : IActionModelConvention
     {
         private readonly EndpointManager _endpointManager;
+        private readonly IEndpointHttpVerbResolver _endpointHttpVerbResolver;
 
         //private readonly Func<EndpointCollection> _endpointsFactory;
 
-        public ApiActionConvention(EndpointManager endpointManager)
+        public ApiActionConvention(EndpointManager endpointManager, IEndpointHttpVerbResolver endpointHttpVerbResolver)
         {
             _endpointManager = endpointManager;
-
-            //_endpointsFactory = endpointsFactory;
+            _endpointHttpVerbResolver = endpointHttpVerbResolver;
         }
 
         public void Apply(ActionModel action)
@@ -40,7 +40,7 @@ namespace Weikio.ApiFramework.Core.Infrastructure
 
                 var selector = new SelectorModel { };
 
-                var httpVerb = ApiHttpVerbResolver.GetHttpVerb(action);
+                var httpVerb = _endpointHttpVerbResolver.GetHttpVerb(action);
 
                 if (!string.Equals(httpVerb, "GET"))
                 {
@@ -75,7 +75,7 @@ namespace Weikio.ApiFramework.Core.Infrastructure
 
                 if (hasMultipleActions)
                 {
-                    var httpVerbs = action.Controller.Actions.Select(x => ApiHttpVerbResolver.GetHttpVerb(x))
+                    var httpVerbs = action.Controller.Actions.Select(x => _endpointHttpVerbResolver.GetHttpVerb(x))
                         .GroupBy(x => x).ToList();
 
                     if (httpVerbs.FirstOrDefault(x => string.Equals(x.Key, httpVerb))?.Count() > 1)

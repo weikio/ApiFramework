@@ -1,11 +1,10 @@
-﻿using System;
 using Microsoft.AspNetCore.Mvc.ApplicationModels;
 
 namespace Weikio.ApiFramework.Core.Infrastructure
 {
-    public static class ApiHttpVerbResolver
+    public class DefaultEndpointHttpVerbResolver : IEndpointHttpVerbResolver
     {
-        public static Func<ActionModel, string> GetHttpVerb = action =>
+        public string GetHttpVerb(ActionModel action)
         {
             if (action.ActionName.StartsWith("Create") || action.ActionName.StartsWith("Insert") ||
                 action.ActionName.StartsWith("New"))
@@ -26,6 +25,6 @@ namespace Weikio.ApiFramework.Core.Infrastructure
             }
 
             return "GET";
-        };
+        }
     }
 }

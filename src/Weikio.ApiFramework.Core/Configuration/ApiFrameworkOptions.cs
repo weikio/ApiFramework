@@ -13,7 +13,7 @@ namespace Weikio.ApiFramework.Core.Configuration
         public bool UseConfiguration { get; set; } = true;
         public string ApiAddressBase { get; set; } = "/api";
 
-        public Func<ActionModel, string> HttpVerbResolver { get; set; } = ApiHttpVerbResolver.GetHttpVerb;
+        public IEndpointHttpVerbResolver EndpointHttpVerbResolver { get; set; }
 
 //        public Func<MetadataReader, TypeDefinition, bool> FunctionResolver { get; set; } = FunctionLocator.IsFunction;
         public bool AutoResolveEndpoints { get; set; } = true;

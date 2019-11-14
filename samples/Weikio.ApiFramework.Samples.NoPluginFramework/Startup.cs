@@ -2,11 +2,13 @@
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ApplicationModels;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Weikio.ApiFramework.Core.Apis;
 using Weikio.ApiFramework.Core.Extensions;
+using Weikio.ApiFramework.Core.Infrastructure;
 
 namespace Weikio.ApiFramework.Samples.NoPluginFramework
 {
@@ -32,10 +34,19 @@ namespace Weikio.ApiFramework.Samples.NoPluginFramework
                     options.ApiProvider = new TypeApiProvider(typeof(HelloWorldWithoutPlugins));
                     options.AutoResolveEndpoints = false;
                     options.ApiAddressBase = "/myapi";
+                    options.EndpointHttpVerbResolver = new CustomHttpVerbResolver();
                 })
                 .AddEndpoint("/test", typeof(HelloWorldWithoutPlugins).FullName);
 
             services.AddSwaggerDocument(document => { document.Title = "Api Framework"; });
+        }
+        
+        public class CustomHttpVerbResolver :IEndpointHttpVerbResolver
+        {
+            public string GetHttpVerb(ActionModel action)
+            {
+                return "POST";
+            }
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
