@@ -24,40 +24,29 @@ namespace Weikio.ApiFramework.AspNetCore
             var builder = services.AddApiFrameworkCore();
             builder.AddPluginFramework();
 
-            if (setupAction != null)
+            if (setupAction == null)
             {
-                var apiFrameworkAspNetCoreOptions = new ApiFrameworkAspNetCoreOptions();
-                setupAction(apiFrameworkAspNetCoreOptions);
-
-                var setupApiFramework = new Action<ApiFrameworkOptions>(options =>
-                {
-                    options.ApiAddressBase = apiFrameworkAspNetCoreOptions.ApiAddressBase;
-                    options.AutoResolveEndpoints = apiFrameworkAspNetCoreOptions.AutoResolveEndpoints;
-                    options.Endpoints = apiFrameworkAspNetCoreOptions.Endpoints;
-                });
-
-                builder.Services.Configure(setupApiFramework);
-
-                var setupPluginFramework = new Action<PluginFrameworkApiProviderOptions>(options =>
-                {
-                    options.AutoResolveApis = apiFrameworkAspNetCoreOptions.AutoResolveApis;
-                });
-
-                builder.Services.Configure(setupPluginFramework);
+                return builder;
             }
 
-            return builder;
-        }
+            var apiFrameworkAspNetCoreOptions = new ApiFrameworkAspNetCoreOptions();
+            setupAction(apiFrameworkAspNetCoreOptions);
 
-        public static IApiFrameworkBuilder AddEndpoint(this IApiFrameworkBuilder builder, string route, string api, object configuration = null,
-            IHealthCheck healthCheck = null)
-        {
-            builder.Services.AddTransient(services =>
+            var setupApiFramework = new Action<ApiFrameworkOptions>(options =>
             {
-                var endpointConfiguration = new EndpointDefinition(route, api, configuration, healthCheck);
-
-                return endpointConfiguration;
+                options.ApiAddressBase = apiFrameworkAspNetCoreOptions.ApiAddressBase;
+                options.AutoResolveEndpoints = apiFrameworkAspNetCoreOptions.AutoResolveEndpoints;
+                options.Endpoints = apiFrameworkAspNetCoreOptions.Endpoints;
             });
+
+            builder.Services.Configure(setupApiFramework);
+
+            var setupPluginFramework = new Action<PluginFrameworkApiProviderOptions>(options =>
+            {
+                options.AutoResolveApis = apiFrameworkAspNetCoreOptions.AutoResolveApis;
+            });
+
+            builder.Services.Configure(setupPluginFramework);
 
             return builder;
         }

@@ -5,9 +5,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="NSwag.AspNetCore" Version="13.1.2" />
+    <PackageReference Include="NSwag.AspNetCore" Version="13.1.3" />
   </ItemGroup>
-
+  
   <ItemGroup>
     <ProjectReference Include="..\..\src\Plugins\Weikio.ApiFramework.Plugins.DynamicHelloWorld\Weikio.ApiFramework.Plugins.DynamicHelloWorld.csproj" />
     <ProjectReference Include="..\..\src\Plugins\Weikio.ApiFramework.Plugins.HelloWorld\Weikio.ApiFramework.Plugins.HelloWorld.csproj" />

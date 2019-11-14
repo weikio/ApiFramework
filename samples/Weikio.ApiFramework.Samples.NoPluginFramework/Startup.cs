@@ -1,15 +1,14 @@
-﻿using System.Collections.Generic;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Builder;
+﻿using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Weikio.ApiFramework.AspNetCore;
+using Weikio.ApiFramework.Core.Apis;
 using Weikio.ApiFramework.Core.Extensions;
 
-namespace Weikio.ApiFramework.Samples.JsonConfiguration
+namespace Weikio.ApiFramework.Samples.NoPluginFramework
 {
     public class Startup
     {
@@ -23,19 +22,21 @@ namespace Weikio.ApiFramework.Samples.JsonConfiguration
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddResponseCaching();
+            services.AddRouting();
 
             services.AddMvc()
-                .SetCompatibilityVersion(CompatibilityVersion.Version_3_0)
-                .AddApiFramework(options => options.AutoResolveApis = true);
+                .SetCompatibilityVersion(CompatibilityVersion.Latest);
 
-            services.AddSwaggerDocument(document =>
-            {
-                document.Title = "Api Framework";
-                document.OperationProcessors.Add(new ApiFrameworkTagOperationProcessor());
-            });
+            services.AddApiFrameworkCore(options =>
+                {
+                    options.ApiProvider = new TypeApiProvider(typeof(HelloWorldWithoutPlugins));
+                    options.AutoResolveEndpoints = false;
+                    options.ApiAddressBase = "/myapi";
+                })
+                .AddEndpoint("/test", typeof(HelloWorldWithoutPlugins).FullName);
+
+            services.AddSwaggerDocument(document => { document.Title = "Api Framework"; });
         }
-        
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -45,16 +46,11 @@ namespace Weikio.ApiFramework.Samples.JsonConfiguration
                 app.UseDeveloperExceptionPage();
             }
             else
-
-                // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
             {
                 app.UseHsts();
             }
 
             app.UseRouting();
-
-            app.UseResponseCaching();
-            app.UseApiFrameworkResponseCaching();
 
             app.UseOpenApi();
             app.UseSwaggerUi3();
@@ -63,7 +59,6 @@ namespace Weikio.ApiFramework.Samples.JsonConfiguration
 
             app.UseEndpoints(endpoints =>
             {
-                endpoints.MapRazorPages();
                 endpoints.MapControllerRoute("default", "{controller=Home}/{action=Index}/{id?}");
             });
         }

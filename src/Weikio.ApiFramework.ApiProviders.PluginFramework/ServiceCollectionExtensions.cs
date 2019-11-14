@@ -18,7 +18,7 @@ namespace Weikio.ApiFramework.ApiProviders.PluginFramework
         public static IApiFrameworkBuilder AddPluginFramework(this IApiFrameworkBuilder builder,
             Action<PluginFrameworkApiProviderOptions> setupAction = null)
         {
-            builder.Services.AddSingleton<IApiProvider>(services =>
+            builder.Services.Replace(ServiceDescriptor.Singleton<IApiProvider>( services =>
             {
                 var configurationOptions = services.GetService<IOptions<PluginFrameworkApiProviderOptions>>();
                 var initializationWrapper = services.GetService<IApiInitializationWrapper>();
@@ -101,7 +101,7 @@ namespace Weikio.ApiFramework.ApiProviders.PluginFramework
                 }
 
                 return new PluginFrameworkApiProvider(new EmptyPluginCatalog(), exporter, initializationWrapper, healthCheckWrapper, logger);
-            });
+            }));
 
             builder.Services.AddTransient<IPluginExporter, PluginExporter>();
             builder.Services.TryAddSingleton<IApiInitializationWrapper, ApiInitializationWrapper>();

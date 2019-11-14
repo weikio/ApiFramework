@@ -7,6 +7,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Options;
 using Weikio.ApiFramework.Abstractions;
+using Weikio.ApiFramework.Core.Apis;
 using Weikio.ApiFramework.Core.Configuration;
 using Weikio.ApiFramework.Core.Endpoints;
 using Weikio.ApiFramework.Core.HealthChecks;
@@ -23,8 +24,22 @@ namespace Weikio.ApiFramework.Core.Extensions
         {
             var builder = new ApiFrameworkBuilder(services);
 
-            services.AddTransient<IStartupFilter, ApiFrameworkStartupFilter>();
+            services.AddSingleton(provider =>
+            {
+                var configurationOptions = provider.GetService<IOptions<ApiFrameworkOptions>>();
+                ApiFrameworkOptions options;
 
+                options = configurationOptions != null ? configurationOptions.Value : new ApiFrameworkOptions();
+
+                if (options.ApiProvider == null)
+                {
+                    return new EmptyApiProvider();
+                }
+
+                return options.ApiProvider;
+            });
+            
+            services.AddTransient<IStartupFilter, ApiFrameworkStartupFilter>();
             services.AddSingleton<ApiChangeNotifier>();
             services.AddSingleton<EndpointConfigurationManager>();
 
@@ -118,6 +133,20 @@ namespace Weikio.ApiFramework.Core.Extensions
 
             services.AddStartupTasks(true,
                 new StartupTasksHealthCheckParameters() { HealthCheckName = "Api Framework startup tasks" });
+        }
+        
+        
+        public static IApiFrameworkBuilder AddEndpoint(this IApiFrameworkBuilder builder, string route, string api, object configuration = null,
+            IHealthCheck healthCheck = null)
+        {
+            builder.Services.AddTransient(services =>
+            {
+                var endpointConfiguration = new EndpointDefinition(route, api, configuration, healthCheck);
+
+                return endpointConfiguration;
+            });
+
+            return builder;
         }
 
         //public static (FunctionCatalog, EndpointCollection) AddFunctionFrameworkPlugins(
