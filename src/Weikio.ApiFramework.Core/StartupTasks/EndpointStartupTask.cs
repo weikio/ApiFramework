@@ -42,16 +42,16 @@ namespace Weikio.ApiFramework.Core.StartupTasks
 
         public async Task Execute(CancellationToken cancellationToken)
         {
-            var initialEndpoints = await _endpointConfigurationManager.GetEndpointConfigurations();
+            var initialEndpoints = await _endpointConfigurationManager.GetEndpointDefinitions();
 
             var endpointsAdded = false;
 
-            foreach (var endpointConfiguration in initialEndpoints)
+            foreach (var endpointDefinition in initialEndpoints)
             {
-                var api = await _apiProvider.Get(endpointConfiguration.Api);
+                var api = await _apiProvider.Get(endpointDefinition.Api);
 
-                var endpoint = new Endpoint(endpointConfiguration.Route, api, endpointConfiguration.Configuration,
-                    GetHealthCheckFactory(api, endpointConfiguration));
+                var endpoint = new Endpoint(endpointDefinition.Route, api, endpointDefinition.Configuration,
+                    GetHealthCheckFactory(api, endpointDefinition));
 
                 _endpointManager.AddEndpoint(endpoint);
                 endpointsAdded = true;
