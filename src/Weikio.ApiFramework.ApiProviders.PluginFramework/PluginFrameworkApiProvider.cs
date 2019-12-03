@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Logging;
@@ -31,10 +32,11 @@ namespace Weikio.ApiFramework.ApiProviders.PluginFramework
             _logger = logger;
         }
 
-        public async Task Initialize()
+        public async Task Initialize(CancellationToken cancellationToken)
         {
             _logger.LogDebug("Initializing PluginFrameworkApiProvider by initializing the {PluginCatalog}", _pluginCatalog);
 
+            // TODO: Make sure that cancellation token can be passed to initialize
             await _pluginCatalog.Initialize();
             IsInitialized = true;
 

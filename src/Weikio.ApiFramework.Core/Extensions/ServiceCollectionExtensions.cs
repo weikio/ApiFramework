@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Options;
 using Weikio.ApiFramework.Abstractions;
@@ -12,6 +13,7 @@ using Weikio.ApiFramework.Core.Configuration;
 using Weikio.ApiFramework.Core.Endpoints;
 using Weikio.ApiFramework.Core.HealthChecks;
 using Weikio.ApiFramework.Core.Infrastructure;
+using Weikio.ApiFramework.Core.StartupTasks;
 using Weikio.AspNetCore.Common;
 using Weikio.AspNetCore.StartupTasks;
 
@@ -46,10 +48,11 @@ namespace Weikio.ApiFramework.Core.Extensions
                 {
                     return options.EndpointHttpVerbResolver;
                 }
-                
+
                 return new DefaultEndpointHttpVerbResolver();
             });
-            
+
+            services.TryAddSingleton<IEndpointStartupHandler, EndpointStartupHandler>();
             services.AddTransient<IStartupFilter, ApiFrameworkStartupFilter>();
             services.AddSingleton<ApiChangeNotifier>();
             services.AddSingleton<EndpointConfigurationManager>();
@@ -72,6 +75,8 @@ namespace Weikio.ApiFramework.Core.Extensions
             services.AddSingleton<IBackgroundTaskQueue, BackgroundTaskQueue>();
             services.AddSingleton<StatusProvider>();
             services.AddSingleton<HealthProbe>();
+            services.TryAddSingleton<IApiProviderInitializer, ApiProviderInitializer>();
+            services.TryAddSingleton<IEndpointInitializer, EndpointInitializer>();
 
             services.AddHealthChecks()
                 .AddCheck<EndpointHeathCheck>("api_framework_endpoint", HealthStatus.Degraded, new[] { "api_framework_endpoint" });
@@ -124,7 +129,7 @@ namespace Weikio.ApiFramework.Core.Extensions
             {
                 mvcOptions.Conventions.Add(convention);
             });
-            
+
             TryAddStartupTasks(services);
 
             if (setupAction != null)
@@ -145,8 +150,7 @@ namespace Weikio.ApiFramework.Core.Extensions
             services.AddStartupTasks(true,
                 new StartupTasksHealthCheckParameters() { HealthCheckName = "Api Framework startup tasks" });
         }
-        
-        
+
         public static IApiFrameworkBuilder AddEndpoint(this IApiFrameworkBuilder builder, string route, string api, object configuration = null,
             IHealthCheck healthCheck = null)
         {

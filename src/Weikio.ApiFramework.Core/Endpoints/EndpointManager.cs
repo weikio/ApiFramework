@@ -8,13 +8,13 @@ namespace Weikio.ApiFramework.Core.Endpoints
     public class EndpointManager
     {
         private readonly IBackgroundTaskQueue _backgroundTaskQueue;
-        private readonly EndpointInitializer _initializer;
+        private readonly IEndpointInitializer _initializer;
 
         private readonly List<Endpoint> _endpoints;
         public EndpointCollection Endpoints { get; }
 
         public EndpointManager(IBackgroundTaskQueue backgroundTaskQueue,
-            EndpointInitializer initializer)
+            IEndpointInitializer initializer)
         {
             _backgroundTaskQueue = backgroundTaskQueue;
             _initializer = initializer;
@@ -90,10 +90,7 @@ namespace Weikio.ApiFramework.Core.Endpoints
         /// </summary>
         public void Update()
         {
-            _backgroundTaskQueue.QueueBackgroundWorkItem(async x =>
-            {
-                await _initializer.Initialize(_endpoints);
-            });
+            _initializer.Initialize(_endpoints);
         }
 
         public void RemoveEndpoint(Endpoint endpoint)

@@ -55,6 +55,14 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Weikio.ApiFramework.Abstrac
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Weikio.ApiFramework.Samples.NoPluginFramework", "..\samples\Weikio.ApiFramework.Samples.NoPluginFramework\Weikio.ApiFramework.Samples.NoPluginFramework.csproj", "{1D254BDD-0B89-49FD-8CCA-A2CC1770BC08}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ApiFramework.IntegrationTests", "..\tests\integration\ApiFramework.IntegrationTests\ApiFramework.IntegrationTests.csproj", "{02879B2A-4393-4D76-91CC-244893EE5603}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{53E78366-C5D5-4FA6-8C48-825D854D20AC}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "WebSites", "WebSites", "{81229E6E-0DC8-4DFF-89C4-40215010FD03}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CodeConfiguration", "..\tests\integration\WebSites\CodeConfiguration\CodeConfiguration.csproj", "{505BA79C-F520-45FB-81BA-1E70D503181F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -153,6 +161,14 @@ Global
 		{1D254BDD-0B89-49FD-8CCA-A2CC1770BC08}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1D254BDD-0B89-49FD-8CCA-A2CC1770BC08}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1D254BDD-0B89-49FD-8CCA-A2CC1770BC08}.Release|Any CPU.Build.0 = Release|Any CPU
+		{02879B2A-4393-4D76-91CC-244893EE5603}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{02879B2A-4393-4D76-91CC-244893EE5603}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{02879B2A-4393-4D76-91CC-244893EE5603}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{02879B2A-4393-4D76-91CC-244893EE5603}.Release|Any CPU.Build.0 = Release|Any CPU
+		{505BA79C-F520-45FB-81BA-1E70D503181F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{505BA79C-F520-45FB-81BA-1E70D503181F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{505BA79C-F520-45FB-81BA-1E70D503181F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{505BA79C-F520-45FB-81BA-1E70D503181F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -177,6 +193,9 @@ Global
 		{3747A186-A42E-4005-8A5E-1D65873D3822} = {644107BC-4E85-43FF-B92C-E4667910EE05}
 		{09B4E7BD-5E34-4A61-AA04-13B4BC05019D} = {D5FF3F7D-2ADF-49EA-BD3C-E6632BEEE53F}
 		{1D254BDD-0B89-49FD-8CCA-A2CC1770BC08} = {644107BC-4E85-43FF-B92C-E4667910EE05}
+		{02879B2A-4393-4D76-91CC-244893EE5603} = {53E78366-C5D5-4FA6-8C48-825D854D20AC}
+		{81229E6E-0DC8-4DFF-89C4-40215010FD03} = {53E78366-C5D5-4FA6-8C48-825D854D20AC}
+		{505BA79C-F520-45FB-81BA-1E70D503181F} = {81229E6E-0DC8-4DFF-89C4-40215010FD03}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {C41EB018-759B-4AF9-B6A8-19E1525D6E11}

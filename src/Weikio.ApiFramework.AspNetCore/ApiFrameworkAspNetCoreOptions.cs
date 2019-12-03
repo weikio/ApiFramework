@@ -11,5 +11,8 @@ namespace Weikio.ApiFramework.AspNetCore
 
         public List<(string Route, string ApiAssemblyName, object Configuration, IHealthCheck healthCheck)> Endpoints { get; set; } =
             new List<(string Route, string ApiAssemblyName, object Configuration, IHealthCheck healthCheck)>();
+        
+        public bool AutoInitializeApiProvider { get; set; } = true;
+        public bool AutoInitializeConfiguredEndpoints { get; set; } = true;
     }
 }

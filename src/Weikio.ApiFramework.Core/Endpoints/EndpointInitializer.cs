@@ -7,43 +7,49 @@ using Microsoft.Extensions.Options;
 using Weikio.ApiFramework.Abstractions;
 using Weikio.ApiFramework.Core.Configuration;
 using Weikio.ApiFramework.Core.Infrastructure;
+using Weikio.AspNetCore.Common;
 
 namespace Weikio.ApiFramework.Core.Endpoints
 {
-    public class EndpointInitializer
+    public class EndpointInitializer : IEndpointInitializer
     {
         private readonly ILogger<EndpointInitializer> _logger;
         private readonly ApiChangeNotifier _changeNotifier;
+        private readonly IBackgroundTaskQueue _backgroundTaskQueue;
         private readonly ApiFrameworkOptions _options;
 
-        public EndpointInitializer(ILogger<EndpointInitializer> logger, ApiChangeNotifier changeNotifier, IOptions<ApiFrameworkOptions> options)
+        public EndpointInitializer(ILogger<EndpointInitializer> logger, ApiChangeNotifier changeNotifier, IOptions<ApiFrameworkOptions> options, IBackgroundTaskQueue backgroundTaskQueue)
         {
             _logger = logger;
             _changeNotifier = changeNotifier;
+            _backgroundTaskQueue = backgroundTaskQueue;
             _options = options.Value;
         }
 
-        public async Task Initialize(List<Endpoint> endpoints, bool force = false)
+        public void Initialize(List<Endpoint> endpoints, bool force = false)
         {
             if (endpoints == null)
             {
                 throw new ArgumentNullException(nameof(endpoints));
             }
-
+            
             if (endpoints?.Any() != true)
             {
                 return;
             }
-
-            await endpoints.ForEachAsync(async endpoint =>
+            
+            _backgroundTaskQueue.QueueBackgroundWorkItem(async cancellationToken =>
             {
-                await Initialize(endpoint, force);
+                await endpoints.ForEachAsync(async endpoint =>
+                {
+                    await Initialize(endpoint, force);
+                });
+
+                if (_options.ChangeNotificationType == ChangeNotificationTypeEnum.Batch)
+                {
+                    _changeNotifier.Notify();
+                }
             });
-
-            if (_options.ChangeNotificationType == ChangeNotificationTypeEnum.Batch)
-            {
-                _changeNotifier.Notify();
-            }
         }
 
         public async Task Initialize(Endpoint endpoint, bool force = false)
