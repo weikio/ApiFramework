@@ -4,7 +4,7 @@
 //using Weikio.ApiFramework.AspNetCore;
 //using Weikio.ApiFramework.Core.Extensions;
 //
-//namespace ApiFramework.IntegrationTests
+//namespace ApiFramework.UnitTests
 //{
 //    public class CustomWebApplicationFactory<TStartup>
 //        : WebApplicationFactory<TStartup> where TStartup : class

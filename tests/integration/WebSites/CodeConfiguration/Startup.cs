@@ -205,15 +205,6 @@ namespace CodeConfiguration
             services.AddSingleton<IApiProviderInitializer, SyncApiProviderInitializer>();
             services.AddSingleton<IEndpointStartupHandler, SyncEndpointStartupHandler>();
             services.AddSingleton<IEndpointInitializer, SyncEndpointInitializer>();
-            
-            services.AddApiFramework(options =>
-                {
-                    options.AutoResolveEndpoints = false;
-                    options.AutoResolveApis = false;
-                    options.ApiAddressBase = "/myapi";
-                })
-                .AddApi(typeof(HelloWorldApi))
-                .AddEndpoint("/mytest", "CodeConfiguration");
 
             services.AddSwaggerDocument();
         }

@@ -8,6 +8,7 @@ using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Logging;
 using Weikio.ApiFramework.Abstractions;
 using Weikio.PluginFramework.Abstractions;
+using Weikio.PluginFramework.Catalogs;
 
 namespace Weikio.ApiFramework.ApiProviders.PluginFramework
 {
@@ -80,42 +81,80 @@ namespace Weikio.ApiFramework.ApiProviders.PluginFramework
                 throw new ApiNotFoundException(definition.Name, definition.Version);
             }
 
-            var typeTaggers = new Dictionary<string, Predicate<Type>>
+            Dictionary<string, Predicate<Type>> typeTaggers;
+            if (pluginDefinition.Source is TypePluginCatalog typePluginCatalog)
             {
-                { "Api", type => type.Name.EndsWith("Api") },
+                // TODO: This isn't a scalable solution but should work for the first version. In the future it might be that typetaggers should be set per catalog.
+                // The problem is that without this if-else handling, TypeCatalog still resolves all the apis in the assembly.
+
+                var bindFlags = BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic
+                                         | BindingFlags.Static;
+                var field = typePluginCatalog.GetType().GetField("_pluginType", bindFlags);
+                var pluginType = (Type) field.GetValue(typePluginCatalog);
+                
+                typeTaggers = new Dictionary<string, Predicate<Type>>
                 {
-                    "Factory", type =>
+                    { "Api", type => type.FullName.Equals(pluginType.FullName) },
                     {
-                        if (type.Name != "ApiFactory")
+                        "Factory", type =>
                         {
-                            return false;
+                            if (type.Name != "ApiFactory")
+                            {
+                                return false;
+                            }
+
+                            var methods = type.GetMethods().ToList();
+
+                            var factoryMethods = methods
+                                .Where(m => m.IsStatic && typeof(Task<IEnumerable<Type>>).IsAssignableFrom(m.ReturnType));
+
+                            return factoryMethods?.Any() == true;
                         }
-
-                        var methods = type.GetMethods().ToList();
-
-                        var factoryMethods = methods
-                            .Where(m => m.IsStatic && typeof(Task<IEnumerable<Type>>).IsAssignableFrom(m.ReturnType));
-
-                        return factoryMethods?.Any() == true;
-                    }
-                },
+                    },
+                    {
+                        "HealthCheck", type => false
+                    },
+                };
+            }
+            else
+            {
+                typeTaggers = new Dictionary<string, Predicate<Type>>
                 {
-                    "HealthCheck", type =>
+                    { "Api", type => type.Name.EndsWith("Api") },
                     {
-                        if (type.Name != "HealthCheckFactory")
+                        "Factory", type =>
                         {
-                            return false;
+                            if (type.Name != "ApiFactory")
+                            {
+                                return false;
+                            }
+
+                            var methods = type.GetMethods().ToList();
+
+                            var factoryMethods = methods
+                                .Where(m => m.IsStatic && typeof(Task<IEnumerable<Type>>).IsAssignableFrom(m.ReturnType));
+
+                            return factoryMethods?.Any() == true;
                         }
+                    },
+                    {
+                        "HealthCheck", type =>
+                        {
+                            if (type.Name != "HealthCheckFactory")
+                            {
+                                return false;
+                            }
 
-                        var methods = type.GetMethods().ToList();
+                            var methods = type.GetMethods().ToList();
 
-                        var factoryMethods = methods
-                            .Where(m => m.IsStatic && typeof(Task<IHealthCheck>).IsAssignableFrom(m.ReturnType));
+                            var factoryMethods = methods
+                                .Where(m => m.IsStatic && typeof(Task<IHealthCheck>).IsAssignableFrom(m.ReturnType));
 
-                        return factoryMethods?.Any() == true;
-                    }
-                },
-            };
+                            return factoryMethods?.Any() == true;
+                        }
+                    },
+                };
+            }
 
             var plugin = await _exporter.Get(pluginDefinition, typeTaggers);
 
