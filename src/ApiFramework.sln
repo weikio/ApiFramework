@@ -67,7 +67,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ApiFramework.UnitTests", ".
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Apis", "Apis", "{0CCBA731-36A0-48C5-8FEE-D23D6E40BF47}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HelloWorld", "..\tests\unit\Apis\HelloWorld\HelloWorld.csproj", "{BBA88EFE-DEE3-477E-B672-B273474326B5}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HelloWorld", "..\tests\Apis\HelloWorld\HelloWorld.csproj", "{BBA88EFE-DEE3-477E-B672-B273474326B5}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

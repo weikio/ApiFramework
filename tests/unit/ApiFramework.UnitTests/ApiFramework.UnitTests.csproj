@@ -13,7 +13,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\..\src\Weikio.ApiFramework.AspNetCore\Weikio.ApiFramework.AspNetCore.csproj" />
-    <ProjectReference Include="..\Apis\HelloWorld\HelloWorld.csproj" />
+    <ProjectReference Include="..\..\Apis\HelloWorld\HelloWorld.csproj" />
   </ItemGroup>
 
 </Project>

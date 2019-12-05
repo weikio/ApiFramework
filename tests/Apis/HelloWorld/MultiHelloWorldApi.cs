@@ -1,13 +1,5 @@
-namespace HelloWorld
+﻿namespace HelloWorld
 {
-    public class HelloWorldApi
-    {
-        public string SayHello()
-        {
-            return "Hello Api Framework!";
-        }
-    }
-    
     public class MultiHelloWorldApi
     {
         public string SayHello()
@@ -19,6 +11,5 @@ namespace HelloWorld
         {
             return "Hello Api Framework!";
         }
-
     }
 }
