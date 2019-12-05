@@ -94,11 +94,11 @@ namespace Weikio.ApiFramework.ApiProviders.PluginFramework
                 
                 typeTaggers = new Dictionary<string, Predicate<Type>>
                 {
-                    { "Api", type => type.FullName.Equals(pluginType.FullName) },
+                    { "Api", type => type.FullName.Equals(pluginType.FullName) && !string.Equals(pluginType.Name, "ApiFactory", StringComparison.InvariantCultureIgnoreCase) },
                     {
                         "Factory", type =>
                         {
-                            if (type.Name != "ApiFactory")
+                            if (pluginType.Name != "ApiFactory")
                             {
                                 return false;
                             }

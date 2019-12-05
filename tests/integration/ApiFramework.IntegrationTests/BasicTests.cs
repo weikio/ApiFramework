@@ -32,6 +32,24 @@ namespace ApiFramework.IntegrationTests
         }
 
         [Fact]
+        public async Task CanGetApiWithMultipleFunctions()
+        {
+            var server = Init(builder =>
+            {
+                builder.AddApi(typeof(HelloWorldMultipleApi));
+                builder.AddEndpoint("/mytest", "HelloWorld");
+            });
+
+            // Act 
+            var result = await server.GetStringAsync("/api/mytest/sayhello");
+            var secondResult = await server.GetStringAsync("/api/mytest/sayanother");
+
+            // Assert
+            Assert.Equal("Hello Api Framework!", result);
+            Assert.Equal("Hello Another!", secondResult);
+        }
+
+        [Fact]
         public async Task CanGetApiWithParameter()
         {
             var server = Init(builder =>
@@ -47,7 +65,6 @@ namespace ApiFramework.IntegrationTests
             Assert.Equal("sometext", result);
         }
 
-        
         [Fact]
         public async Task CanPostApi()
         {
@@ -63,7 +80,7 @@ namespace ApiFramework.IntegrationTests
             // Assert
             Assert.True(response.IsSuccessStatusCode);
         }
-        
+
         [Fact]
         public async Task CanPostApiWithParameters()
         {
@@ -74,7 +91,7 @@ namespace ApiFramework.IntegrationTests
             });
 
             // Act 
-            var result = await server.PostJsonAsync<CreatedResult>("/api/mytest", new CreatedDto {FirstName = "hello", Age = 50});
+            var result = await server.PostJsonAsync<CreatedResult>("/api/mytest", new CreatedDto { FirstName = "hello", Age = 50 });
 
             // Assert
             Assert.Equal("hello", result.FirstName);

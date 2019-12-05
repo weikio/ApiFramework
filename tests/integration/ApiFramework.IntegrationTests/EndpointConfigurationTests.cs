@@ -1,4 +1,3 @@
-using System;
 using System.Threading.Tasks;
 using CodeConfiguration;
 using HelloWorld;
@@ -93,20 +92,6 @@ namespace ApiFramework.IntegrationTests
 
             Assert.Equal(firstExpected, firstResult);
             Assert.Equal(secondExpected, secondResult);
-        }
-    }
-
-    public class EndpointFactoryTests : ApiFrameworkTestBase
-    {
-        public EndpointFactoryTests(WebApplicationFactory<Startup> factory) : base(factory)
-        {
-        }
-        
-        
-        [Fact]
-        public async Task CanSetRouteToConfiguration()
-        {
-            throw new NotImplementedException();
         }
     }
 }

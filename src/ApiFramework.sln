@@ -69,6 +69,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Apis", "Apis", "{0CCBA731-3
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HelloWorld", "..\tests\Apis\HelloWorld\HelloWorld.csproj", "{BBA88EFE-DEE3-477E-B672-B273474326B5}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AnotherHelloWorld", "..\tests\Apis\AnotherHelloWorld\AnotherHelloWorld.csproj", "{2C56109C-F728-49AC-A929-6C21AB0A5681}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -183,6 +185,10 @@ Global
 		{BBA88EFE-DEE3-477E-B672-B273474326B5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BBA88EFE-DEE3-477E-B672-B273474326B5}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BBA88EFE-DEE3-477E-B672-B273474326B5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2C56109C-F728-49AC-A929-6C21AB0A5681}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2C56109C-F728-49AC-A929-6C21AB0A5681}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2C56109C-F728-49AC-A929-6C21AB0A5681}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2C56109C-F728-49AC-A929-6C21AB0A5681}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -213,6 +219,7 @@ Global
 		{EFB5F0AE-D227-48BB-BD8A-71EDBAFC90C2} = {53E78366-C5D5-4FA6-8C48-825D854D20AC}
 		{0CCBA731-36A0-48C5-8FEE-D23D6E40BF47} = {53E78366-C5D5-4FA6-8C48-825D854D20AC}
 		{BBA88EFE-DEE3-477E-B672-B273474326B5} = {0CCBA731-36A0-48C5-8FEE-D23D6E40BF47}
+		{2C56109C-F728-49AC-A929-6C21AB0A5681} = {53E78366-C5D5-4FA6-8C48-825D854D20AC}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {C41EB018-759B-4AF9-B6A8-19E1525D6E11}
