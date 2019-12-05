@@ -71,13 +71,40 @@ namespace ApiFramework.IntegrationTests
         }
 
         [Fact]
-        public async Task CanSetRouteToConfiguration()
-        {
-            throw new NotImplementedException();
-        }
-
-        [Fact]
         public async Task CanSetDifferentConfigurationToDifferentEndpoints()
+        {
+            var firstConfiguration = new Complex() { Country = "hello", Name = "there", Age = 50 };
+            var secondConfiguration = new Complex() { Country = "another", Name = "here", Age = 70 };
+
+            var server = Init(builder =>
+            {
+                builder.AddApi(typeof(HelloWorldComplexConfigurationApi));
+                builder.AddEndpoint("/first", "HelloWorld", firstConfiguration);
+                builder.AddEndpoint("/second", "HelloWorld", secondConfiguration);
+            });
+
+            // Act 
+            var firstResult = await server.GetStringAsync("/api/first");
+            var secondResult = await server.GetStringAsync("/api/second");
+            
+            // Assert
+            var firstExpected = $"{firstConfiguration.Name}-{firstConfiguration.Country}-{firstConfiguration.Age}";
+            var secondExpected = $"{secondConfiguration.Name}-{secondConfiguration.Country}-{secondConfiguration.Age}";
+
+            Assert.Equal(firstExpected, firstResult);
+            Assert.Equal(secondExpected, secondResult);
+        }
+    }
+
+    public class EndpointFactoryTests : ApiFrameworkTestBase
+    {
+        public EndpointFactoryTests(WebApplicationFactory<Startup> factory) : base(factory)
+        {
+        }
+        
+        
+        [Fact]
+        public async Task CanSetRouteToConfiguration()
         {
             throw new NotImplementedException();
         }
