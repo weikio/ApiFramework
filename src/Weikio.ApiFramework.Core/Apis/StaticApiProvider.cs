@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using Weikio.ApiFramework.Abstractions;
 
@@ -15,7 +16,7 @@ namespace Weikio.ApiFramework.Core.Apis
             _api = new Api(apiDefinition, new List<Type>() { type });
         }
 
-        public Task Initialize()
+        public Task Initialize(CancellationToken cancellationToken)
         {
             IsInitialized = true;
 

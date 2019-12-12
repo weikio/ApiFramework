@@ -37,6 +37,8 @@ namespace Weikio.ApiFramework.AspNetCore
                 options.ApiAddressBase = apiFrameworkAspNetCoreOptions.ApiAddressBase;
                 options.AutoResolveEndpoints = apiFrameworkAspNetCoreOptions.AutoResolveEndpoints;
                 options.Endpoints = apiFrameworkAspNetCoreOptions.Endpoints;
+                options.AutoInitializeApiProvider = apiFrameworkAspNetCoreOptions.AutoInitializeApiProvider;
+                options.AutoInitializeConfiguredEndpoints = apiFrameworkAspNetCoreOptions.AutoInitializeConfiguredEndpoints;
             });
 
             builder.Services.Configure(setupApiFramework);
@@ -81,9 +83,9 @@ namespace Weikio.ApiFramework.AspNetCore
         {
             builder.Services.AddTransient<IPluginCatalog>(services =>
             {
-                var assemblyCatalog = new TypePluginCatalog(apiType);
+                var typeCatalog = new TypePluginCatalog(apiType);
 
-                return assemblyCatalog;
+                return typeCatalog;
             });
 
             return builder;
