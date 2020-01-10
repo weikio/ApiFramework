@@ -79,28 +79,44 @@ namespace Weikio.ApiFramework.Core.Infrastructure
 
                     if (endpointConfiguration != null)
                     {
-                        // TODO: Maybe rethink this. Configuration works well if there is only single object by handling multiple parameters is hard
-                        if (endpoint.Configuration is IDictionary<string, object> dictionary && dictionary.Count > 1)
+                        // Primary option is to try to bind to Configuration-property, if such exists
+                        // It should be ok to use reflection here. The convention is only run when something changes.
+                        var configProperty = controller.ControllerType.GetProperties().FirstOrDefault(p => p.Name == "Configuration");
+
+                        if (configProperty != null)
                         {
+                            // Create configuration setter delegate. This is executed from <see cref="ApiConfigurationActionFilter"/>
+                            var convertedConfigValue = JsonSerializer.Deserialize(JsonSerializer.Serialize(endpointConfiguration), configProperty.PropertyType);
+                            item.EndpointMetadata.Add(convertedConfigValue);
+
+                            item.EndpointMetadata.Add(new Action<object>(obj =>
+                            {
+                                configProperty.SetValue(obj, convertedConfigValue);
+                            }));
+                        }
+                        else if (endpoint.Configuration is IDictionary<string, object> dictionary && dictionary.Count > 1)
+                        {
+                            // If we have configuration for the endpoint but no Configuration-property in the Api, go through the configuration's keys one by one
                             var controllerProperties = controller.ControllerType.GetProperties().ToList();
                             var setters = new List<Action<object>>();
-                            
+
                             foreach (var keyValue in dictionary)
                             {
-                                var prop = controllerProperties.FirstOrDefault(x => string.Equals(x.Name, keyValue.Key, StringComparison.InvariantCultureIgnoreCase));
+                                var prop = controllerProperties.FirstOrDefault(x =>
+                                    string.Equals(x.Name, keyValue.Key, StringComparison.InvariantCultureIgnoreCase));
 
                                 if (prop == null)
                                 {
                                     continue;
                                 }
-                                
+
                                 var convertedConfigValue = JsonSerializer.Deserialize(JsonSerializer.Serialize(keyValue.Value), prop.PropertyType);
                                 item.EndpointMetadata.Add(convertedConfigValue);
-                                
+
                                 setters.Add(obj =>
                                 {
                                     prop.SetValue(obj, convertedConfigValue);
-                                } );
+                                });
                             }
 
                             if (setters.Any())
@@ -116,20 +132,8 @@ namespace Weikio.ApiFramework.Core.Infrastructure
                         }
                         else
                         {
-                            // It should be ok to use reflection here. The convention is only run when something changes.
-                            var configProperty = controller.ControllerType.GetProperties().FirstOrDefault(p => p.Name == "Configuration");
-
-                            if (configProperty != null)
-                            {
-                                // Create configuration setter delegate. This is executed from <see cref="ApiConfigurationActionFilter"/>
-                                var convertedConfigValue = JsonSerializer.Deserialize(JsonSerializer.Serialize(endpointConfiguration), configProperty.PropertyType);
-                                item.EndpointMetadata.Add(convertedConfigValue);
-
-                                item.EndpointMetadata.Add(new Action<object>(obj =>
-                                {
-                                    configProperty.SetValue(obj, convertedConfigValue);
-                                }));
-                            }
+                            // We don't know what to do with the configuration.
+                            // TODO: Throw?
                         }
                     }
 
