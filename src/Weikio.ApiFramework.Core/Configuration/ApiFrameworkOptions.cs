@@ -29,5 +29,8 @@ namespace Weikio.ApiFramework.Core.Configuration
         /// Gets or sets how endpoint changes are notified to the system. 
         /// </summary>
         public ChangeNotificationTypeEnum ChangeNotificationType { get; set; } = ChangeNotificationTypeEnum.Single;
+
+        public bool AutoInitializeApiProvider { get; set; } = true;
+        public bool AutoInitializeConfiguredEndpoints { get; set; } = true;
     }
 }
