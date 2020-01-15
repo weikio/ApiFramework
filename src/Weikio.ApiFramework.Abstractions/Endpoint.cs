@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 
@@ -14,6 +15,7 @@ namespace Weikio.ApiFramework.Abstractions
         public object Configuration { get; private set; }
         public Func<Endpoint, Task<IHealthCheck>> HealthCheckFactory { get; }
         public List<Type> ApiTypes { get; private set; }
+        public string GroupName { get; set; }
 
         public IHealthCheck HealthCheck { get; private set; }
 
@@ -31,7 +33,7 @@ namespace Weikio.ApiFramework.Abstractions
             }
         }
 
-        public Endpoint(string route, Api api, object configuration = null, Func<Endpoint, Task<IHealthCheck>> healthCheckFactory = null)
+        public Endpoint(string route, Api api, object configuration = null, Func<Endpoint, Task<IHealthCheck>> healthCheckFactory = null, string groupName = null)
         {
             Route = route;
             Api = api;
@@ -40,6 +42,8 @@ namespace Weikio.ApiFramework.Abstractions
 
             ApiTypes = new List<Type>();
             Status = new EndpointStatus();
+            
+            GroupName = groupName;
         }
 
         public async Task Initialize()

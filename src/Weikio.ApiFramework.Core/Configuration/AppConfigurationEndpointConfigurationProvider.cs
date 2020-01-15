@@ -45,13 +45,26 @@ namespace Weikio.ApiFramework.Core.Configuration
 
                 var endpointConfigurationSection = endpointSection.GetSection("Configuration");
                 var endpointConfiguration = GetApiConfiguration(endpointConfigurationSection);
+                var endpointGroupName = GetEndpointGroupName(endpointSection);
 
-                var endpointDefinition = new EndpointDefinition(route, definition.Name, endpointConfiguration, new EmptyHealthCheck());
+                var endpointDefinition = new EndpointDefinition(route, definition.Name, endpointConfiguration, new EmptyHealthCheck(), endpointGroupName);
 
                 result.Add(endpointDefinition);
             }
 
             return Task.FromResult(result);
+        }
+
+        private string GetEndpointGroupName(IConfigurationSection endpointSection)
+        {
+            if (endpointSection == null)
+            {
+                return null;
+            }
+
+            var result = endpointSection.GetValue<string>("Group");
+
+            return result;
         }
 
         private IDictionary<string, object> GetApiConfiguration(IConfigurationSection configuration)

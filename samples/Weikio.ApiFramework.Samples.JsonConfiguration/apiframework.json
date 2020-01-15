@@ -1,20 +1,20 @@
 {
   "ApiFramework": {
     "Endpoints": {
-      "/l7": {
-        "Api": "Weikio.ApiFramework.Plugins.Odbc",
-        "Configuration": {
-          "OdbcOptions": {
-            "ConnectionString": "dsn=myodbc",
-            "Tables": []
-          },
-          "SqlCommands": {
-            "GetColors": {
-              "CommandText": "select distinct color from SalesLT.Product where color is not null",
-              "DataTypeName": "ColorItem"
-            }
-          }
-        }
+      "/hello": {
+        "Api": "Weikio.ApiFramework.Plugins.HelloWorld",
+        "Group": "external"
+      },
+      "/another": {
+        "Api": "Weikio.ApiFramework.Plugins.HelloWorld",
+        "Group":"internal"
+      },
+      "/more": {
+        "Api": "Weikio.ApiFramework.Plugins.HelloWorld",
+        "Group": "external"
+      },
+      "/mycustomer": {
+        "Api": "Weikio.ApiFramework.Samples.JsonConfiguration"
       }
     }
   }

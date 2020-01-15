@@ -20,8 +20,8 @@ namespace Weikio.ApiFramework.Core.Configuration
 
 //        public bool AutoResolveFunctions { get; set; } = true;
 //        public List<string> FunctionAssemblies { get; set; } = new List<string>();
-        public List<(string Route, string ApiAssemblyName, object Configuration, IHealthCheck HealthCheck)> Endpoints { get; set; } =
-            new List<(string Route, string ApiAssemblyName, object Configuration, IHealthCheck HealthCheck)>();
+        public List<(string Route, string ApiAssemblyName, object Configuration, IHealthCheck HealthCheck, string GroupName)> Endpoints { get; set; } =
+            new List<(string Route, string ApiAssemblyName, object Configuration, IHealthCheck HealthCheck, string groupName)>();
 
         public IApiProvider ApiProvider { get; set; }
 

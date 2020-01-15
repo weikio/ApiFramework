@@ -2,6 +2,7 @@
 using System.Linq;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
@@ -77,6 +78,10 @@ namespace Weikio.ApiFramework.Core.Extensions
             services.AddSingleton<HealthProbe>();
             services.TryAddSingleton<IApiProviderInitializer, ApiProviderInitializer>();
             services.TryAddSingleton<IEndpointInitializer, EndpointInitializer>();
+            
+            // Services which alter the group names of the API Descriptions. These are used for Open Api / Swagger generation. Each endpoint by default belongs to an unique api group.
+            services.TryAddSingleton<IEndpointGroupNameProvider, EndpointGroupNameProvider>();
+            services.AddTransient<IApiDescriptionProvider, EndpointGroupNameDescriptor>();
 
             services.AddHealthChecks()
                 .AddCheck<EndpointHeathCheck>("api_framework_endpoint", HealthStatus.Degraded, new[] { "api_framework_endpoint" });
@@ -101,7 +106,7 @@ namespace Weikio.ApiFramework.Core.Extensions
                 foreach (var endpoint in options.Endpoints)
                 {
                     var endpointConfiguration = new EndpointDefinition(endpoint.Route, endpoint.ApiAssemblyName,
-                        endpoint.Configuration, endpoint.HealthCheck);
+                        endpoint.Configuration, endpoint.HealthCheck, endpoint.GroupName);
 
                     result.Add(endpointConfiguration);
                 }
@@ -152,11 +157,11 @@ namespace Weikio.ApiFramework.Core.Extensions
         }
 
         public static IApiFrameworkBuilder AddEndpoint(this IApiFrameworkBuilder builder, string route, string api, object configuration = null,
-            IHealthCheck healthCheck = null)
+            IHealthCheck healthCheck = null, string groupName = null)
         {
             builder.Services.AddTransient(services =>
             {
-                var endpointConfiguration = new EndpointDefinition(route, api, configuration, healthCheck);
+                var endpointConfiguration = new EndpointDefinition(route, api, configuration, healthCheck, groupName);
 
                 return endpointConfiguration;
             });
