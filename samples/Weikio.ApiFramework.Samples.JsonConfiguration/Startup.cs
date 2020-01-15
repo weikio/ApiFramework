@@ -1,12 +1,12 @@
-﻿using System.Collections.Generic;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
 using Weikio.ApiFramework.AspNetCore;
+using Weikio.ApiFramework.Core.Configuration;
 using Weikio.ApiFramework.Core.Extensions;
 
 namespace Weikio.ApiFramework.Samples.JsonConfiguration
@@ -25,17 +25,51 @@ namespace Weikio.ApiFramework.Samples.JsonConfiguration
         {
             services.AddResponseCaching();
 
-            services.AddMvc()
+            services.AddMvc(options =>
+                {
+                })
                 .SetCompatibilityVersion(CompatibilityVersion.Version_3_0)
                 .AddApiFramework(options => options.AutoResolveApis = true);
 
-            services.AddSwaggerDocument(document =>
+            services.AddOpenApiDocument(document =>
             {
-                document.Title = "Api Framework";
+                document.Title = "Api Framework All Apis";
+                document.DocumentName = "api";
                 document.OperationProcessors.Add(new ApiFrameworkTagOperationProcessor());
             });
+
+            services.AddOpenApiDocument(document =>
+            {
+                document.Title = "Api Framework Internal APIs";
+                document.DocumentName = "Internal";
+                document.ApiGroupNames = new[] { "internal" };
+                document.OperationProcessors.Add(new ApiFrameworkTagOperationProcessor());
+            });
+            
+            services.AddOpenApiDocument(document =>
+            {
+                document.Title = "Api Framework External APIs";
+                document.DocumentName = "External";
+                document.ApiGroupNames = new[] { "external" };
+                document.OperationProcessors.Add(new ApiFrameworkTagOperationProcessor());
+            });
+
+            //
+            // services.AddOpenApiDocument(document =>
+            // {
+            //     document.Title = "Api Framework";
+            //     document.DocumentName = "external";
+            //     document.OperationProcessors.Add(new ApiFrameworkTagOperationProcessor("external"));
+            //     // document.SchemaProcessors.Add(new MySchemaProcessor());
+            // });
+            //
+            // services.AddOpenApiDocument(document =>
+            // {
+            //     document.Title = "Api Framework";
+            //     document.DocumentName = "internal";
+            //     // document.OperationProcessors.Add(new ApiFrameworkTagOperationProcessor("internal"));
+            // });
         }
-        
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -45,8 +79,6 @@ namespace Weikio.ApiFramework.Samples.JsonConfiguration
                 app.UseDeveloperExceptionPage();
             }
             else
-
-                // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
             {
                 app.UseHsts();
             }
@@ -66,6 +98,19 @@ namespace Weikio.ApiFramework.Samples.JsonConfiguration
                 endpoints.MapRazorPages();
                 endpoints.MapControllerRoute("default", "{controller=Home}/{action=Index}/{id?}");
             });
+        }
+    }
+
+    public class Customer
+    {
+        public string Firstname { get; set; }
+    }
+
+    public class CustomersApi
+    {
+        public Customer Get()
+        {
+            return new Customer() { Firstname = "Api-FF" };
         }
     }
 }

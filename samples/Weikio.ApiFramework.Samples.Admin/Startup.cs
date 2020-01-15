@@ -1,11 +1,11 @@
-﻿using System;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -89,8 +89,15 @@ namespace Weikio.ApiFramework.Samples.Admin
             services.AddOpenApiDocument(document =>
             {
                 document.Title = "Api Framework";
-                document.ApiGroupNames = new[] { "api_framework_endpoint" };
                 document.DocumentName = "api";
+                // document.OperationProcessors.Add(new ApiFrameworkTagOperationProcessor("api_framework_endpoint"));
+            });
+            
+            services.AddOpenApiDocument(document =>
+            {
+                document.Title = "Api Framework";
+                document.DocumentName = "external";
+                // document.OperationProcessors.Add(new ApiFrameworkTagOperationProcessor("external"));
             });
 
             services.AddOpenApiDocument(document =>

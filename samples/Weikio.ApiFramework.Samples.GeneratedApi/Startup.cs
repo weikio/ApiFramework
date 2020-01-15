@@ -35,15 +35,16 @@ namespace Weikio.ApiFramework.Samples.GeneratedApi
                 options.AutoResolveEndpoints = false;
 
                 options.Endpoints =
-                    new List<(string Route, string ApiAssemblyName, object Configuration, IHealthCheck healthCheck)>
+                    new List<(string Route, string ApiAssemblyName, object Configuration, IHealthCheck healthCheck, string groupName)>
                     {
-                        ("/dynamictest", "Weikio.ApiFramework.Plugins.DynamicHelloWorld", new
-                        {
-                            HelloString = "Hey there from first configuration",
-                            postFix = "test!",
-                            age = 20,
-                            complex = new { Another = "Hey there", MyParameters = new List<string> { "first", "second" } }
-                        }, new EmptyHealthCheck())
+                        ("/dynamictest", "Weikio.ApiFramework.Plugins.DynamicHelloWorld",
+                            new
+                            {
+                                HelloString = "Hey there from first configuration",
+                                postFix = "test!",
+                                age = 20,
+                                complex = new { Another = "Hey there", MyParameters = new List<string> { "first", "second" } }
+                            }, new EmptyHealthCheck(), "hello" )
                     };
             });
 
