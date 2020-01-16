@@ -2,8 +2,7 @@
   "ApiFramework": {
     "Endpoints": {
       "/hello": {
-        "Api": "Weikio.ApiFramework.Plugins.HelloWorld",
-        "Group": "external"
+        "Api": "Weikio.ApiFramework.Plugins.HelloWorld"
       },
       "/another": {
         "Api": "Weikio.ApiFramework.Plugins.HelloWorld",

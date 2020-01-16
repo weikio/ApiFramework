@@ -81,6 +81,7 @@ namespace Weikio.ApiFramework.Core.Extensions
             
             // Services which alter the group names of the API Descriptions. These are used for Open Api / Swagger generation. Each endpoint by default belongs to an unique api group.
             services.TryAddSingleton<IEndpointGroupNameProvider, EndpointGroupNameProvider>();
+            services.TryAddSingleton<IDefaultEndpointGroupNameProvider, DefaultEndpointGroupNameProvider>();
             services.AddTransient<IApiDescriptionProvider, EndpointGroupNameDescriptor>();
 
             services.AddHealthChecks()
