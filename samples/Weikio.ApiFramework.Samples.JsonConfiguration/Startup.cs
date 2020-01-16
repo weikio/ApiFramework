@@ -42,7 +42,7 @@ namespace Weikio.ApiFramework.Samples.JsonConfiguration
             {
                 document.Title = "Api Framework Internal APIs";
                 document.DocumentName = "Internal";
-                document.ApiGroupNames = new[] { "internal" };
+                document.ApiGroupNames = new[] { "internal", "api_framework_endpoint" };
                 document.OperationProcessors.Add(new ApiFrameworkTagOperationProcessor());
             });
             

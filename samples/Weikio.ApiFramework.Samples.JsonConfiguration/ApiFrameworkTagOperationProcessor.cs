@@ -11,28 +11,36 @@ namespace Weikio.ApiFramework.Samples.JsonConfiguration
     {
         public bool Process(OperationProcessorContext context)
         {
-            if (context is AspNetCoreOperationProcessorContext aspnetContext)
+            if (!(context is AspNetCoreOperationProcessorContext aspnetContext))
             {
-                var tags = context.OperationDescription.Operation.Tags;
-                var apiDescription = (Microsoft.AspNetCore.Mvc.ApiExplorer.ApiDescription) typeof(AspNetCoreOperationProcessorContext).GetProperty("ApiDescription").GetValue(aspnetContext);
-                var endPoint = apiDescription.ActionDescriptor.EndpointMetadata?.OfType<Endpoint>().FirstOrDefault();
+                return true;
+            }
 
-                if (endPoint != null)
+            var tags = context.OperationDescription.Operation.Tags;
+            var apiDescription = (Microsoft.AspNetCore.Mvc.ApiExplorer.ApiDescription) typeof(AspNetCoreOperationProcessorContext).GetProperty("ApiDescription")?.GetValue(aspnetContext);
+
+            if (apiDescription == null)
+            {
+                return true;
+            }
+
+            var endPoint = apiDescription.ActionDescriptor.EndpointMetadata?.OfType<Endpoint>().FirstOrDefault();
+
+            if (endPoint != null)
+            {
+                tags.Clear();
+
+                tags.Add(endPoint.Route);
+            }
+            else if (apiDescription.ActionDescriptor is ControllerActionDescriptor controllerActionDescriptor)
+            {
+                if (!controllerActionDescriptor.ControllerTypeInfo.Assembly.FullName.Contains("Weikio.ApiFramework.Admin"))
                 {
-                    tags.Clear();
-
-                    tags.Add(endPoint.Route);
+                    return true;
                 }
-                else if (apiDescription.ActionDescriptor is ControllerActionDescriptor controllerActionDescriptor)
-                {
-                    if (!controllerActionDescriptor.ControllerTypeInfo.Assembly.FullName.Contains("Weikio.ApiFramework.Admin"))
-                    {
-                        return true;
-                    }
 
-                    tags.Clear();
-                    tags.Add("Admin");
-                }
+                tags.Clear();
+                tags.Add("Admin");
             }
 
             return true;
