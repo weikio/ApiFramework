@@ -16,6 +16,9 @@ namespace Weikio.ApiFramework.Abstractions
         public Func<Endpoint, Task<IHealthCheck>> HealthCheckFactory { get; }
         public List<Type> ApiTypes { get; private set; }
         public string GroupName { get; set; }
+        public string Name { get; }
+        public string Description { get; }
+        public string[] Tags { get; }
 
         public IHealthCheck HealthCheck { get; private set; }
 
@@ -33,7 +36,13 @@ namespace Weikio.ApiFramework.Abstractions
             }
         }
 
-        public Endpoint(string route, Api api, object configuration = null, Func<Endpoint, Task<IHealthCheck>> healthCheckFactory = null, string groupName = null)
+        public Endpoint(EndpointDefinition definition, Api api, Func<Endpoint, Task<IHealthCheck>> healthCheckFactory = null) : this(definition.Route, api,
+            definition.Configuration, healthCheckFactory, definition.GroupName, definition.Name, definition.Description, definition.Tags)
+        {
+        }
+
+        public Endpoint(string route, Api api, object configuration = null, Func<Endpoint, Task<IHealthCheck>> healthCheckFactory = null,
+            string groupName = null, string name = null, string description = null, string[] tags = null)
         {
             Route = route;
             Api = api;
@@ -42,8 +51,11 @@ namespace Weikio.ApiFramework.Abstractions
 
             ApiTypes = new List<Type>();
             Status = new EndpointStatus();
-            
+
             GroupName = groupName;
+            Name = name;
+            Description = description;
+            Tags = tags;
         }
 
         public async Task Initialize()

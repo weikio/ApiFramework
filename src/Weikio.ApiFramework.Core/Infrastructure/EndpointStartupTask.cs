@@ -48,8 +48,8 @@ namespace Weikio.ApiFramework.Core.Infrastructure
                 {
                     var api = await _apiProvider.Get(endpointDefinition.Api);
 
-                    var endpoint = new Endpoint(endpointDefinition.Route, api, endpointDefinition.Configuration,
-                        GetHealthCheckFactory(api, endpointDefinition), endpointDefinition.GroupName);
+                    var endpoint = new Endpoint(endpointDefinition, api,
+                        GetHealthCheckFactory(api, endpointDefinition));
 
                     _endpointManager.AddEndpoint(endpoint);
                     endpointsAdded = true;

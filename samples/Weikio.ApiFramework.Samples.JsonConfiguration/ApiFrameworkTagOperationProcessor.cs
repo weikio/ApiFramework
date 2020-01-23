@@ -30,7 +30,14 @@ namespace Weikio.ApiFramework.Samples.JsonConfiguration
             {
                 tags.Clear();
 
-                tags.Add(endPoint.Route);
+                if (!string.IsNullOrWhiteSpace(endPoint.Name))
+                {
+                    tags.Add(endPoint.Name);
+                }
+                else
+                {
+                    tags.Add(endPoint.Route);
+                }
             }
             else if (apiDescription.ActionDescriptor is ControllerActionDescriptor controllerActionDescriptor)
             {

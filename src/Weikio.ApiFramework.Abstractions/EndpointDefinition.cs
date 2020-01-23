@@ -18,5 +18,8 @@ namespace Weikio.ApiFramework.Abstractions
         public object Configuration { get; }
         public IHealthCheck HealthCheck { get; }
         public string GroupName { get; }
+        public string Name { get; set; }
+        public string Description { get; set; }
+        public string[] Tags { get; set; }
     }
 }

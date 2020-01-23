@@ -2,18 +2,25 @@
   "ApiFramework": {
     "Endpoints": {
       "/hello": {
-        "Api": "Weikio.ApiFramework.Plugins.HelloWorld"
+        "Api": "Weikio.ApiFramework.Plugins.HelloWorld",
+        "Tags": ["one", "another"]
       },
       "/another": {
         "Api": "Weikio.ApiFramework.Plugins.HelloWorld",
+        "Name": "Anothers",
         "Group":"internal"
       },
       "/more": {
         "Api": "Weikio.ApiFramework.Plugins.HelloWorld",
-        "Group": "external"
+        "Group": "external",
+        "Description": "All the customers",
+        "Tags": ["one", "another"]
       },
       "/mycustomer": {
-        "Api": "Weikio.ApiFramework.Samples.JsonConfiguration"
+        "Api": "Weikio.ApiFramework.Samples.JsonConfiguration",
+        "Name": "Customers",
+        "Description": "All the customers",
+        "Tags": ["one", "another"]
       }
     }
   }
