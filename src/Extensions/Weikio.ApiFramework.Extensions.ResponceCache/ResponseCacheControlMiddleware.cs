@@ -38,6 +38,8 @@ namespace Weikio.ApiFramework.Core.Caching
 
         public async Task Invoke(HttpContext context)
         {
+            var endpoint = context.GetEndpointMetadata();
+            
             var request = context.Request;
             var response = context.Response;
 
@@ -61,6 +63,14 @@ namespace Weikio.ApiFramework.Core.Caching
 
                 requestPathParts.Dequeue();
             }
+
+            var endpoint = context.GetEndpoint();
+            // if (!(context.ActionDescriptor is ControllerActionDescriptor controllerActionDescriptor))
+            // {
+            //     return;
+            // }
+            //
+            // response.GetTypedHeaders().CacheControl = new CacheControlHeaderValue() { Public = true, MaxAge = TimeSpan.FromSeconds(30) };
 
             await _nextMiddleware(context);
         }

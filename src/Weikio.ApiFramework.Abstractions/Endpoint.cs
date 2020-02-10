@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
@@ -19,6 +20,7 @@ namespace Weikio.ApiFramework.Abstractions
         public string Name { get; }
         public string Description { get; }
         public string[] Tags { get; }
+        public List<IEndpointExtension> Extensions { get; set; } = new List<IEndpointExtension>();
 
         public IHealthCheck HealthCheck { get; private set; }
 

@@ -1,0 +1,10 @@
+{
+  "ApiFramework": {
+    "Endpoints": {
+      "/hello": {
+        "Api": "Weikio.ApiFramework.Plugins.HelloWorld",
+        "Tags": ["one", "another"]
+      }
+    }
+  }
+}

@@ -6,30 +6,22 @@
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Authors>Weik.io</Authors>
     <Company>Weik.io</Company>
-    <Description>Api Framework for ASP.NET Core. Api Framework gives you powerful and dynamic tools for easily building Open Api based endpoints.</Description>
-    <PackageDescription>Api Framework for ASP.NET Core. Api Framework gives you powerful and dynamic tools for easily building Open Api based endpoints.</PackageDescription>
+    <Description>Response Cache Extension for Api Framework. Api Framework gives you powerful and dynamic tools for easily building Open Api based endpoints.</Description>
+    <PackageDescription>Response Cache Extension for Api Framework. Api Framework gives you powerful and dynamic tools for easily building Open Api based endpoints.</PackageDescription>
     <PackageProjectUrl>https://www.weik.io</PackageProjectUrl>
     <Copyright>©2019 Weik.io</Copyright>
     <PackageId>Weikio.ApiFramework.AspNetCore</PackageId>
     <Product>Weikio.ApiFramework.AspNetCore</Product>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <RepositoryUrl>https://github.com/weikio/Weikio.ApiFramework</RepositoryUrl>
-    <PackageTags>api;open api;aspnetcore</PackageTags>
+    <PackageTags>api;open api;response cache;aspnetcore</PackageTags>
     <PackageIcon>logo_256.png</PackageIcon>
-    <Title>Api Framework for ASP.NET Core</Title>
+    <Title>Response Cache for Api Framework</Title>
     <MinVerMinimumMajorMinor>1.0</MinVerMinimumMajorMinor>
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Extensions\Weikio.ApiFramework.Extensions.ResponceCache\Weikio.ApiFramework.Extensions.ResponceCache.csproj" />
-    <ProjectReference Include="..\Weikio.ApiFramework.ApiProviders.PluginFramework\Weikio.ApiFramework.ApiProviders.PluginFramework.csproj" />
-    <ProjectReference Include="..\Weikio.ApiFramework.Core\Weikio.ApiFramework.Core.csproj" />
-    <ProjectReference Include="..\Weikio.ApiFramework.Abstractions\Weikio.ApiFramework.Abstractions.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="MinVer" Version="2.0.0" />
-    <PackageReference Include="Weikio.PluginFramework" Version="1.0.0-alpha.*" />
   </ItemGroup>
   
   <ItemGroup>
@@ -37,6 +29,10 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="../../docs/logo_256.png" Pack="true" Visible="false" PackagePath="" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\Weikio.ApiFramework.Abstractions\Weikio.ApiFramework.Abstractions.csproj" />
+    <ProjectReference Include="..\..\Weikio.ApiFramework.Core\Weikio.ApiFramework.Core.csproj" />
   </ItemGroup>
 
 </Project>
