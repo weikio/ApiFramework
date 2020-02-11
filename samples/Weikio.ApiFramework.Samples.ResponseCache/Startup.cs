@@ -6,6 +6,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Weikio.ApiFramework.AspNetCore;
 using Weikio.ApiFramework.Core.Extensions;
+using Weikio.ApiFramework.Extensions.ResponceCache;
 
 namespace Weikio.ApiFramework.Samples.ResponseCache
 {
@@ -27,7 +28,8 @@ namespace Weikio.ApiFramework.Samples.ResponseCache
                 {
                 })
                 .SetCompatibilityVersion(CompatibilityVersion.Version_3_0)
-                .AddApiFramework(options => options.AutoResolveApis = true);
+                .AddApiFramework(options => options.AutoResolveApis = true)
+                .AddApiFrameworkResponseCache();
 
             services.AddOpenApiDocument();
         }

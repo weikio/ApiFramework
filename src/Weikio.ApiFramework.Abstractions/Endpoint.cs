@@ -24,10 +24,10 @@ namespace Weikio.ApiFramework.Abstractions
 
         public IHealthCheck HealthCheck { get; private set; }
 
-        private Dictionary<string, ResponseCacheConfiguration> _responseCacheConfigurations =
-            new Dictionary<string, ResponseCacheConfiguration>(StringComparer.OrdinalIgnoreCase);
-
-        public IEnumerable<KeyValuePair<string, ResponseCacheConfiguration>> ResponseCacheConfigurations => _responseCacheConfigurations;
+        // private Dictionary<string, ResponseCacheConfiguration> _responseCacheConfigurations =
+        //     new Dictionary<string, ResponseCacheConfiguration>(StringComparer.OrdinalIgnoreCase);
+        //
+        // public IEnumerable<KeyValuePair<string, ResponseCacheConfiguration>> ResponseCacheConfigurations => _responseCacheConfigurations;
         public EndpointStatus Status { get; }
 
         public bool HasHealthCheck

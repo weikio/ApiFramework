@@ -9,6 +9,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Weikio.ApiFramework.AspNetCore;
 using Weikio.ApiFramework.Core.Extensions;
+using Weikio.ApiFramework.Extensions.ResponceCache;
 
 namespace Weikio.ApiFramework.Samples.DependencyConflict
 {

@@ -6,6 +6,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Weikio.ApiFramework.AspNetCore;
 using Weikio.ApiFramework.Core.Extensions;
+using Weikio.ApiFramework.Extensions.ResponceCache;
 
 namespace Weikio.ApiFramework.Samples.ReferenceConflict
 {

@@ -1,4 +1,6 @@
-namespace Weikio.ApiFramework.Abstractions
+using Weikio.ApiFramework.Abstractions;
+
+namespace Weikio.ApiFramework.Extensions.ResponceCache
 {
     public class ResponseCacheEndpointExtension : IEndpointExtension
     {

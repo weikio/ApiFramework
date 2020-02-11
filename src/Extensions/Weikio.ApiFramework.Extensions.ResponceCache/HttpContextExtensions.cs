@@ -2,7 +2,7 @@ using System.Linq;
 using Microsoft.AspNetCore.Http;
 using Endpoint = Weikio.ApiFramework.Abstractions.Endpoint;
 
-namespace Weikio.ApiFramework.AspNetCore
+namespace Weikio.ApiFramework.Extensions.ResponceCache
 {
     public static class HttpContextExtensions
     {

@@ -6,6 +6,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Weikio.ApiFramework.AspNetCore;
 using Weikio.ApiFramework.Core.Extensions;
 using Weikio.ApiFramework.Core.Infrastructure;
+using Weikio.ApiFramework.Extensions.ResponceCache;
 
 namespace RuntimeConfiguration
 {

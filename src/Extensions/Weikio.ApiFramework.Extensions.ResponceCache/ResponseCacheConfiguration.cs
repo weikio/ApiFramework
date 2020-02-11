@@ -1,16 +1,25 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Weikio.ApiFramework.Abstractions
+namespace Weikio.ApiFramework.Extensions.ResponceCache
 {
+    public class ResponceCacheOptions
+    {
+        public ResponseCacheConfiguration ResponseCacheConfiguration { get; set; }
+        public Dictionary<string, EndpointResponceCacheConfiguration> EndpointResponceCacheConfigurations { get; set; } = new Dictionary<string, EndpointResponceCacheConfiguration>();
+    }
+    
     public class EndpointResponceCacheConfiguration
     {
-        public EndpointResponceCacheConfiguration(TimeSpan defaultMaxAge, string[] defaultVary)
+        public string EndpointRoute { get; set; }
+        public ResponseCacheConfiguration ResponseCacheConfiguration { get; set; }
+        
+        public EndpointResponceCacheConfiguration(string endpointRoute)
         {
-            DefaultMaxAge = defaultMaxAge;
-            DefaultVary = defaultVary;
+            EndpointRoute = endpointRoute;
             PathConfigurations = new Dictionary<string, ResponseCacheConfiguration>();
         }
+
 
         public void AddPathConfiguration(string path, ResponseCacheConfiguration configuration)
         {
@@ -18,16 +27,11 @@ namespace Weikio.ApiFramework.Abstractions
             PathConfigurations.Add(path, configuration);
         }
 
-        public TimeSpan DefaultMaxAge { get; }
-        public string[] DefaultVary { get; }
-
         public Dictionary<string, ResponseCacheConfiguration> PathConfigurations { get; set; }
     }
     
     public class ResponseCacheConfiguration
     {
-        // public string Path { get; }
-
         public TimeSpan MaxAge { get; }
 
         public string[] Vary { get; }

@@ -13,12 +13,10 @@ namespace Weikio.ApiFramework.Core.Configuration
     public class AppConfigurationEndpointConfigurationProvider : IEndpointConfigurationProvider
     {
         private readonly IConfiguration _configuration;
-        private readonly IEnumerable<IEndpointDefinitionExtensionConfigurator> _endpointExtensionConfigurators;
 
-        public AppConfigurationEndpointConfigurationProvider(IConfiguration configuration, IEnumerable<IEndpointDefinitionExtensionConfigurator> endpointExtensionConfigurators)
+        public AppConfigurationEndpointConfigurationProvider(IConfiguration configuration)
         {
             _configuration = configuration;
-            _endpointExtensionConfigurators = endpointExtensionConfigurators;
         }
 
         public Task<List<EndpointDefinition>> GetEndpointConfiguration()
@@ -56,12 +54,6 @@ namespace Weikio.ApiFramework.Core.Configuration
                 endpointDefinition.Name = name;
                 endpointDefinition.Description = description;
                 endpointDefinition.Tags = tags;
-
-                foreach (var endpointExtensionConfigurator in _endpointExtensionConfigurators)
-                {
-                    
-                    
-                }
                 
                 result.Add(endpointDefinition);
             }

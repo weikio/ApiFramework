@@ -14,6 +14,7 @@ using Weikio.ApiFramework.Admin;
 using Weikio.ApiFramework.AspNetCore;
 using Weikio.ApiFramework.Core.Extensions;
 using Weikio.ApiFramework.Core.Infrastructure;
+using Weikio.ApiFramework.Extensions.ResponceCache;
 using Weikio.ApiFramework.Plugins.Broken;
 using Weikio.ApiFramework.Plugins.HealthCheck;
 using Weikio.ApiFramework.Plugins.HelloWorld;

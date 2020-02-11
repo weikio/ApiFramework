@@ -10,8 +10,8 @@
     <PackageDescription>Response Cache Extension for Api Framework. Api Framework gives you powerful and dynamic tools for easily building Open Api based endpoints.</PackageDescription>
     <PackageProjectUrl>https://www.weik.io</PackageProjectUrl>
     <Copyright>©2019 Weik.io</Copyright>
-    <PackageId>Weikio.ApiFramework.AspNetCore</PackageId>
-    <Product>Weikio.ApiFramework.AspNetCore</Product>
+    <PackageId>Weikio.ApiFramework.Extensions.ResponseCache</PackageId>
+    <Product>Weikio.ApiFramework.Extensions.ResponseCache</Product>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <RepositoryUrl>https://github.com/weikio/Weikio.ApiFramework</RepositoryUrl>
     <PackageTags>api;open api;response cache;aspnetcore</PackageTags>
@@ -28,7 +28,7 @@
     <FrameworkReference Include="Microsoft.AspNetCore.App" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="../../docs/logo_256.png" Pack="true" Visible="false" PackagePath="" />
+    <None Include="../../../docs/logo_256.png" Pack="true" Visible="false" PackagePath="" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Weikio.ApiFramework.Abstractions\Weikio.ApiFramework.Abstractions.csproj" />
