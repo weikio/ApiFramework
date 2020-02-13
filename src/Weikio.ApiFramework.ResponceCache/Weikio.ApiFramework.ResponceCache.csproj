@@ -6,12 +6,12 @@
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Authors>Weik.io</Authors>
     <Company>Weik.io</Company>
-    <Description>Response Cache Extension for Api Framework. Api Framework gives you powerful and dynamic tools for easily building Open Api based endpoints.</Description>
-    <PackageDescription>Response Cache Extension for Api Framework. Api Framework gives you powerful and dynamic tools for easily building Open Api based endpoints.</PackageDescription>
+    <Description>Response Cache for Api Framework. Api Framework gives you powerful and dynamic tools for easily building Open Api based endpoints.</Description>
+    <PackageDescription>Response Cache for Api Framework. Api Framework gives you powerful and dynamic tools for easily building Open Api based endpoints.</PackageDescription>
     <PackageProjectUrl>https://www.weik.io</PackageProjectUrl>
     <Copyright>©2019 Weik.io</Copyright>
-    <PackageId>Weikio.ApiFramework.Extensions.ResponseCache</PackageId>
-    <Product>Weikio.ApiFramework.Extensions.ResponseCache</Product>
+    <PackageId>Weikio.ApiFramework.ResponseCache</PackageId>
+    <Product>Weikio.ApiFramework.ResponseCache</Product>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <RepositoryUrl>https://github.com/weikio/Weikio.ApiFramework</RepositoryUrl>
     <PackageTags>api;open api;response cache;aspnetcore</PackageTags>
@@ -28,11 +28,11 @@
     <FrameworkReference Include="Microsoft.AspNetCore.App" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="../../../docs/logo_256.png" Pack="true" Visible="false" PackagePath="" />
+    <None Include="../../docs/logo_256.png" Pack="true" Visible="false" PackagePath="" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\Weikio.ApiFramework.Abstractions\Weikio.ApiFramework.Abstractions.csproj" />
-    <ProjectReference Include="..\..\Weikio.ApiFramework.Core\Weikio.ApiFramework.Core.csproj" />
+    <ProjectReference Include="..\Weikio.ApiFramework.Abstractions\Weikio.ApiFramework.Abstractions.csproj" />
+    <ProjectReference Include="..\Weikio.ApiFramework.Core\Weikio.ApiFramework.Core.csproj" />
   </ItemGroup>
 
 </Project>

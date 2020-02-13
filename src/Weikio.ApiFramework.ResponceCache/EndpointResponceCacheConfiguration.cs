@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace Weikio.ApiFramework.Extensions.ResponceCache
+namespace Weikio.ApiFramework.ResponceCache
 {
     public class EndpointResponceCacheConfiguration
     {

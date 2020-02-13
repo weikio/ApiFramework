@@ -4,7 +4,7 @@ using System.Linq;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
 
-namespace Weikio.ApiFramework.Extensions.ResponceCache
+namespace Weikio.ApiFramework.ResponceCache
 {
     public class ConfigureEndpointResponseCacheOptions : IConfigureOptions<ResponceCacheOptions>
     {

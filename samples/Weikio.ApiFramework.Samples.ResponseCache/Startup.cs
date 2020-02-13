@@ -5,8 +5,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Weikio.ApiFramework.AspNetCore;
-using Weikio.ApiFramework.Core.Extensions;
-using Weikio.ApiFramework.Extensions.ResponceCache;
+using Weikio.ApiFramework.ResponceCache;
 
 namespace Weikio.ApiFramework.Samples.ResponseCache
 {

@@ -7,7 +7,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Weikio.ApiFramework.AspNetCore;
 using Weikio.ApiFramework.Core.Extensions;
-using Weikio.ApiFramework.Extensions.ResponceCache;
 
 namespace Weikio.ApiFramework.Samples.CodeConfiguration
 {
@@ -87,9 +86,6 @@ namespace Weikio.ApiFramework.Samples.CodeConfiguration
             }
 
             app.UseRouting();
-
-            app.UseResponseCaching();
-            app.UseApiFrameworkResponseCaching();
 
             app.UseSwagger();
             app.UseSwaggerUi3();

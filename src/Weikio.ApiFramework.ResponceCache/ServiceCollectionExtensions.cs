@@ -2,9 +2,8 @@ using System;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Weikio.ApiFramework.Abstractions;
-using Weikio.ApiFramework.Core.Configuration;
 
-namespace Weikio.ApiFramework.Extensions.ResponceCache
+namespace Weikio.ApiFramework.ResponceCache
 {
     public static class ServiceCollectionExtensions
     {

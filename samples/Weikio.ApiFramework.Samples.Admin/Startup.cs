@@ -1,20 +1,16 @@
-﻿using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authentication.Cookies;
+﻿using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.IdentityModel.Tokens;
 using Weikio.ApiFramework.Admin;
 using Weikio.ApiFramework.AspNetCore;
 using Weikio.ApiFramework.Core.Extensions;
 using Weikio.ApiFramework.Core.Infrastructure;
-using Weikio.ApiFramework.Extensions.ResponceCache;
 using Weikio.ApiFramework.Plugins.Broken;
 using Weikio.ApiFramework.Plugins.HealthCheck;
 using Weikio.ApiFramework.Plugins.HelloWorld;
@@ -130,7 +126,6 @@ namespace Weikio.ApiFramework.Samples.Admin
 
             app.UseRouting();
             app.UseResponseCaching();
-            app.UseApiFrameworkResponseCaching();
 
             app.UseOpenApi();
             app.UseSwaggerUi3();

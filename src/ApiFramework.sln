@@ -73,7 +73,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AnotherHelloWorld", "..\tes
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Weikio.ApiFramework.Samples.ResponseCache", "..\samples\Weikio.ApiFramework.Samples.ResponseCache\Weikio.ApiFramework.Samples.ResponseCache.csproj", "{1C973E5B-08CC-4374-A13F-5711A3F55ADC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Weikio.ApiFramework.Extensions.ResponceCache", "Extensions\Weikio.ApiFramework.Extensions.ResponceCache\Weikio.ApiFramework.Extensions.ResponceCache.csproj", "{5CE2F2A0-8698-4F5D-A6E8-6910402B05D5}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Weikio.ApiFramework.ResponceCache", "Weikio.ApiFramework.ResponceCache\Weikio.ApiFramework.ResponceCache.csproj", "{5CE2F2A0-8698-4F5D-A6E8-6910402B05D5}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
