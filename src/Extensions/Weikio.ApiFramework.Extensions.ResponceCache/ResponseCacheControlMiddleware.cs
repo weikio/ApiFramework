@@ -1,14 +1,14 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.Net.Http.Headers;
-using Weikio.ApiFramework.Abstractions;
 using Weikio.ApiFramework.Core.Configuration;
-using Weikio.ApiFramework.Core.Endpoints;
 
 namespace Weikio.ApiFramework.Extensions.ResponceCache
 {
@@ -18,10 +18,13 @@ namespace Weikio.ApiFramework.Extensions.ResponceCache
         private readonly RequestDelegate _nextMiddleware;
         private readonly ResponceCacheOptions _options;
         private readonly ApiFrameworkOptions _apiFrameworkOptions;
+        private readonly IMemoryCache _memoryCache;
 
-        public ResponseCacheControlMiddleware(IOptions<ResponceCacheOptions> options, ILogger<ResponseCacheControlMiddleware> logger, IOptions<ApiFrameworkOptions> apiFrameworkOptions, RequestDelegate nextMiddleware)
+        public ResponseCacheControlMiddleware(IOptions<ResponceCacheOptions> options, ILogger<ResponseCacheControlMiddleware> logger,
+            IOptions<ApiFrameworkOptions> apiFrameworkOptions, IMemoryCache memoryCache, RequestDelegate nextMiddleware)
         {
             _logger = logger;
+            _memoryCache = memoryCache;
             _nextMiddleware = nextMiddleware;
             _options = options.Value;
             _apiFrameworkOptions = apiFrameworkOptions.Value;
@@ -33,24 +36,58 @@ namespace Weikio.ApiFramework.Extensions.ResponceCache
 
             if (endpoint != null)
             {
+                _logger.LogDebug("Processing response cache configuration for {Endpoint}", endpoint);
+
                 var request = context.Request;
                 var response = context.Response;
 
-                var requestPathParts = request.Path.Value.Split('/', StringSplitOptions.RemoveEmptyEntries).ToList();
+                var cacheEntry = GetRequestCacheConfiguration(request, endpoint);
 
+                if (cacheEntry.Level == ResponseCacheConfigurationLevel.Undefined)
+                {
+                    _logger.LogDebug("No cache configuration found for {Endpoint}", endpoint.Route);
+                }
+                else
+                {
+                    response.GetTypedHeaders().CacheControl = cacheEntry.CacheControlHeader;
+
+                    if (cacheEntry.Vary?.Any() == true)
+                    {
+                        response.Headers[HeaderNames.Vary] = cacheEntry.Vary;
+                    }
+
+                    _logger.LogDebug("Cache configuration found from level {ResponseCacheConfigurationLevel} for {Endpoint}. {CacheControl}, {Vary}.",
+                        cacheEntry.Level, endpoint,
+                        cacheEntry.CacheControlHeader?.ToString() ?? "", cacheEntry.Vary ?? Array.Empty<string>());
+                }
+            }
+
+            await _nextMiddleware(context);
+        }
+
+        private ResponseCacheCachedEntry GetRequestCacheConfiguration(HttpRequest request, Abstractions.Endpoint endpoint)
+        {
+            return _memoryCache.GetOrCreate(request.Path.Value, entry =>
+            {
+                // Request example: /api/HelloWorld/TimeTest where /api is the Api Framework's base address and /HelloWorld is the endpoint's route.
+                // As the route based caching is defined inside the Endpoint's configuration, we want to match the cache routes against the routes inside the endpoint.
+                // So instead of checking if we find a cache route for /api/HelloWorld/TimeTest, we check if we find one for /TimeTest
+                var requestPathParts = request.Path.Value.Split('/', StringSplitOptions.RemoveEmptyEntries).ToList();
                 requestPathParts.Remove(endpoint.Route.Replace("/", ""));
 
-                if (requestPathParts.Any() && string.Equals(requestPathParts.First(), _apiFrameworkOptions.ApiAddressBase.Replace("/", ""),
-                        StringComparison.InvariantCultureIgnoreCase))
+                var containsApiAddressBase = requestPathParts.Any() && string.Equals(requestPathParts.First(),
+                    _apiFrameworkOptions.ApiAddressBase.Replace("/", ""),
+                    StringComparison.InvariantCultureIgnoreCase);
+
+                if (containsApiAddressBase)
                 {
                     requestPathParts.Remove(_apiFrameworkOptions.ApiAddressBase.Replace("/", ""));
                 }
 
                 var requestPathPartsQueue = new Queue<string>(requestPathParts);
 
-                var cacheAdded = false;
-
-                if (_options.EndpointResponceCacheConfigurations?.Any() == true && _options.EndpointResponceCacheConfigurations.TryGetValue(endpoint.Route, out var endpointCacheConfig))
+                if (_options.EndpointResponceCacheConfigurations?.Any() == true &&
+                    _options.EndpointResponceCacheConfigurations.TryGetValue(endpoint.Route, out var endpointCacheConfig))
                 {
                     while (requestPathPartsQueue.Any())
                     {
@@ -58,61 +95,48 @@ namespace Weikio.ApiFramework.Extensions.ResponceCache
 
                         if (endpointCacheConfig.PathConfigurations.TryGetValue(path, out var cacheConfig))
                         {
-                            response.GetTypedHeaders().CacheControl = new CacheControlHeaderValue() { Public = true, MaxAge = cacheConfig.MaxAge };
-
-                            if (cacheConfig.Vary.Any())
-                            {
-                                response.Headers[HeaderNames.Vary] = cacheConfig.Vary;
-                            }
-
-                            cacheAdded = true;
-
-                            break;
+                            return new ResponseCacheCachedEntry(ResponseCacheConfigurationLevel.Route,
+                                new CacheControlHeaderValue() { Public = true, MaxAge = cacheConfig.MaxAge }, cacheConfig.Vary);
                         }
 
                         requestPathPartsQueue.Dequeue();
                     }
 
-                    if (!cacheAdded && endpointCacheConfig.ResponseCacheConfiguration?.MaxAge != default)
+                    if (endpointCacheConfig.ResponseCacheConfiguration?.MaxAge != default)
                     {
-                        response.GetTypedHeaders().CacheControl = new CacheControlHeaderValue() { Public = true, MaxAge = endpointCacheConfig.ResponseCacheConfiguration.MaxAge };
-
-                        if (endpointCacheConfig.ResponseCacheConfiguration?.Vary?.Any() == true)
-                        {
-                            response.Headers[HeaderNames.Vary] = endpointCacheConfig.ResponseCacheConfiguration.Vary;
- 
-                        }
-                        
-                        cacheAdded = true;
+                        return new ResponseCacheCachedEntry(ResponseCacheConfigurationLevel.Endpoint,
+                            new CacheControlHeaderValue() { Public = true, MaxAge = endpointCacheConfig.ResponseCacheConfiguration.MaxAge },
+                            endpointCacheConfig.ResponseCacheConfiguration.Vary);
                     }
                 }
 
-                if (cacheAdded == false && _options.ResponseCacheConfiguration != null && _options.ResponseCacheConfiguration.MaxAge != default)
+                if (_options.ResponseCacheConfiguration != null && _options.ResponseCacheConfiguration.MaxAge != default)
                 {
-                    response.GetTypedHeaders().CacheControl = new CacheControlHeaderValue() { Public = true, MaxAge = _options.ResponseCacheConfiguration.MaxAge };
-
-                    if (_options.ResponseCacheConfiguration.Vary?.Any() == true)
-                    {
-                        response.Headers[HeaderNames.Vary] = _options.ResponseCacheConfiguration.Vary;
-                    }
-                    
-                    cacheAdded = true;
+                    return new ResponseCacheCachedEntry(ResponseCacheConfigurationLevel.Global,
+                        new CacheControlHeaderValue() { Public = true, MaxAge = _options.ResponseCacheConfiguration.MaxAge },
+                        _options.ResponseCacheConfiguration.Vary);
                 }
 
-                // TODO: Log the actual used cache type
-                // Log the actual cache values
-                // Cache the cache info
-                if (!cacheAdded)
-                {
-                    _logger.LogDebug("No cache configuration found for {Endpoint}", endpoint.Route);
-                }
-                else
-                {
-                    _logger.LogDebug("Cache configuration found for {Endpoint}. {CacheControl}, {Vary}.", endpoint.Route, response.GetTypedHeaders().CacheControl.ToString(), response.Headers[HeaderNames.Vary]);
-                }
+                return new ResponseCacheCachedEntry(ResponseCacheConfigurationLevel.Undefined, null, null);
+            });
+        }
+
+        private class ResponseCacheCachedEntry
+        {
+            public ResponseCacheConfigurationLevel Level { get; set; }
+            public CacheControlHeaderValue CacheControlHeader { get; set; }
+            public string[] Vary { get; set; }
+
+            public ResponseCacheCachedEntry()
+            {
             }
 
-            await _nextMiddleware(context);
+            public ResponseCacheCachedEntry(ResponseCacheConfigurationLevel level, CacheControlHeaderValue cacheControlHeader, string[] vary)
+            {
+                Level = level;
+                CacheControlHeader = cacheControlHeader;
+                Vary = vary;
+            }
         }
     }
 }

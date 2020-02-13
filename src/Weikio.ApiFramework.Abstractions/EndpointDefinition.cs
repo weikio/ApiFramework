@@ -22,7 +22,5 @@ namespace Weikio.ApiFramework.Abstractions
         public string Name { get; set; }
         public string Description { get; set; }
         public string[] Tags { get; set; }
-        
-        public List<IEndpointDefinitionExtension> EndpointDefinitionExtensions { get; set; } = new List<IEndpointDefinitionExtension>();
     }
 }

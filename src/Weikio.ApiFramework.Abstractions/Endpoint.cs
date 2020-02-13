@@ -20,15 +20,18 @@ namespace Weikio.ApiFramework.Abstractions
         public string Name { get; }
         public string Description { get; }
         public string[] Tags { get; }
-        public List<IEndpointExtension> Extensions { get; set; } = new List<IEndpointExtension>();
-
         public IHealthCheck HealthCheck { get; private set; }
-
-        // private Dictionary<string, ResponseCacheConfiguration> _responseCacheConfigurations =
-        //     new Dictionary<string, ResponseCacheConfiguration>(StringComparer.OrdinalIgnoreCase);
-        //
-        // public IEnumerable<KeyValuePair<string, ResponseCacheConfiguration>> ResponseCacheConfigurations => _responseCacheConfigurations;
         public EndpointStatus Status { get; }
+
+        public override string ToString()
+        {
+            if (!string.IsNullOrEmpty(Name))
+            {
+                return $"{Name} ({Route})";
+            }
+
+            return Route;
+        }
 
         public bool HasHealthCheck
         {
@@ -82,15 +85,6 @@ namespace Weikio.ApiFramework.Abstractions
             {
                 Status.UpdateStatus(EndpointStatusEnum.Failed, "Failed: " + e);
             }
-
-//            if (moduleConfigSection?.GetChildren()?.Any() == true)
-//            {
-//                _responseCacheConfigurations = GetResponseCacheConfigurations(moduleConfigSection.GetSection("ResponseCache"));
-//            }
-//            else
-//            {
-//                _responseCacheConfigurations = new Dictionary<string, ResponseCacheConfiguration>();
-//            }
         }
 
         private async Task<List<Type>> InitializeApi()
@@ -102,44 +96,12 @@ namespace Weikio.ApiFramework.Abstractions
                 return result;
             }
 
-            var task = Api.Initializer(this); //.Invoke(null, arguments.ToArray());
+            var task = Api.Initializer(this); 
             var createdApis = await task;
 
             result.AddRange(createdApis);
 
             return result;
         }
-
-        private MethodInfo FindApiFactoryMethod(Type factoryType)
-        {
-            var methods = factoryType.GetMethods().ToList();
-
-            var result = methods
-                .FirstOrDefault(m => m.IsStatic && typeof(Task<IEnumerable<Type>>).IsAssignableFrom(m.ReturnType));
-
-            return result;
-        }
-
-//
-//        private static Dictionary<string, ResponseCacheConfiguration> GetResponseCacheConfigurations(IConfigurationSection cachingConfigSection)
-//        {
-//            var cacheConfigs = new Dictionary<string, ResponseCacheConfiguration>(StringComparer.OrdinalIgnoreCase);
-//
-//            if (cachingConfigSection == null)
-//            {
-//                return cacheConfigs;
-//            }
-//
-//            foreach (var configSection in cachingConfigSection.GetChildren())
-//            {
-//                var resourcePath = configSection.Key;
-//                var maxAge = configSection.GetValue<TimeSpan>("MaxAge");
-//                var vary = configSection.GetSection("Vary")?.Get<string[]>() ?? new string[] { };
-//
-//                cacheConfigs.Add(resourcePath, new ResponseCacheConfiguration(resourcePath, maxAge, vary));
-//            }
-//
-//            return cacheConfigs;
-//        }
     }
 }
