@@ -1,11 +1,13 @@
-﻿using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Weikio.ApiFramework.AspNetCore;
+using Weikio.ApiFramework.ResponceCache;
 
-namespace Weikio.ApiFramework.Samples.NoConfiguration
+namespace Weikio.ApiFramework.Samples.ResponseCache
 {
     public class Startup
     {
@@ -19,33 +21,36 @@ namespace Weikio.ApiFramework.Samples.NoConfiguration
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddRouting();
+            services.AddResponseCaching();
 
-            var mvcBuilder = services.AddMvc()
-                .SetCompatibilityVersion(CompatibilityVersion.Latest);
+            services.AddMvc(options =>
+                {
+                })
+                .SetCompatibilityVersion(CompatibilityVersion.Version_3_0)
+                .AddApiFramework(options => options.AutoResolveApis = true)
+                .AddApiFrameworkResponseCache();
 
-            services.AddApiFramework();
-
-            services.AddSwaggerDocument(document => { document.Title = "Api Framework"; });
+            services.AddOpenApiDocument();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
             }
             else
-
-                // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
             {
                 app.UseHsts();
             }
 
             app.UseRouting();
 
-            app.UseSwagger();
+            app.UseResponseCaching();
+            app.UseApiFrameworkResponseCaching();
+
+            app.UseOpenApi();
             app.UseSwaggerUi3();
 
             app.UseHttpsRedirection();
@@ -55,6 +60,19 @@ namespace Weikio.ApiFramework.Samples.NoConfiguration
                 endpoints.MapRazorPages();
                 endpoints.MapControllerRoute("default", "{controller=Home}/{action=Index}/{id?}");
             });
+        }
+    }
+
+    public class Customer
+    {
+        public string Firstname { get; set; }
+    }
+
+    public class CustomersApi
+    {
+        public Customer Get()
+        {
+            return new Customer() { Firstname = "Api-FF" };
         }
     }
 }

@@ -87,9 +87,6 @@ namespace Weikio.ApiFramework.Samples.CodeConfiguration
 
             app.UseRouting();
 
-            app.UseResponseCaching();
-            app.UseApiFrameworkResponseCaching();
-
             app.UseSwagger();
             app.UseSwaggerUi3();
 

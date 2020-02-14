@@ -54,7 +54,7 @@ namespace Weikio.ApiFramework.Core.Configuration
                 endpointDefinition.Name = name;
                 endpointDefinition.Description = description;
                 endpointDefinition.Tags = tags;
-
+                
                 result.Add(endpointDefinition);
             }
 

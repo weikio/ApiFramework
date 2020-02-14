@@ -1,18 +1,15 @@
 ﻿using System;
 
-namespace Weikio.ApiFramework.Abstractions
+namespace Weikio.ApiFramework.ResponceCache
 {
     public class ResponseCacheConfiguration
     {
-        public string Path { get; }
-
         public TimeSpan MaxAge { get; }
 
         public string[] Vary { get; }
 
-        public ResponseCacheConfiguration(string path, TimeSpan maxAge, string[] vary)
+        public ResponseCacheConfiguration(TimeSpan maxAge, string[] vary)
         {
-            Path = path;
             MaxAge = maxAge;
             Vary = vary;
         }

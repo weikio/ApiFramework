@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Builder;
-using Weikio.ApiFramework.Core.Caching;
 
-namespace Weikio.ApiFramework.Core.Extensions
+namespace Weikio.ApiFramework.ResponceCache
 {
     public static class ApplicationBuilderExtensions
     {

@@ -1,0 +1,33 @@
+{
+  "ApiFramework": {
+    "Endpoints": {
+      "/hello": {
+        "Api": "Weikio.ApiFramework.Plugins.HelloWorld",
+        "Tags": [
+          "one",
+          "another"
+        ],
+        "Cache": {
+          "MaxAge": "00:00:25",
+          "Vary": [],
+          "Routes": [
+            {
+              "Route": "/test",
+              "MaxAge": "00:00:10",
+              "Vary": []
+            },
+            {
+              "Route": "/HelloWorlTime",
+              "MaxAge": "00:00:25",
+              "Vary": []
+            }
+          ]
+        }
+      }
+    },
+    "Cache": {
+      "MaxAge": "00:00:10",
+      "Vary": []
+    }
+  }
+}

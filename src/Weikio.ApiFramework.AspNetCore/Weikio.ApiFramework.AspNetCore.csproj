@@ -21,21 +21,22 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Weikio.ApiFramework.ApiProviders.PluginFramework\Weikio.ApiFramework.ApiProviders.PluginFramework.csproj"/>
-    <ProjectReference Include="..\Weikio.ApiFramework.Core\Weikio.ApiFramework.Core.csproj"/>
-    <ProjectReference Include="..\Weikio.ApiFramework.Abstractions\Weikio.ApiFramework.Abstractions.csproj"/>
+    <ProjectReference Include="..\Weikio.ApiFramework.ApiProviders.PluginFramework\Weikio.ApiFramework.ApiProviders.PluginFramework.csproj" />
+    <ProjectReference Include="..\Weikio.ApiFramework.Core\Weikio.ApiFramework.Core.csproj" />
+    <ProjectReference Include="..\Weikio.ApiFramework.Abstractions\Weikio.ApiFramework.Abstractions.csproj" />
+    <ProjectReference Include="..\Weikio.ApiFramework.ResponceCache\Weikio.ApiFramework.ResponceCache.csproj" />
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="MinVer" Version="2.0.0"/>
-    <PackageReference Include="Weikio.PluginFramework" Version="1.0.0-alpha.*"/>
+    <PackageReference Include="MinVer" Version="2.0.0" />
+    <PackageReference Include="Weikio.PluginFramework" Version="1.0.0-alpha.*" />
   </ItemGroup>
   
   <ItemGroup>
-    <FrameworkReference Include="Microsoft.AspNetCore.App"/>
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="../../docs/logo_256.png" Pack="true" Visible="false" PackagePath=""/>
+    <None Include="../../docs/logo_256.png" Pack="true" Visible="false" PackagePath="" />
   </ItemGroup>
 
 </Project>

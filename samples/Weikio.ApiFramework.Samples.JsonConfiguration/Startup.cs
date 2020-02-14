@@ -23,8 +23,6 @@ namespace Weikio.ApiFramework.Samples.JsonConfiguration
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddResponseCaching();
-
             services.AddMvc(options =>
                 {
                 })
@@ -84,9 +82,6 @@ namespace Weikio.ApiFramework.Samples.JsonConfiguration
             }
 
             app.UseRouting();
-
-            app.UseResponseCaching();
-            app.UseApiFrameworkResponseCaching();
 
             app.UseOpenApi();
             app.UseSwaggerUi3();
