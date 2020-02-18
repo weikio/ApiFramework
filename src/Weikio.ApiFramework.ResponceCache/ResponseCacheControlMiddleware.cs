@@ -35,7 +35,7 @@ namespace Weikio.ApiFramework.ResponceCache
 
             if (endpoint != null)
             {
-                _logger.LogDebug("Processing response cache configuration for {Endpoint}", endpoint);
+                _logger.LogTrace("Processing response cache configuration for {Endpoint}", endpoint);
 
                 var request = context.Request;
                 var response = context.Response;
@@ -44,7 +44,7 @@ namespace Weikio.ApiFramework.ResponceCache
 
                 if (cacheEntry.Level == ResponseCacheConfigurationLevel.Undefined)
                 {
-                    _logger.LogDebug("No cache configuration found for {Endpoint}", endpoint.Route);
+                    _logger.LogTrace("No cache configuration found for {Endpoint}", endpoint.Route);
                 }
                 else
                 {
