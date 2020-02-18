@@ -139,6 +139,8 @@ namespace Weikio.ApiFramework.ApiProviders.PluginFramework
 
                             result.AddRange(createdApis);
                         });
+                        
+                        _logger.LogDebug("Initialized {Endpoint} with {Route}", endpoint, endpoint.Route);
                     }
                     catch (Exception e)
                     {

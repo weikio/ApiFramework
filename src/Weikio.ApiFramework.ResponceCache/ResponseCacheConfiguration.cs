@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 
 namespace Weikio.ApiFramework.ResponceCache
 {
@@ -12,6 +13,11 @@ namespace Weikio.ApiFramework.ResponceCache
         {
             MaxAge = maxAge;
             Vary = vary;
+        }
+
+        public override string ToString()
+        {
+            return $"MaxAge: {MaxAge}, Vary: {(Vary?.Any() == true ? string.Join(", ", Vary) : "")}";
         }
     }
 }
