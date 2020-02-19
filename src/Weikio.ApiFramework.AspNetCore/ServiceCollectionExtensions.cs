@@ -39,6 +39,7 @@ namespace Weikio.ApiFramework.AspNetCore
                 options.Endpoints = apiFrameworkAspNetCoreOptions.Endpoints;
                 options.AutoInitializeApiProvider = apiFrameworkAspNetCoreOptions.AutoInitializeApiProvider;
                 options.AutoInitializeConfiguredEndpoints = apiFrameworkAspNetCoreOptions.AutoInitializeConfiguredEndpoints;
+                options.AutoConvertFileToStream = apiFrameworkAspNetCoreOptions.AutoConvertFileToStream;
             });
 
             builder.Services.Configure(setupApiFramework);
