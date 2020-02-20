@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Weikio.ApiFramework.Core.Infrastructure
 {
-    public class FileInfoFileResultConverter : IFileResultConverter
+    public class FileInfoFileStreamResultConverter : IFileStreamResultConverter
     {
         public bool CanConvertType(Type type)
         {

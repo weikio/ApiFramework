@@ -12,10 +12,10 @@ namespace Weikio.ApiFramework.Core.Infrastructure
     public class FileResultFilter : IAsyncResultFilter
     {
         private readonly ILogger<FileResultFilter> _logger;
-        private readonly IEnumerable<IFileResultConverter> _fileResultConverters;
+        private readonly IEnumerable<IFileStreamResultConverter> _fileResultConverters;
         private readonly ApiFrameworkOptions _options;
 
-        public FileResultFilter(ILogger<FileResultFilter> logger, IEnumerable<IFileResultConverter> fileResultConverters, IOptions<ApiFrameworkOptions> options)
+        public FileResultFilter(ILogger<FileResultFilter> logger, IEnumerable<IFileStreamResultConverter> fileResultConverters, IOptions<ApiFrameworkOptions> options)
         {
             _logger = logger;
             _fileResultConverters = fileResultConverters;
@@ -24,37 +24,46 @@ namespace Weikio.ApiFramework.Core.Infrastructure
 
         public async Task OnResultExecutionAsync(ResultExecutingContext context, ResultExecutionDelegate next)
         {
-            if (_options.AutoConvertFileToStream == false)
+            try
             {
-                _logger.LogTrace("Auto conversion from file to stream disabled. Skip filter.");
-                return;
-            }
-
-            if (context.Result is ObjectResult objResult)
-            {
-                if (_fileResultConverters?.Any() != true)
+                if (_options.AutoConvertFileToStream == false)
                 {
-                    _logger.LogDebug("No IFileResultConverter implementations found from DI. Skip filter.");
+                    _logger.LogTrace("Auto conversion from file to stream disabled. Skip filter.");
                     return;
                 }
 
-                // Cache the converter
-                foreach (var converter in _fileResultConverters)
+                if (context.Result is ObjectResult objResult)
                 {
-                    var canConvert = converter.CanConvertType(objResult.DeclaredType);
-
-                    if (!canConvert)
+                    if (_fileResultConverters?.Any() != true)
                     {
-                        _logger.LogTrace("{FileResultConverter} can not handle {Type}. Trying the next IFileResultConverter.", converter.GetType().Name, objResult.DeclaredType.Name);
-                        continue;
+                        _logger.LogDebug("No IFileResultConverter implementations found from DI. Skip filter.");
+                        return;
                     }
 
-                    _logger.LogDebug("Handling file result conversion of {Type} with {FileResultConverter}.", objResult.DeclaredType.Name, converter.GetType().Name );
+                    // Cache the converter
+                    foreach (var converter in _fileResultConverters)
+                    {
+                        var canConvert = converter.CanConvertType(objResult.DeclaredType);
 
-                    context.Result = await converter.Convert(objResult.Value);
+                        if (!canConvert)
+                        {
+                            _logger.LogTrace("{FileResultConverter} can not handle {Type}. Trying the next IFileResultConverter.", converter.GetType().Name, objResult.DeclaredType.Name);
+                            continue;
+                        }
+
+                        _logger.LogDebug("Handling file result conversion of {Type} with {FileResultConverter}.", objResult.DeclaredType.Name, converter.GetType().Name );
+
+                        context.Result = await converter.Convert(objResult.Value);
+
+                        break;
+                    }
                 }
-                
             }
+            finally
+            {
+                await next();
+            }
+
         }
     }
 }

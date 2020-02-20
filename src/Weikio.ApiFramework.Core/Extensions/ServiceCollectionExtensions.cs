@@ -137,7 +137,9 @@ namespace Weikio.ApiFramework.Core.Extensions
                 mvcOptions.Conventions.Add(convention);
             });
 
-            services.AddSingleton<IFileResultConverter, FileInfoFileResultConverter>();
+            services.AddSingleton<IFileStreamResultConverter, FileInfoFileStreamResultConverter>();
+            services.AddSingleton<IFileStreamResultConverter, FileResponseFileStreamResultConverter>();
+            
             services.AddSingleton<FileResultFilter>();
             
             services.ConfigureWithDependencies<MvcOptions, FileResultFilter>((mvcOptions, filter) =>
