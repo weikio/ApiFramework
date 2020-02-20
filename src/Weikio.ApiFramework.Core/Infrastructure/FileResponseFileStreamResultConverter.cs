@@ -39,6 +39,7 @@ namespace Weikio.ApiFramework.Core.Infrastructure
 
         public Task<FileStreamResult> Convert(object obj)
         {
+            // Todo: Could we cache the reflections?
             var streamProperty = obj.GetType().GetProperty("Stream");
 
             if (streamProperty == null)

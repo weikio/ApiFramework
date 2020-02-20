@@ -3,6 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
+using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Weikio.ApiFramework.Core.Configuration;
@@ -13,12 +14,14 @@ namespace Weikio.ApiFramework.Core.Infrastructure
     {
         private readonly ILogger<FileResultFilter> _logger;
         private readonly IEnumerable<IFileStreamResultConverter> _fileResultConverters;
+        private readonly IMemoryCache _memoryCache;
         private readonly ApiFrameworkOptions _options;
 
-        public FileResultFilter(ILogger<FileResultFilter> logger, IEnumerable<IFileStreamResultConverter> fileResultConverters, IOptions<ApiFrameworkOptions> options)
+        public FileResultFilter(ILogger<FileResultFilter> logger, IEnumerable<IFileStreamResultConverter> fileResultConverters, IOptions<ApiFrameworkOptions> options, IMemoryCache memoryCache)
         {
             _logger = logger;
             _fileResultConverters = fileResultConverters;
+            _memoryCache = memoryCache;
             _options = options.Value;
         }
 
@@ -40,23 +43,37 @@ namespace Weikio.ApiFramework.Core.Infrastructure
                         return;
                     }
 
-                    // Cache the converter
-                    foreach (var converter in _fileResultConverters)
+                    if (objResult.DeclaredType == null)
                     {
-                        var canConvert = converter.CanConvertType(objResult.DeclaredType);
+                        return;
+                    }
 
-                        if (!canConvert)
+                    var converter = _memoryCache.GetOrCreate(objResult.DeclaredType.FullName, entry =>
+                    {
+                        foreach (var availableConverter in _fileResultConverters)
                         {
-                            _logger.LogTrace("{FileResultConverter} can not handle {Type}. Trying the next IFileResultConverter.", converter.GetType().Name, objResult.DeclaredType.Name);
-                            continue;
+                            var canConvert = availableConverter.CanConvertType(objResult.DeclaredType);
+
+                            if (canConvert)
+                            {
+                                return availableConverter;
+                            }
+
+                            _logger.LogTrace("{FileResultConverter} can not handle {Type}. Trying the next IFileResultConverter.", availableConverter.GetType().Name, objResult.DeclaredType.Name);
                         }
 
-                        _logger.LogDebug("Handling file result conversion of {Type} with {FileResultConverter}.", objResult.DeclaredType.Name, converter.GetType().Name );
+                        return null;
+                    });
 
-                        context.Result = await converter.Convert(objResult.Value);
-
-                        break;
+                    if (converter == null)
+                    {
+                        _logger.LogDebug("IFileResultConverter not available for converting {Type}", objResult.DeclaredType.FullName);
+                
+                        return;  
                     }
+                    
+                    _logger.LogDebug("Handling file result conversion of {Type} with {FileResultConverter}.", objResult.DeclaredType.Name, converter.GetType().Name );
+                    context.Result = await converter.Convert(objResult.Value);
                 }
             }
             finally
