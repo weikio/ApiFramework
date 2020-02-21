@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
+using System.Web;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Weikio.ApiFramework.Core.Infrastructure
@@ -65,7 +66,30 @@ namespace Weikio.ApiFramework.Core.Infrastructure
                 contentType = headers["Content-Type"].First();
             }
 
-            return Task.FromResult(new FileStreamResult(stream, contentType)); 
+            string fileName = null;
+            if (headers?.ContainsKey("Content-Disposition") == true && headers["Content-Disposition"]?.Any() == true)
+            {
+                // Content-Disposition's format is like the following:
+                //  content-disposition: attachment; filename=StorageExplorer.exe; filename*=UTF-8''StorageExplorer.exe 
+                // Try to parse the first filename
+                var attributes = headers["Content-Disposition"].First();
+
+                if (attributes.Contains("filename="))
+                {
+                    var fileNameAttribute = attributes.Substring(attributes.IndexOf("filename=", StringComparison.Ordinal));
+                    fileNameAttribute = fileNameAttribute.Substring(fileNameAttribute.IndexOf("=", StringComparison.Ordinal) + 1);
+                    fileName = fileNameAttribute.Substring(0, fileNameAttribute.IndexOf(";", StringComparison.Ordinal));
+                }
+            }
+
+            var result = new FileStreamResult(stream, contentType);
+
+            if (fileName != null)
+            {
+                result.FileDownloadName = fileName;
+            }
+
+            return Task.FromResult(result); 
         }
     }
 }

@@ -17,7 +17,11 @@ namespace Weikio.ApiFramework.Core.Infrastructure
             var info = (FileInfo) obj;
             var stream = File.OpenRead(info.FullName);
 
-            return Task.FromResult(new FileStreamResult(stream, "application/octet-stream")); 
+            var result = new FileStreamResult(stream, "application/octet-stream");
+            var fileName = Path.GetFileName(info.FullName);
+            result.FileDownloadName = fileName;
+            
+            return Task.FromResult(result); 
         }
     }
 }
