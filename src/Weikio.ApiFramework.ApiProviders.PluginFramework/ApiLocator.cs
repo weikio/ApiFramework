@@ -7,7 +7,7 @@ namespace Weikio.ApiFramework.ApiProviders.PluginFramework
 {
     public static class ApiLocator
     {
-        public static Func<MetadataReader, TypeDefinition, bool> IsApi = (metadata, type) =>
+        public static Func<string, MetadataReader, TypeDefinition, bool> IsApi = (assemblyName, metadata, type) =>
         {
             var typeName = metadata.GetString(type.Name);
 

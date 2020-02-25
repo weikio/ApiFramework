@@ -70,7 +70,10 @@ namespace Weikio.ApiFramework.ApiProviders.PluginFramework
                 if (options.AutoResolveApis)
                 {
                     var binDirectory = Path.GetDirectoryName(Assembly.GetEntryAssembly().Location);
-                    var pluginCatalog = new FolderPluginCatalog(binDirectory, ApiLocator.IsApi);
+                    
+                    var folderPluginCatalogOptions = new FolderPluginCatalogOptions();
+                    folderPluginCatalogOptions.PluginResolvers.Add(ApiLocator.IsApi);
+                    var pluginCatalog = new FolderPluginCatalog(binDirectory, folderPluginCatalogOptions);
 
                     if (!registeredCatalogs.Any())
                     {
