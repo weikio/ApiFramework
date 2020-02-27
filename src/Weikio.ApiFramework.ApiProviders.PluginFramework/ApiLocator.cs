@@ -7,7 +7,7 @@ namespace Weikio.ApiFramework.ApiProviders.PluginFramework
 {
     public static class ApiLocator
     {
-        public static Func<MetadataReader, TypeDefinition, bool> IsApi = (metadata, type) =>
+        public static Func<string, MetadataReader, TypeDefinition, bool> IsApi = (assembly, metadata, type) =>
         {
             var typeName = metadata.GetString(type.Name);
 
@@ -17,23 +17,19 @@ namespace Weikio.ApiFramework.ApiProviders.PluginFramework
                 return true;
             }
 
-            if (typeName == "ApiFactory" &&
-                type.Attributes.HasFlag(TypeAttributes.Abstract | TypeAttributes.Sealed)) // Abstract + Sealed = Static
+            if (typeName != "ApiFactory" || !type.Attributes.HasFlag(TypeAttributes.Abstract | TypeAttributes.Sealed))
             {
-                var apiFactoryMethods = type.GetMethods()
-                    .Select(d => metadata.GetMethodDefinition(d))
-                    .Where(m => m.Attributes.HasFlag(MethodAttributes.Public) &&
-                                m.Attributes.HasFlag(MethodAttributes.Static) &&
-                                metadata.GetString(m.Name) == "Create")
-                    .ToArray();
-
-                if (apiFactoryMethods.Any())
-                {
-                    return true;
-                }
+                return false;
             }
 
-            return false;
+            var apiFactoryMethods = type.GetMethods()
+                .Select(metadata.GetMethodDefinition)
+                .Where(m => m.Attributes.HasFlag(MethodAttributes.Public) &&
+                            m.Attributes.HasFlag(MethodAttributes.Static) &&
+                            metadata.GetString(m.Name) == "Create")
+                .ToArray();
+
+            return apiFactoryMethods.Any();
         };
     }
 }

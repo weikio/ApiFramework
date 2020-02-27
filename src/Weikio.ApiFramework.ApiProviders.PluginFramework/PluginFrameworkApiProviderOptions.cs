@@ -8,6 +8,6 @@ namespace Weikio.ApiFramework.ApiProviders.PluginFramework
     {
         public List<string> ApiAssemblies { get; set; } = new List<string>();
         public bool AutoResolveApis { get; set; }
-        public Func<MetadataReader, TypeDefinition, bool> ApiResolver { get; set; } = ApiLocator.IsApi;
+        public Func<string, MetadataReader, TypeDefinition, bool> ApiResolver { get; set; } = ApiLocator.IsApi;
     }
 }

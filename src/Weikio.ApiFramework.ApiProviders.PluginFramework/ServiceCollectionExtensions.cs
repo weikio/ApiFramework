@@ -18,13 +18,13 @@ namespace Weikio.ApiFramework.ApiProviders.PluginFramework
         public static IApiFrameworkBuilder AddPluginFramework(this IApiFrameworkBuilder builder,
             Action<PluginFrameworkApiProviderOptions> setupAction = null)
         {
-            builder.Services.Replace(ServiceDescriptor.Singleton<IApiProvider>( services =>
+            builder.Services.Replace(ServiceDescriptor.Singleton<IApiProvider>(services =>
             {
                 var configurationOptions = services.GetService<IOptions<PluginFrameworkApiProviderOptions>>();
                 var initializationWrapper = services.GetService<IApiInitializationWrapper>();
                 var healthCheckWrapper = services.GetService<IApiHealthCheckWrapper>();
                 var logger = services.GetService<ILogger<PluginFrameworkApiProvider>>();
-                
+
                 PluginFrameworkApiProviderOptions options = null;
 
                 if (configurationOptions != null)
@@ -46,10 +46,11 @@ namespace Weikio.ApiFramework.ApiProviders.PluginFramework
                 if (options.ApiAssemblies?.Any() == true)
                 {
                     var assemblyCatalogs = new List<IPluginCatalog>();
+                    var assemblyPluginCatalogOptions = new AssemblyPluginCatalogOptions { PluginLoadContextOptions = { UseHostApplicationAssemblies = true } };
 
                     foreach (var apiAssembly in options.ApiAssemblies)
                     {
-                        var assemblyCatalog = new AssemblyPluginCatalog(apiAssembly);
+                        var assemblyCatalog = new AssemblyPluginCatalog(apiAssembly, assemblyPluginCatalogOptions);
                         assemblyCatalogs.Add(assemblyCatalog);
                     }
 
@@ -70,7 +71,10 @@ namespace Weikio.ApiFramework.ApiProviders.PluginFramework
                 if (options.AutoResolveApis)
                 {
                     var binDirectory = Path.GetDirectoryName(Assembly.GetEntryAssembly().Location);
-                    var pluginCatalog = new FolderPluginCatalog(binDirectory, ApiLocator.IsApi);
+                    var folderPluginCatalogOptions = new FolderPluginCatalogOptions { PluginLoadContextOptions = { UseHostApplicationAssemblies = true } };
+                    folderPluginCatalogOptions.PluginResolvers.Add(ApiLocator.IsApi);
+
+                    var pluginCatalog = new FolderPluginCatalog(binDirectory, folderPluginCatalogOptions);
 
                     if (!registeredCatalogs.Any())
                     {

@@ -57,7 +57,8 @@ namespace Weikio.ApiFramework.AspNetCore
         {
             builder.Services.AddTransient<IPluginCatalog>(services =>
             {
-                var assemblyCatalog = new AssemblyPluginCatalog(assemblyPath);
+                var assemblyPluginCatalogOptions = new AssemblyPluginCatalogOptions { PluginLoadContextOptions = { UseHostApplicationAssemblies = true } };
+                var assemblyCatalog = new AssemblyPluginCatalog(assemblyPath, assemblyPluginCatalogOptions);
 
                 return assemblyCatalog;
             });
@@ -69,9 +70,10 @@ namespace Weikio.ApiFramework.AspNetCore
         {
             builder.Services.AddTransient<IPluginCatalog>(services =>
             {
+                var assemblyPluginCatalogOptions = new AssemblyPluginCatalogOptions { PluginLoadContextOptions = { UseHostApplicationAssemblies = true } };
                 var assemblyPath = assembly.Location;
 
-                var assemblyCatalog = new AssemblyPluginCatalog(assemblyPath);
+                var assemblyCatalog = new AssemblyPluginCatalog(assemblyPath, assemblyPluginCatalogOptions);
 
                 return assemblyCatalog;
             });

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -17,13 +18,12 @@ namespace Weikio.ApiFramework.ResponceCache
         private readonly RequestDelegate _nextMiddleware;
         private readonly ResponceCacheOptions _options;
         private readonly ApiFrameworkOptions _apiFrameworkOptions;
-        private readonly IMemoryCache _memoryCache;
+        private static readonly ConcurrentDictionary<string, ResponseCacheCachedEntry> _memoryCache = new ConcurrentDictionary<string, ResponseCacheCachedEntry>();
 
         public ResponseCacheControlMiddleware(IOptions<ResponceCacheOptions> options, ILogger<ResponseCacheControlMiddleware> logger,
-            IOptions<ApiFrameworkOptions> apiFrameworkOptions, IMemoryCache memoryCache, RequestDelegate nextMiddleware)
+            IOptions<ApiFrameworkOptions> apiFrameworkOptions, RequestDelegate nextMiddleware)
         {
             _logger = logger;
-            _memoryCache = memoryCache;
             _nextMiddleware = nextMiddleware;
             _options = options.Value;
             _apiFrameworkOptions = apiFrameworkOptions.Value;
@@ -66,7 +66,7 @@ namespace Weikio.ApiFramework.ResponceCache
 
         private ResponseCacheCachedEntry GetRequestCacheConfiguration(HttpRequest request, Abstractions.Endpoint endpoint)
         {
-            return _memoryCache.GetOrCreate(request.Path.Value, entry =>
+            return _memoryCache.GetOrAdd(request.Path.Value, entry =>
             {
                 // Request example: /api/HelloWorld/TimeTest where /api is the Api Framework's base address and /HelloWorld is the endpoint's route.
                 // As the route based caching is defined inside the Endpoint's configuration, we want to match the cache routes against the routes inside the endpoint.
