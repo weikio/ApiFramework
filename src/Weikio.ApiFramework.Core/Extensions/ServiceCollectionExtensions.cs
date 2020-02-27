@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
@@ -136,6 +137,16 @@ namespace Weikio.ApiFramework.Core.Extensions
                 mvcOptions.Conventions.Add(convention);
             });
 
+            services.AddSingleton<IFileStreamResultConverter, FileInfoFileStreamResultConverter>();
+            services.AddSingleton<IFileStreamResultConverter, FileResponseFileStreamResultConverter>();
+            
+            services.AddSingleton<FileResultFilter>();
+            
+            services.ConfigureWithDependencies<MvcOptions, FileResultFilter>((mvcOptions, filter) =>
+            {
+                mvcOptions.Filters.Add(filter);
+            });
+            
             TryAddStartupTasks(services);
 
             if (setupAction != null)

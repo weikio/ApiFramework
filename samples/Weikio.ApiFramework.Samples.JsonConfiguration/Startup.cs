@@ -86,8 +86,6 @@ namespace Weikio.ApiFramework.Samples.JsonConfiguration
             app.UseOpenApi();
             app.UseSwaggerUi3();
 
-            app.UseHttpsRedirection();
-
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapRazorPages();
