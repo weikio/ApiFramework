@@ -1,8 +1,7 @@
-﻿using Weikio.ApiFramework.Samples.DependencyConflict;
-using Microsoft.AspNetCore;
+﻿using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 
-namespace FunctionFramework.Samples.ReferenceConflict
+namespace Weikio.ApiFramework.Samples.DependencyConflict
 {
     public class Program
     {

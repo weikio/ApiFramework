@@ -1,9 +1,7 @@
-﻿using System.Diagnostics;
-using Microsoft.AspNetCore.Builder;
+﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
@@ -14,19 +12,11 @@ namespace Weikio.ApiFramework.Samples.DependencyConflict
 {
     public class Startup
     {
-        public Startup(IConfiguration configuration)
-        {
-            Configuration = configuration;
-        }
-
-        public IConfiguration Configuration { get; }
-
-        // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddRouting();
 
-            var mvcBuilder = services.AddMvc(options => { })
+            services.AddMvc()
                 .SetCompatibilityVersion(CompatibilityVersion.Latest);
 
             services.AddApiFramework(options =>
@@ -36,15 +26,13 @@ namespace Weikio.ApiFramework.Samples.DependencyConflict
                     options.AutoResolveApis = false;
                 })
                 .AddApi(
-                    @"C:\dev\projects\Weik.io\src\FunctionFramework\src\Plugins\Weikio.ApiFramework.Plugins.Logger\bin\Debug\netstandard2.0\Weikio.ApiFramework.Plugins.Logger.dll")
+                    @"..\..\src\Plugins\Weikio.ApiFramework.Plugins.Logger\bin\Debug\netstandard2.0\Weikio.ApiFramework.Plugins.Logger.dll")
                 .AddApi(
-                    @"C:\dev\projects\Weik.io\src\FunctionFramework\src\Plugins\Weikio.ApiFramework.Plugins.OldLogger\bin\Debug\netstandard2.0\Weikio.ApiFramework.Plugins.OldLogger.dll")
+                    @"..\..\src\Plugins\Weikio.ApiFramework.Plugins.OldLogger\bin\Debug\netstandard2.0\Weikio.ApiFramework.Plugins.OldLogger.dll")
                 .AddApi(typeof(HostLoggerApi))
                 .AddEndpoint("/new", "Weikio.ApiFramework.Plugins.Logger")
                 .AddEndpoint("/old", "Weikio.ApiFramework.Plugins.OldLogger")
-                .AddEndpoint("/host", "DependencyConflict");
-
-//                .AddEndpoint("/old", "Weikio.ApiFramework.Plugins.JsonNetOld", new {HelloString = "This is the second configuration"});
+                .AddEndpoint("/host", "Weikio.ApiFramework.Samples.DependencyConflict.HostLoggerApi");
 
             services.AddSwaggerDocument(document => { document.Title = "Api Framework"; });
         }
@@ -63,7 +51,7 @@ namespace Weikio.ApiFramework.Samples.DependencyConflict
 
             app.UseRouting();
 
-            app.UseSwagger();
+            app.UseOpenApi();
             app.UseSwaggerUi3();
 
             app.UseHttpsRedirection();
@@ -83,27 +71,6 @@ namespace Weikio.ApiFramework.Samples.DependencyConflict
                     await context.Response.WriteAsync("Logger location: " + location);
                 });
             });
-        }
-    }
-
-    public class HostLoggerApi
-    {
-        private readonly ILogger<HostLoggerApi> _logger;
-
-        public HostLoggerApi(ILogger<HostLoggerApi> logger)
-        {
-            _logger = logger;
-        }
-
-        public string Log()
-        {
-            _logger.LogInformation("Running host logger");
-
-            var assembly = _logger.GetType().Assembly;
-            var location = assembly.Location;
-
-            var versionInfo = FileVersionInfo.GetVersionInfo(location);
-            return location + " " + versionInfo.ToString();
         }
     }
 }

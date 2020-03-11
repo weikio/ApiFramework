@@ -87,7 +87,7 @@ namespace Weikio.ApiFramework.Samples.CodeConfiguration
 
             app.UseRouting();
 
-            app.UseSwagger();
+            app.UseOpenApi();
             app.UseSwaggerUi3();
 
             app.UseHttpsRedirection();

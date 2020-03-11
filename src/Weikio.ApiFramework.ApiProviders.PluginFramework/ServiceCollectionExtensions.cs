@@ -10,6 +10,7 @@ using Microsoft.Extensions.Options;
 using Weikio.ApiFramework.Abstractions;
 using Weikio.PluginFramework.Abstractions;
 using Weikio.PluginFramework.Catalogs;
+using Weikio.PluginFramework.Context;
 
 namespace Weikio.ApiFramework.ApiProviders.PluginFramework
 {
@@ -18,6 +19,8 @@ namespace Weikio.ApiFramework.ApiProviders.PluginFramework
         public static IApiFrameworkBuilder AddPluginFramework(this IApiFrameworkBuilder builder,
             Action<PluginFrameworkApiProviderOptions> setupAction = null)
         {
+            PluginLoadContextOptions.Defaults.UseHostApplicationAssemblies = UseHostApplicationAssembliesEnum.Always;
+            
             builder.Services.Replace(ServiceDescriptor.Singleton<IApiProvider>(services =>
             {
                 var configurationOptions = services.GetService<IOptions<PluginFrameworkApiProviderOptions>>();
@@ -46,11 +49,10 @@ namespace Weikio.ApiFramework.ApiProviders.PluginFramework
                 if (options.ApiAssemblies?.Any() == true)
                 {
                     var assemblyCatalogs = new List<IPluginCatalog>();
-                    var assemblyPluginCatalogOptions = new AssemblyPluginCatalogOptions { PluginLoadContextOptions = { UseHostApplicationAssemblies = true } };
 
                     foreach (var apiAssembly in options.ApiAssemblies)
                     {
-                        var assemblyCatalog = new AssemblyPluginCatalog(apiAssembly, assemblyPluginCatalogOptions);
+                        var assemblyCatalog = new AssemblyPluginCatalog(apiAssembly);
                         assemblyCatalogs.Add(assemblyCatalog);
                     }
 
@@ -71,7 +73,7 @@ namespace Weikio.ApiFramework.ApiProviders.PluginFramework
                 if (options.AutoResolveApis)
                 {
                     var binDirectory = Path.GetDirectoryName(Assembly.GetEntryAssembly().Location);
-                    var folderPluginCatalogOptions = new FolderPluginCatalogOptions { PluginLoadContextOptions = { UseHostApplicationAssemblies = true } };
+                    var folderPluginCatalogOptions = new FolderPluginCatalogOptions();
                     folderPluginCatalogOptions.PluginResolvers.Add(ApiLocator.IsApi);
 
                     var pluginCatalog = new FolderPluginCatalog(binDirectory, folderPluginCatalogOptions);

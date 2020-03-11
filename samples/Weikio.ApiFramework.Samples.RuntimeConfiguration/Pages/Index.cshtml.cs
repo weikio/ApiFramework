@@ -36,7 +36,7 @@ namespace RuntimeConfiguration.Pages
         {
             var api = await _apiProvider.Get("Weikio.ApiFramework.Plugins.HelloWorld");
             var newEndpoint = new Endpoint("/test", api, null);
-            newEndpoint.Initialize();
+            await newEndpoint.Initialize();
 
             EndpointManager.AddEndpoint(newEndpoint);
             EndpointManager.Update();

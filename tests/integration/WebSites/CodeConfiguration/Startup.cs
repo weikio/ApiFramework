@@ -27,15 +27,12 @@ namespace CodeConfiguration
     {
         private readonly ILogger<EndpointInitializer> _logger;
         private readonly ApiChangeNotifier _changeNotifier;
-        private readonly IBackgroundTaskQueue _backgroundTaskQueue;
         private readonly ApiFrameworkOptions _options;
 
-        public SyncEndpointInitializer(ILogger<EndpointInitializer> logger, ApiChangeNotifier changeNotifier, IOptions<ApiFrameworkOptions> options,
-            IBackgroundTaskQueue backgroundTaskQueue)
+        public SyncEndpointInitializer(ILogger<EndpointInitializer> logger, ApiChangeNotifier changeNotifier, IOptions<ApiFrameworkOptions> options)
         {
             _logger = logger;
             _changeNotifier = changeNotifier;
-            _backgroundTaskQueue = backgroundTaskQueue;
             _options = options.Value;
         }
 
@@ -115,7 +112,6 @@ namespace CodeConfiguration
         private readonly EndpointConfigurationManager _endpointConfigurationManager;
         private readonly EndpointManager _endpointManager;
         private readonly IApiProvider _apiProvider;
-        private readonly IBackgroundTaskQueue _backgroundTaskQueue;
         private readonly ApiFrameworkOptions _options;
 
         public SyncEndpointStartupHandler(EndpointManager endpointManager,
