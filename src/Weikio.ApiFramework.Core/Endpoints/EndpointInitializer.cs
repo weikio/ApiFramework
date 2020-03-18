@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -17,6 +17,7 @@ namespace Weikio.ApiFramework.Core.Endpoints
         private readonly ApiChangeNotifier _changeNotifier;
         private readonly IBackgroundTaskQueue _backgroundTaskQueue;
         private readonly ApiFrameworkOptions _options;
+        private static string _initializationLock = "lock";
 
         public EndpointInitializer(ILogger<EndpointInitializer> logger, ApiChangeNotifier changeNotifier, IOptions<ApiFrameworkOptions> options, IBackgroundTaskQueue backgroundTaskQueue)
         {
@@ -32,28 +33,37 @@ namespace Weikio.ApiFramework.Core.Endpoints
             {
                 throw new ArgumentNullException(nameof(endpoints));
             }
-            
+
             if (endpoints?.Any() != true)
             {
                 return;
             }
-            
-            _backgroundTaskQueue.QueueBackgroundWorkItem(async cancellationToken =>
+
+            lock (_initializationLock)
             {
-                await endpoints.ForEachAsync(async endpoint =>
+                _logger.LogDebug("Initializing {EndpointCount} {Endpoints}", endpoints.Count, endpoints);
+
+                _backgroundTaskQueue.QueueBackgroundWorkItem(async cancellationToken =>
                 {
-                    await Initialize(endpoint, force);
+                    await endpoints.ForEachAsync(async endpoint =>
+                    {
+                        await Initialize(endpoint, force);
+                    });
+
+                    if (_options.ChangeNotificationType == ChangeNotificationTypeEnum.Batch)
+                    {
+                        _changeNotifier.Notify();
+                    }
                 });
 
-                if (_options.ChangeNotificationType == ChangeNotificationTypeEnum.Batch)
-                {
-                    _changeNotifier.Notify();
-                }
-            });
+                _logger.LogDebug("Endpoints initialized");
+            }
         }
 
         public async Task Initialize(Endpoint endpoint, bool force = false)
         {
+            _logger.LogDebug("Initializing {Endpoint}. Force: {Force}", endpoint, force);
+
             if (endpoint == null)
             {
                 throw new ArgumentNullException(nameof(endpoint));
