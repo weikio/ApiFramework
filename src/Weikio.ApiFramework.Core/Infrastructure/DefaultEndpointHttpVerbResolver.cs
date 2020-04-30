@@ -1,4 +1,6 @@
+using System.Linq;
 using Microsoft.AspNetCore.Mvc.ApplicationModels;
+using Microsoft.AspNetCore.Mvc.Routing;
 
 namespace Weikio.ApiFramework.Core.Infrastructure
 {
@@ -6,6 +8,28 @@ namespace Weikio.ApiFramework.Core.Infrastructure
     {
         public string GetHttpVerb(ActionModel action)
         {
+            if (action.Attributes.Any(f => f is HttpMethodAttribute))
+            {
+                var attribute = action.Attributes.FirstOrDefault(f => f is HttpMethodAttribute) as HttpMethodAttribute;
+                var methods = attribute.HttpMethods;
+
+                if (methods != null)
+                {
+                    if (methods.Contains("POST"))
+                    {
+                        return "POST";
+                    }
+                    else if (methods.Contains("PUT"))
+                    {
+                        return "PUT";
+                    }
+                    else if (methods.Contains("DELETE"))
+                    {
+                        return "DELETE";
+                    }
+                }
+            }
+
             if (action.ActionName.StartsWith("Create") || action.ActionName.StartsWith("Insert") ||
                 action.ActionName.StartsWith("New"))
             {
