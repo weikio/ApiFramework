@@ -15,5 +15,6 @@ namespace Weikio.ApiFramework.AspNetCore
         public bool AutoInitializeApiProvider { get; set; } = true;
         public bool AutoInitializeConfiguredEndpoints { get; set; } = true;
         public bool AutoConvertFileToStream { get; set; } = true;
+        public bool AddHealthCheck { get; set; } = true;
     }
 }
