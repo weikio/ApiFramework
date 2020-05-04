@@ -6,6 +6,7 @@ using Weikio.ApiFramework.Abstractions;
 using Weikio.ApiFramework.Core.Configuration;
 using Weikio.ApiFramework.Core.Extensions;
 using Weikio.ApiFramework.ApiProviders.PluginFramework;
+using Weikio.ApiFramework.Core.HealthChecks;
 using Weikio.PluginFramework.Abstractions;
 using Weikio.PluginFramework.Catalogs;
 
@@ -26,12 +27,21 @@ namespace Weikio.ApiFramework.AspNetCore
 
             if (setupAction == null)
             {
+                services.AddHealthChecks()
+                    .AddCheck<EndpointHeathCheck>("api_framework_endpoint", HealthStatus.Degraded, new[] { "api_framework_endpoint" });
+            
                 return builder;
             }
 
             var apiFrameworkAspNetCoreOptions = new ApiFrameworkAspNetCoreOptions();
             setupAction(apiFrameworkAspNetCoreOptions);
 
+            if (apiFrameworkAspNetCoreOptions.AddHealthCheck)
+            {
+                services.AddHealthChecks()
+                    .AddCheck<EndpointHeathCheck>("api_framework_endpoint", HealthStatus.Degraded, new[] { "api_framework_endpoint" });
+            }
+            
             var setupApiFramework = new Action<ApiFrameworkOptions>(options =>
             {
                 options.ApiAddressBase = apiFrameworkAspNetCoreOptions.ApiAddressBase;

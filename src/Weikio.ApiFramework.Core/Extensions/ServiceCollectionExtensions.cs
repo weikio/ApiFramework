@@ -28,7 +28,7 @@ namespace Weikio.ApiFramework.Core.Extensions
         {
             var builder = new ApiFrameworkBuilder(services);
 
-            services.AddSingleton(provider =>
+            services.TryAddSingleton(provider =>
             {
                 var configurationOptions = provider.GetService<IOptions<ApiFrameworkOptions>>();
                 var options = configurationOptions != null ? configurationOptions.Value : new ApiFrameworkOptions();
@@ -41,7 +41,7 @@ namespace Weikio.ApiFramework.Core.Extensions
                 return options.ApiProvider;
             });
 
-            services.AddSingleton(provider =>
+            services.TryAddSingleton(provider =>
             {
                 var configurationOptions = provider.GetService<IOptions<ApiFrameworkOptions>>();
                 var options = configurationOptions != null ? configurationOptions.Value : new ApiFrameworkOptions();
@@ -55,42 +55,39 @@ namespace Weikio.ApiFramework.Core.Extensions
             });
 
             services.TryAddSingleton<IEndpointStartupHandler, EndpointStartupHandler>();
-            services.AddTransient<IStartupFilter, ApiFrameworkStartupFilter>();
-            services.AddSingleton<ApiChangeNotifier>();
-            services.AddSingleton<EndpointConfigurationManager>();
+            builder.Services.TryAddEnumerable(ServiceDescriptor.Transient<IStartupFilter, ApiFrameworkStartupFilter>());
+            services.TryAddSingleton<ApiChangeNotifier>();
+            services.TryAddSingleton<EndpointConfigurationManager>();
 
-            services.AddSingleton<EndpointManager>();
-            services.AddTransient(ctx => ctx.GetService<EndpointManager>().Endpoints);
-            services.AddSingleton<EndpointInitializer>();
+            services.TryAddSingleton<EndpointManager>();
+            services.TryAddTransient(ctx => ctx.GetService<EndpointManager>().Endpoints);
+            services.TryAddSingleton<EndpointInitializer>();
 
-            services.AddSingleton<ApiChangeToken>();
-            services.AddSingleton<IActionDescriptorChangeProvider, ActionDescriptorChangeProvider>();
+            services.TryAddSingleton<ApiChangeToken>();
+            builder.Services.TryAddEnumerable(ServiceDescriptor.Singleton<IActionDescriptorChangeProvider, ActionDescriptorChangeProvider>());
 
             services.AddHttpContextAccessor();
 
-            services.AddSingleton<ApiControllerConvention>();
-            services.AddSingleton<ApiActionConvention>();
-            services.AddSingleton<ApiFeatureProvider>();
+            services.TryAddSingleton<ApiControllerConvention>();
+            services.TryAddSingleton<ApiActionConvention>();
+            services.TryAddSingleton<ApiFeatureProvider>();
 
             // Services for running background tasks like endpoint initializations
             services.AddHostedService<QueuedHostedService>();
             services.AddSingleton<IBackgroundTaskQueue, BackgroundTaskQueue>();
-            services.AddSingleton<StatusProvider>();
-            services.AddSingleton<HealthProbe>();
+            services.TryAddSingleton<StatusProvider>();
+            services.TryAddSingleton<HealthProbe>();
             services.TryAddSingleton<IApiProviderInitializer, ApiProviderInitializer>();
             services.TryAddSingleton<IEndpointInitializer, EndpointInitializer>();
             
             // Services which alter the group names of the API Descriptions. These are used for Open Api / Swagger generation. Each endpoint by default belongs to an unique api group.
             services.TryAddSingleton<IEndpointGroupNameProvider, EndpointGroupNameProvider>();
             services.TryAddSingleton<IDefaultEndpointGroupNameProvider, DefaultEndpointGroupNameProvider>();
-            services.AddTransient<IApiDescriptionProvider, EndpointGroupNameDescriptor>();
+            builder.Services.TryAddEnumerable(ServiceDescriptor.Transient<IApiDescriptionProvider, EndpointGroupNameDescriptor>());
 
-            services.AddHealthChecks()
-                .AddCheck<EndpointHeathCheck>("api_framework_endpoint", HealthStatus.Degraded, new[] { "api_framework_endpoint" });
+            builder.Services.TryAddEnumerable(ServiceDescriptor.Singleton<IHealthCheckPublisher, HealthPublisher>());
 
-            builder.Services.AddSingleton<IHealthCheckPublisher, HealthPublisher>();
-
-            services.AddSingleton<IEndpointConfigurationProvider>(provider =>
+            services.TryAddSingleton<IEndpointConfigurationProvider>(provider =>
             {
                 var result = new CodeBasedEndpointConfigurationProvider();
                 var configurationOptions = provider.GetService<IOptions<ApiFrameworkOptions>>();
