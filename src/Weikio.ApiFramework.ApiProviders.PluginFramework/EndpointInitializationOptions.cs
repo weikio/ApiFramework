@@ -18,9 +18,9 @@ namespace Weikio.ApiFramework.ApiProviders.PluginFramework
         };
 
         /// <summary>
-        /// Gets or sets the OnBeforeUpdatingStatus. Can be used to run a task before OnInitializationError happens.
+        /// Gets or sets the OnBeforeUpdatingInitializationFailedStatus. Can be used to run a task before OnInitializationError happens.
         /// </summary>
-        public Func<Endpoint, Exception, int, string, Task> OnBeforeUpdatingStatus = (endpoint, exception, count, statusMessage) =>
+        public Func<Endpoint, Exception, int, string, Task> OnBeforeUpdatingInitializationFailedStatus = (endpoint, exception, count, statusMessage) =>
         {
             return Task.CompletedTask;
         };
