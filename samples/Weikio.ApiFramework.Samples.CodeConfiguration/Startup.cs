@@ -1,10 +1,15 @@
-﻿using Microsoft.AspNetCore.Builder;
+﻿using System;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Polly;
+using Weikio.ApiFramework.Abstractions;
+using Weikio.ApiFramework.ApiProviders.PluginFramework;
 using Weikio.ApiFramework.AspNetCore;
 using Weikio.ApiFramework.Core.Extensions;
 
@@ -69,6 +74,7 @@ namespace Weikio.ApiFramework.Samples.CodeConfiguration
 //            });
 
             services.AddSwaggerDocument(document => { document.Title = "Api Framework"; });
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

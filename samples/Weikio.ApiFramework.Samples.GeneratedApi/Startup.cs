@@ -6,6 +6,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Hosting;
+using Weikio.ApiFramework.ApiProviders.PluginFramework;
 using Weikio.ApiFramework.AspNetCore;
 using Weikio.ApiFramework.Core.Extensions;
 using Weikio.ApiFramework.Core.HealthChecks;
@@ -46,7 +47,17 @@ namespace Weikio.ApiFramework.Samples.GeneratedApi
                             }, new EmptyHealthCheck(), "hello" )
                     };
             });
-
+            
+            services.ConfigureAll<EndpointInitializationOptions>(options =>
+            {
+                options.RetryCount = 5;
+            });
+            
+            services.Configure<EndpointInitializationOptions>("dynamictest", options =>
+            {
+                options.RetryCount = 4;
+            });
+            
             services.AddSwaggerDocument(document => { document.Title = "Api Framework"; });
         }
 

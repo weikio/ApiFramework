@@ -29,8 +29,8 @@
     <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="3.1.2" />
     <PackageReference Include="System.Text.Json" Version="4.6.0" />
     <PackageReference Include="Polly" Version="7.2.0" />
-    <PackageReference Include="Weikio.PluginFramework" Version="1.0.0-alpha.*"/>
-    <PackageReference Include="MinVer" Version="2.0.0"/>
+    <PackageReference Include="Weikio.PluginFramework" Version="1.0.0-alpha.*" />
+    <PackageReference Include="MinVer" Version="2.0.0" />
   </ItemGroup>
   
   <ItemGroup>
@@ -38,7 +38,7 @@
   </ItemGroup>
   
   <ItemGroup>
-    <None Include="../../docs/logo_256.png" Pack="true" Visible="false" PackagePath=""/>
+    <None Include="../../docs/logo_256.png" Pack="true" Visible="false" PackagePath="" />
   </ItemGroup>
 
 </Project>
