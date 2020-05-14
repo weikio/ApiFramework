@@ -21,7 +21,7 @@ namespace ApiFramework.IntegrationTests
             var server = Init(builder =>
             {
                 builder.AddApi(typeof(HelloWorldApi));
-                builder.AddEndpoint("/thisistheendpoint", "HelloWorld");
+                builder.AddEndpoint("/thisistheendpoint", "HelloWorld.HelloWorldApi");
             });
 
             var result = await server.GetAsync("/api/thisistheendpoint");
@@ -35,9 +35,9 @@ namespace ApiFramework.IntegrationTests
             var server = Init(builder =>
             {
                 builder.AddApi(typeof(HelloWorldApi));
-                builder.AddEndpoint("/first", "HelloWorld");
-                builder.AddEndpoint("/second", "HelloWorld");
-                builder.AddEndpoint("/third", "HelloWorld");
+                builder.AddEndpoint("/first", "HelloWorld.HelloWorldApi");
+                builder.AddEndpoint("/second", "HelloWorld.HelloWorldApi");
+                builder.AddEndpoint("/third", "HelloWorld.HelloWorldApi");
             });
 
             var firstResult = await server.GetAsync("/api/first");

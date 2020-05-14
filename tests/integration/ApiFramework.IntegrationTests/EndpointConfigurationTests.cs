@@ -20,7 +20,7 @@ namespace ApiFramework.IntegrationTests
             var server = Init(builder =>
             {
                 builder.AddApi(typeof(HelloWorldConfigurationApi));
-                builder.AddEndpoint("/mytest", "HelloWorld", "TestConfiguration");
+                builder.AddEndpoint("/mytest", "HelloWorld.HelloWorldConfigurationApi", "TestConfiguration");
             });
 
             // Act 
@@ -41,7 +41,7 @@ namespace ApiFramework.IntegrationTests
             var server = Init(builder =>
             {
                 builder.AddApi(typeof(HelloWorldComplexConfigurationApi));
-                builder.AddEndpoint("/mytest", "HelloWorld", configuration);
+                builder.AddEndpoint("/mytest", "HelloWorld.HelloWorldComplexConfigurationApi", configuration);
             });
 
             // Act 
@@ -58,7 +58,7 @@ namespace ApiFramework.IntegrationTests
             var server = Init(builder =>
             {
                 builder.AddApi(typeof(HelloWorldComplexConfigurationApi));
-                builder.AddEndpoint("/mytest", "HelloWorld", new {Name = "anonymous", Country = "mycountry", Age = 40});
+                builder.AddEndpoint("/mytest", "HelloWorld.HelloWorldComplexConfigurationApi", new {Name = "anonymous", Country = "mycountry", Age = 40});
             });
 
             // Act 
@@ -78,8 +78,8 @@ namespace ApiFramework.IntegrationTests
             var server = Init(builder =>
             {
                 builder.AddApi(typeof(HelloWorldComplexConfigurationApi));
-                builder.AddEndpoint("/first", "HelloWorld", firstConfiguration);
-                builder.AddEndpoint("/second", "HelloWorld", secondConfiguration);
+                builder.AddEndpoint("/first", "HelloWorld.HelloWorldComplexConfigurationApi", firstConfiguration);
+                builder.AddEndpoint("/second", "HelloWorld.HelloWorldComplexConfigurationApi", secondConfiguration);
             });
 
             // Act 
