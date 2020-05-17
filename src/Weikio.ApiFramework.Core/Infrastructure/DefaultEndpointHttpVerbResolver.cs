@@ -10,22 +10,26 @@ namespace Weikio.ApiFramework.Core.Infrastructure
         {
             if (action.Attributes.Any(f => f is HttpMethodAttribute))
             {
-                var attribute = action.Attributes.FirstOrDefault(f => f is HttpMethodAttribute) as HttpMethodAttribute;
-                var methods = attribute.HttpMethods;
+                var httpMethodAttribute = action.Attributes.FirstOrDefault(x => x is HttpMethodAttribute) as HttpMethodAttribute;
 
-                if (methods != null)
+                if (httpMethodAttribute != null)
                 {
-                    if (methods.Contains("POST"))
+                    var methods = httpMethodAttribute.HttpMethods?.ToList();
+
+                    if (methods != null)
                     {
-                        return "POST";
-                    }
-                    else if (methods.Contains("PUT"))
-                    {
-                        return "PUT";
-                    }
-                    else if (methods.Contains("DELETE"))
-                    {
-                        return "DELETE";
+                        if (methods.Contains("POST"))
+                        {
+                            return "POST";
+                        }
+                        else if (methods.Contains("PUT"))
+                        {
+                            return "PUT";
+                        }
+                        else if (methods.Contains("DELETE"))
+                        {
+                            return "DELETE";
+                        }
                     }
                 }
             }
