@@ -1,9 +1,9 @@
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
-using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Weikio.ApiFramework.Core.Configuration;
@@ -12,16 +12,15 @@ namespace Weikio.ApiFramework.Core.Infrastructure
 {
     public class FileResultFilter : IAsyncResultFilter
     {
+        private static readonly ConcurrentDictionary<string, IFileStreamResultConverter> _memoryCache = new ConcurrentDictionary<string, IFileStreamResultConverter>();
         private readonly ILogger<FileResultFilter> _logger;
         private readonly IEnumerable<IFileStreamResultConverter> _fileResultConverters;
-        private readonly IMemoryCache _memoryCache;
         private readonly ApiFrameworkOptions _options;
 
-        public FileResultFilter(ILogger<FileResultFilter> logger, IEnumerable<IFileStreamResultConverter> fileResultConverters, IOptions<ApiFrameworkOptions> options, IMemoryCache memoryCache)
+        public FileResultFilter(ILogger<FileResultFilter> logger, IEnumerable<IFileStreamResultConverter> fileResultConverters, IOptions<ApiFrameworkOptions> options)
         {
             _logger = logger;
             _fileResultConverters = fileResultConverters;
-            _memoryCache = memoryCache;
             _options = options.Value;
         }
 
@@ -48,7 +47,7 @@ namespace Weikio.ApiFramework.Core.Infrastructure
                         return;
                     }
 
-                    var converter = _memoryCache.GetOrCreate(objResult.DeclaredType.FullName, entry =>
+                    var converter = _memoryCache.GetOrAdd(objResult.DeclaredType.FullName, entry =>
                     {
                         foreach (var availableConverter in _fileResultConverters)
                         {
@@ -80,7 +79,6 @@ namespace Weikio.ApiFramework.Core.Infrastructure
             {
                 await next();
             }
-
         }
     }
 }
