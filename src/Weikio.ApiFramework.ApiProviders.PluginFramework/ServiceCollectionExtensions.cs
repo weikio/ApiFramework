@@ -8,6 +8,8 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Weikio.ApiFramework.Abstractions;
+using Weikio.ApiFramework.Abstractions.DependencyInjection;
+using Weikio.ApiFramework.SDK;
 using Weikio.PluginFramework.Abstractions;
 using Weikio.PluginFramework.Catalogs;
 using Weikio.PluginFramework.Context;
@@ -20,14 +22,16 @@ namespace Weikio.ApiFramework.ApiProviders.PluginFramework
             Action<PluginFrameworkApiProviderOptions> setupAction = null)
         {
             PluginLoadContextOptions.Defaults.UseHostApplicationAssemblies = UseHostApplicationAssembliesEnum.Always;
-            
+
             builder.Services.Replace(ServiceDescriptor.Singleton<IApiProvider>(services =>
             {
                 var configurationOptions = services.GetService<IOptions<PluginFrameworkApiProviderOptions>>();
                 var initializationWrapper = services.GetService<IApiInitializationWrapper>();
                 var healthCheckWrapper = services.GetService<IApiHealthCheckWrapper>();
                 var logger = services.GetService<ILogger<PluginFrameworkApiProvider>>();
-
+                var apiPlugins = services.GetServices<ApiPlugin>();
+                var apiPluginOptions = services.GetService<IOptions<ApiPluginOptions>>().Value;
+                
                 PluginFrameworkApiProviderOptions options = null;
 
                 if (configurationOptions != null)
@@ -42,7 +46,23 @@ namespace Weikio.ApiFramework.ApiProviders.PluginFramework
                 // TODO: Replace with interface/DI based solution
                 ApiLocator.IsApi = options.ApiResolver;
 
-                var registeredCatalogs = GetRegisteredPluginCatalogs(services);
+                var registeredPluginCatalogs = GetRegisteredPluginCatalogs(services);
+                var registeredCatalogs = new List<IPluginCatalog>(registeredPluginCatalogs);
+
+                // if (plugins?.Any() == true)
+                // {
+                //     foreach (var apiPlugin in plugins)
+                //     {
+                //         var catalog = new AssemblyPluginCatalog(apiPlugin.Assembly);
+                //         registeredCatalogs.Add(catalog);
+                //     }
+                // }
+
+                foreach (var apiPluginAssembly in apiPluginOptions.ApiPluginAssemblies)
+                {
+                    var catalog = new AssemblyPluginCatalog(apiPluginAssembly);
+                    registeredCatalogs.Add(catalog);
+                }
 
                 var exporter = services.GetService<IPluginExporter>();
 
@@ -80,7 +100,8 @@ namespace Weikio.ApiFramework.ApiProviders.PluginFramework
 
                     if (!registeredCatalogs.Any())
                     {
-                        var apiProvider = new PluginFrameworkApiProvider(pluginCatalog, exporter, initializationWrapper, healthCheckWrapper, logger);
+                        var apiProvider =
+                            new PluginFrameworkApiProvider(pluginCatalog, exporter, initializationWrapper, healthCheckWrapper, logger);
 
                         return apiProvider;
                     }
@@ -93,7 +114,8 @@ namespace Weikio.ApiFramework.ApiProviders.PluginFramework
                             compositeCatalog.AddCatalog(catalog);
                         }
 
-                        var apiProvider = new PluginFrameworkApiProvider(compositeCatalog, exporter, initializationWrapper, healthCheckWrapper, logger);
+                        var apiProvider = new PluginFrameworkApiProvider(compositeCatalog, exporter, initializationWrapper, healthCheckWrapper, logger
+                            );
 
                         return apiProvider;
                     }
@@ -101,7 +123,7 @@ namespace Weikio.ApiFramework.ApiProviders.PluginFramework
 
                 if (registeredCatalogs.Any())
                 {
-                    var compositeCatalog = new CompositePluginCatalog(registeredCatalogs);
+                    var compositeCatalog = new CompositePluginCatalog(registeredCatalogs.ToArray());
 
                     return new PluginFrameworkApiProvider(compositeCatalog, exporter, initializationWrapper, healthCheckWrapper, logger);
                 }

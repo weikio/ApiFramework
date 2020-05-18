@@ -6,6 +6,7 @@ using System.Runtime.CompilerServices;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
+using Weikio.ApiFramework.SDK;
 
 namespace Weikio.ApiFramework.Abstractions
 {

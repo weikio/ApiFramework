@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Logging;
 using Weikio.ApiFramework.Abstractions;
+using Weikio.ApiFramework.SDK;
 using Weikio.PluginFramework.Abstractions;
 using Weikio.PluginFramework.Catalogs;
 
@@ -39,6 +40,7 @@ namespace Weikio.ApiFramework.ApiProviders.PluginFramework
 
             // TODO: Make sure that cancellation token can be passed to initialize
             await _pluginCatalog.Initialize();
+  
             IsInitialized = true;
 
             _logger.LogDebug("PluginFrameworkApiProvider initialized");

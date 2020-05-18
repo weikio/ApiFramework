@@ -62,26 +62,26 @@ namespace Weikio.ApiFramework.Samples.Admin
                 });
             });
 
-            services.AddApiFramework(options =>
-                {
-                    options.AutoResolveEndpoints = false;
-                    options.AutoResolveApis = false;
-                })
-                .AddApi(typeof(ApiFactory))
-                .AddApi(typeof(HelloWorldApi))
-                .AddApi(typeof(NewJsonApi))
-                .AddApi(typeof(OldJsonApi))
-                .AddApi(typeof(Weikio.ApiFramework.Plugins.DynamicHelloWorld.ApiFactory))
-                .AddApi(typeof(SometimesWorkingApi))
-                .AddEndpoint("/sometimesworks", "HealthCheck")
-                .AddEndpoint("/notworking", "Broken", healthCheck: new CustomHealthCheck())
-                .AddEndpoint("/working", "HelloWorld", new { HelloString = "Fast Hellou!!!" })
-                .AddEndpoint("/working2", "HelloWorld", new { HelloString = "Another configuration Hellou!!!" })
-                .AddAdmin(options =>
-                {
-                    options.EndpointApiPolicy = "custom";
-                    options.EndpointAdminRouteRoot = "myadmin/here/itis";
-                });
+            // services.AddApiFramework(options =>
+            //     {
+            //         options.AutoResolveEndpoints = false;
+            //         options.AutoResolveApis = false;
+            //     })
+            //     .AddApi(typeof(ApiFactory))
+            //     .AddApi(typeof(HelloWorldApi))
+            //     .AddApi(typeof(NewJsonApi))
+            //     .AddApi(typeof(OldJsonApi))
+            //     .AddApi(typeof(Weikio.ApiFramework.Plugins.DynamicHelloWorld.ApiFactory))
+            //     .AddApi(typeof(SometimesWorkingApi))
+            //     .AddEndpoint("/sometimesworks", "HealthCheck")
+            //     .AddEndpoint("/notworking", "Broken", healthCheck: new CustomHealthCheck())
+            //     .AddEndpoint("/working", "HelloWorld", new { HelloString = "Fast Hellou!!!" })
+            //     .AddEndpoint("/working2", "HelloWorld", new { HelloString = "Another configuration Hellou!!!" })
+            //     .AddAdmin(options =>
+            //     {
+            //         options.EndpointApiPolicy = "custom";
+            //         options.EndpointAdminRouteRoot = "myadmin/here/itis";
+            //     });
 
             services.AddOpenApiDocument(document =>
             {

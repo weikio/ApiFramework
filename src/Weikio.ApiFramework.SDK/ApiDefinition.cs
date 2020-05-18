@@ -1,10 +1,14 @@
 ﻿using System;
 using System.Text;
 
-namespace Weikio.ApiFramework.Abstractions
+namespace Weikio.ApiFramework.SDK
 {
     public class ApiDefinition
     {
+        public ApiDefinition()
+        {
+        }
+
         public ApiDefinition(string name, Version version)
         {
             Name = name;

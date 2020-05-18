@@ -3,6 +3,7 @@ using System.Net.Http;
 using CodeConfiguration;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Weikio.ApiFramework.Abstractions;
+using Weikio.ApiFramework.Abstractions.DependencyInjection;
 using Weikio.ApiFramework.AspNetCore;
 using Xunit;
 

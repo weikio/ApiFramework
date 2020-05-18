@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using Weikio.ApiFramework.SDK;
 
 namespace Weikio.ApiFramework.Abstractions
 {

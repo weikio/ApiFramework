@@ -9,6 +9,7 @@ using Weikio.ApiFramework.Core.Configuration;
 using Weikio.ApiFramework.Core.Endpoints;
 using Weikio.ApiFramework.Core.HealthChecks;
 using Weikio.ApiFramework.Core.StartupTasks;
+using Weikio.ApiFramework.SDK;
 using Weikio.AspNetCore.Common;
 
 namespace Weikio.ApiFramework.Core.Infrastructure

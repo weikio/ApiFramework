@@ -3,6 +3,7 @@ using System.Reflection;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Weikio.ApiFramework.Abstractions;
+using Weikio.ApiFramework.Abstractions.DependencyInjection;
 using Weikio.ApiFramework.Core.Configuration;
 using Weikio.ApiFramework.Core.Extensions;
 using Weikio.ApiFramework.ApiProviders.PluginFramework;

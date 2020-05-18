@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Weikio.ApiFramework.Abstractions;
 using Weikio.ApiFramework.Core.Endpoints;
+using Weikio.ApiFramework.SDK;
 
 namespace RuntimeConfiguration.Pages
 {

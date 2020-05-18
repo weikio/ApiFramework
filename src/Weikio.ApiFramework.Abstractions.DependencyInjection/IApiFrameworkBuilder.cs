@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 
-namespace Weikio.ApiFramework.Abstractions
+namespace Weikio.ApiFramework.Abstractions.DependencyInjection
 {
     public interface IApiFrameworkBuilder
     {

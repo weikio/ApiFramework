@@ -33,7 +33,9 @@
   </ItemGroup>
   
   <ItemGroup>
+    <ProjectReference Include="..\Weikio.ApiFramework.Abstractions.DependencyInjection\Weikio.ApiFramework.Abstractions.DependencyInjection.csproj" />
     <ProjectReference Include="..\Weikio.ApiFramework.Abstractions\Weikio.ApiFramework.Abstractions.csproj" />
+    <ProjectReference Include="..\Weikio.ApiFramework.SDK\Weikio.ApiFramework.SDK.csproj" />
   </ItemGroup>
   
   <ItemGroup>

@@ -10,12 +10,14 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Options;
 using Weikio.ApiFramework.Abstractions;
+using Weikio.ApiFramework.Abstractions.DependencyInjection;
 using Weikio.ApiFramework.Core.Apis;
 using Weikio.ApiFramework.Core.Configuration;
 using Weikio.ApiFramework.Core.Endpoints;
 using Weikio.ApiFramework.Core.HealthChecks;
 using Weikio.ApiFramework.Core.Infrastructure;
 using Weikio.ApiFramework.Core.StartupTasks;
+using Weikio.ApiFramework.SDK;
 using Weikio.AspNetCore.Common;
 using Weikio.AspNetCore.StartupTasks;
 

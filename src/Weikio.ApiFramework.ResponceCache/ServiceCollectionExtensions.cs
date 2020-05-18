@@ -2,6 +2,7 @@ using System;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Weikio.ApiFramework.Abstractions;
+using Weikio.ApiFramework.Abstractions.DependencyInjection;
 
 namespace Weikio.ApiFramework.ResponceCache
 {

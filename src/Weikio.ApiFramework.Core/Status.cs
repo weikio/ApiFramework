@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using Weikio.ApiFramework.Abstractions;
 using Weikio.ApiFramework.Core.Endpoints;
+using Weikio.ApiFramework.SDK;
 
 namespace Weikio.ApiFramework.Core
 {

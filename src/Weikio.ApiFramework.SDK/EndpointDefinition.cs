@@ -1,7 +1,6 @@
-﻿using System.Collections.Generic;
-using Microsoft.Extensions.Diagnostics.HealthChecks;
+﻿using Microsoft.Extensions.Diagnostics.HealthChecks;
 
-namespace Weikio.ApiFramework.Abstractions
+namespace Weikio.ApiFramework.SDK
 {
     public class EndpointDefinition
     {

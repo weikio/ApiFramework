@@ -3,6 +3,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Weikio.ApiFramework.Abstractions;
 using Weikio.ApiFramework.Core.Configuration;
+using Weikio.ApiFramework.SDK;
 
 namespace Weikio.ApiFramework.Core.Extensions
 {

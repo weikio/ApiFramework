@@ -34,5 +34,9 @@
     <None Include="../../docs/logo_256.png" Pack="true" Visible="false" PackagePath="" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Weikio.ApiFramework.SDK\Weikio.ApiFramework.SDK.csproj" />
+  </ItemGroup>
+
 
 </Project>

@@ -7,6 +7,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Weikio.ApiFramework.AspNetCore;
 using Weikio.ApiFramework.Core.Extensions;
+using Weikio.ApiFramework.Plugins.Soap;
 
 namespace Weikio.ApiFramework.Samples.CodeConfiguration
 {
@@ -34,23 +35,64 @@ namespace Weikio.ApiFramework.Samples.CodeConfiguration
 //                options.AutoResolveEndpoints = false;
 //            });
 
-            services.AddApiFramework(options =>
-                {
-                    options.AutoResolveEndpoints = false;
-                    options.ApiAddressBase = "/myapi";
 
+            var apiFrameworkBuilder = services.AddApiFramework(options =>
+            {
+                options.AutoResolveApis = false;
+                options.AutoResolveEndpoints = false;
+            });
+
+            services.AddSoapApi("/soaptest", "http://localhost:54533/Service1.svc");
+            
+                // }).AddApi(typeof(ApiFactory))
+                // .AddEndpoint("/soaptest", "Weikio.ApiFramework.Plugins.Soap.ApiFactory",
+                //     configuration: new
+                //     {
+                //         soapOptions = new SoapOptions()
+                //         {
+                //             WsdlLocation = "http://localhost:54533/Service1.svc"
+                //         }
+                //     });
+
+//             services.AddApiFramework(options =>
+//                 {
+//                     options.AutoResolveEndpoints = false;
+//                     options.ApiAddressBase = "/myapi";
+//                     options.AutoResolveApis = false;
 //
-//                options.Endpoints = new List<(string Route, string FunctionAssemblyName, object Configuration)>()
-//                {
-//                    ("/test", "Weikio.ApiFramework.Plugins.HelloWorld", new {HelloString = "Hey there from first configuration"}),
-//                    ("/otherEndpoint", "Weikio.ApiFramework.Plugins.HelloWorld", new {HelloString = "This is the second configuration"}),
-//                };
-                })
-                .AddEndpoint("/withhealth", "Weikio.ApiFramework.Plugins.HealthCheck");
-
-//                .AddEndpoint("/test", "Weikio.ApiFramework.Plugins.HelloWorld", new {HelloString = "Hey there from first configuration"})
-//                .AddEndpoint("/otherEndpoint", "Weikio.ApiFramework.Plugins.HelloWorld", new {HelloString = "This is the second configuration"});
-            ;
+// //
+// //                options.Endpoints = new List<(string Route, string FunctionAssemblyName, object Configuration)>()
+// //                {
+// //                    ("/test", "Weikio.ApiFramework.Plugins.HelloWorld", new {HelloString = "Hey there from first configuration"}),
+// //                    ("/otherEndpoint", "Weikio.ApiFramework.Plugins.HelloWorld", new {HelloString = "This is the second configuration"}),
+// //                };
+//                 })
+//                 
+//                 // .AddEndpoint("/withhealth", "Weikio.ApiFramework.Plugins.HealthCheck");
+//
+// //                .AddEndpoint("/test", "Weikio.ApiFramework.Plugins.HelloWorld", new {HelloString = "Hey there from first configuration"})
+// //                .AddEndpoint("/otherEndpoint", "Weikio.ApiFramework.Plugins.HelloWorld", new {HelloString = "This is the second configuration"});
+//                 ;
+            
+//             services.AddApiFramework(options =>
+//                 {
+//                     options.AutoResolveEndpoints = false;
+//                     options.ApiAddressBase = "/myapi";
+//                     options.AutoResolveApis = false;
+//
+// //
+// //                options.Endpoints = new List<(string Route, string FunctionAssemblyName, object Configuration)>()
+// //                {
+// //                    ("/test", "Weikio.ApiFramework.Plugins.HelloWorld", new {HelloString = "Hey there from first configuration"}),
+// //                    ("/otherEndpoint", "Weikio.ApiFramework.Plugins.HelloWorld", new {HelloString = "This is the second configuration"}),
+// //                };
+//                 })
+//                 
+//                 // .AddEndpoint("/withhealth", "Weikio.ApiFramework.Plugins.HealthCheck");
+//
+// //                .AddEndpoint("/test", "Weikio.ApiFramework.Plugins.HelloWorld", new {HelloString = "Hey there from first configuration"})
+// //                .AddEndpoint("/otherEndpoint", "Weikio.ApiFramework.Plugins.HelloWorld", new {HelloString = "This is the second configuration"});
+//             ;
 
 //            services.AddFunctionFrameworkCore(Configuration, mvcBuilder, options =>
 //            {

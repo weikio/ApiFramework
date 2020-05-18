@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Weikio.ApiFramework.Abstractions;
+using Weikio.ApiFramework.SDK;
 
 namespace Weikio.ApiFramework.Core.Apis
 {
