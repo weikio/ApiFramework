@@ -36,16 +36,16 @@ namespace Weikio.ApiFramework.SDK
             return services;
         }
 
-        public static IApiFrameworkBuilder RegisterEndpoint(this IApiFrameworkBuilder apiFrameworkBuilder, string route, object configuration = null, IHealthCheck healthCheck = null, string group = null)
+        public static IApiFrameworkBuilder RegisterEndpoint(this IApiFrameworkBuilder apiFrameworkBuilder, string route, string pluginName, object configuration = null, IHealthCheck healthCheck = null, string group = null)
         {
-            apiFrameworkBuilder.Services.RegisterEndpoint(route, configuration, healthCheck, group);
+            apiFrameworkBuilder.Services.RegisterEndpoint(route, pluginName, configuration, healthCheck, group);
 
             return apiFrameworkBuilder;
         }
         
-        public static IServiceCollection RegisterEndpoint(this IServiceCollection services, string route, object configuration = null, IHealthCheck healthCheck = null, string group = null)
+        public static IServiceCollection RegisterEndpoint(this IServiceCollection services, string route, string pluginName, object configuration = null, IHealthCheck healthCheck = null, string group = null)
         {
-            var endpointDefinition = new EndpointDefinition(route, "Weikio.ApiFramework.Plugins.Soap", configuration, healthCheck, group);
+            var endpointDefinition = new EndpointDefinition(route, pluginName , configuration, healthCheck, group);
             services.AddSingleton<IEndpointConfigurationProvider>(provider => new PluginEndpointConfigurationProvider(endpointDefinition));
             
             return services;
