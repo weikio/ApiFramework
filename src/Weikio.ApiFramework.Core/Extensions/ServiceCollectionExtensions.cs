@@ -86,6 +86,7 @@ namespace Weikio.ApiFramework.Core.Extensions
             services.TryAddSingleton<IEndpointGroupNameProvider, EndpointGroupNameProvider>();
             services.TryAddSingleton<IDefaultEndpointGroupNameProvider, DefaultEndpointGroupNameProvider>();
             builder.Services.TryAddEnumerable(ServiceDescriptor.Transient<IApiDescriptionProvider, EndpointGroupNameDescriptor>());
+            builder.Services.TryAddEnumerable(ServiceDescriptor.Transient<IApiDescriptionProvider, ApiFileResponseTypeDescriptor>());
 
             builder.Services.TryAddEnumerable(ServiceDescriptor.Singleton<IHealthCheckPublisher, HealthPublisher>());
 

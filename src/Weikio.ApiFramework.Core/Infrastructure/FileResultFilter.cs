@@ -17,7 +17,8 @@ namespace Weikio.ApiFramework.Core.Infrastructure
         private readonly IEnumerable<IFileStreamResultConverter> _fileResultConverters;
         private readonly ApiFrameworkOptions _options;
 
-        public FileResultFilter(ILogger<FileResultFilter> logger, IEnumerable<IFileStreamResultConverter> fileResultConverters, IOptions<ApiFrameworkOptions> options)
+        public FileResultFilter(ILogger<FileResultFilter> logger, IEnumerable<IFileStreamResultConverter> fileResultConverters, 
+            IOptions<ApiFrameworkOptions> options)
         {
             _logger = logger;
             _fileResultConverters = fileResultConverters;
