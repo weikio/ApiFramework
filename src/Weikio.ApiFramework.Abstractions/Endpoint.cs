@@ -60,6 +60,12 @@ namespace Weikio.ApiFramework.Abstractions
 
             GroupName = groupName;
             Name = name;
+
+            if (string.IsNullOrWhiteSpace(Name))
+            {
+                Name = route.Trim('/');
+            }
+            
             Description = description;
             Tags = tags;
         }

@@ -21,7 +21,7 @@ namespace ApiFramework.IntegrationTests
             var server = Init(builder =>
             {
                 builder.AddApi(typeof(HelloWorldApi));
-                builder.AddEndpoint("/mytest", "HelloWorld");
+                builder.AddEndpoint("/mytest", "HelloWorld.HelloWorldApi");
             });
 
             // Act 
@@ -37,7 +37,7 @@ namespace ApiFramework.IntegrationTests
             var server = Init(builder =>
             {
                 builder.AddApi(typeof(HelloWorldMultipleApi));
-                builder.AddEndpoint("/mytest", "HelloWorld");
+                builder.AddEndpoint("/mytest", "HelloWorld.HelloWorldMultipleApi");
             });
 
             // Act 
@@ -55,7 +55,7 @@ namespace ApiFramework.IntegrationTests
             var server = Init(builder =>
             {
                 builder.AddApi(typeof(HelloWorldParameterApi));
-                builder.AddEndpoint("/mytest", "HelloWorld");
+                builder.AddEndpoint("/mytest", "HelloWorld.HelloWorldParameterApi");
             });
 
             // Act 
@@ -71,7 +71,7 @@ namespace ApiFramework.IntegrationTests
             var server = Init(builder =>
             {
                 builder.AddApi(typeof(HelloWorldPostApi));
-                builder.AddEndpoint("/mytest", "HelloWorld");
+                builder.AddEndpoint("/mytest", "HelloWorld.HelloWorldPostApi");
             });
 
             // Act 
@@ -87,7 +87,7 @@ namespace ApiFramework.IntegrationTests
             var server = Init(builder =>
             {
                 builder.AddApi(typeof(HelloWorldParameterPostApi));
-                builder.AddEndpoint("/mytest", "HelloWorld");
+                builder.AddEndpoint("/mytest", "HelloWorld.HelloWorldParameterPostApi");
             });
 
             // Act 
@@ -104,7 +104,7 @@ namespace ApiFramework.IntegrationTests
             var server = Init(builder =>
                 {
                     builder.AddApi(typeof(HelloWorldApi));
-                    builder.AddEndpoint("/mytest", "HelloWorld");
+                    builder.AddEndpoint("/mytest", "HelloWorld.HelloWorldApi");
                 },
                 options =>
                 {
@@ -124,7 +124,7 @@ namespace ApiFramework.IntegrationTests
             var server = Init(builder =>
             {
                 builder.AddApi(typeof(HelloWorldApi));
-                builder.AddEndpoint("/mytest", "HelloWorld");
+                builder.AddEndpoint("/mytest", "HelloWorld.HelloWorldApi");
             });
 
             // Act 

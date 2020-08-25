@@ -22,7 +22,7 @@ namespace ApiFramework.IntegrationTests
             var server = Init(builder =>
             {
                 builder.AddApi(typeof(ApiFactory));
-                builder.AddEndpoint("/mytest", "HelloWorld");
+                builder.AddEndpoint("/mytest", "HelloWorld.ApiFactory");
             });
 
             // Act 
@@ -56,7 +56,7 @@ namespace ApiFramework.IntegrationTests
             var server = Init(builder =>
             {
                 builder.AddApi(typeof(AnotherHelloWorld.ApiFactory));
-                builder.AddEndpoint("/mytest", "AnotherHelloWorld");
+                builder.AddEndpoint("/mytest", "AnotherHelloWorld.ApiFactory");
             });
 
             // Act 

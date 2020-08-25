@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
@@ -6,6 +8,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Hosting;
+using Weikio.ApiFramework.Abstractions;
+using Weikio.ApiFramework.ApiProviders.PluginFramework;
 using Weikio.ApiFramework.AspNetCore;
 using Weikio.ApiFramework.Core.Extensions;
 using Weikio.ApiFramework.Core.HealthChecks;
@@ -46,8 +50,31 @@ namespace Weikio.ApiFramework.Samples.GeneratedApi
                             }, new EmptyHealthCheck(), "hello" )
                     };
             });
+            
+            services.ConfigureAll<EndpointInitializationOptions>(options =>
+            {
+                options.RetryCount = 5;
+            });
+            
+            services.Configure<EndpointInitializationOptions>("dynamictest", options =>
+            {
+                options.RetryCount = null;
 
+                options.OnBeforeUpdatingInitializationFailedStatus = async (endpoint, exception, retryCount, statusMessage) =>
+                {
+                    if (retryCount == 5)
+                    {
+                        await SendEmail(exception, endpoint);
+                    }
+                };
+            });
+            
             services.AddSwaggerDocument(document => { document.Title = "Api Framework"; });
+        }
+
+        private  Task SendEmail(Exception exception, Endpoint endpoint)
+        {
+            return Task.CompletedTask;
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

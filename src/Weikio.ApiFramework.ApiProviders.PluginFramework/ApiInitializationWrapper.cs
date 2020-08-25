@@ -6,6 +6,7 @@ using System.Reflection;
 using System.Text.Json;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using Polly;
 using Weikio.ApiFramework.Abstractions;
 
@@ -14,10 +15,12 @@ namespace Weikio.ApiFramework.ApiProviders.PluginFramework
     public class ApiInitializationWrapper : IApiInitializationWrapper
     {
         private readonly ILogger<ApiInitializationWrapper> _logger;
+        private readonly IOptionsMonitor<EndpointInitializationOptions> _endpointInitializationOptions;
 
-        public ApiInitializationWrapper(ILogger<ApiInitializationWrapper> logger)
+        public ApiInitializationWrapper(ILogger<ApiInitializationWrapper> logger, IOptionsMonitor<EndpointInitializationOptions> endpointInitializationOptions)
         {
             _logger = logger;
+            _endpointInitializationOptions = endpointInitializationOptions;
         }
 
         public Func<Endpoint, Task<IEnumerable<Type>>> Wrap(List<MethodInfo> initializerMethods)
@@ -27,8 +30,7 @@ namespace Weikio.ApiFramework.ApiProviders.PluginFramework
                 return null;
             }
 
-            // This isn't performance sensitive code as it is usually called only once, when the endpoint is initialized. But try to minimize the dependencies
-            // and remove Dynamitey as it isn't actually needed.
+            // This isn't performance sensitive code as it is usually called only once, when the endpoint is initialized. 
             // Currently it seems that the best way to pass the parameters to the initializer is serializing and deserializing them through System.Text.Json.
             // As the assemblies are loaded into their own AssemblyLoadContext, we can't directly pass any complex type as the compiler thinks they are different.
             async Task<IEnumerable<Type>> InitializerFunc(Endpoint endpoint)
@@ -83,8 +85,6 @@ namespace Weikio.ApiFramework.ApiProviders.PluginFramework
 
                             continue;
                         };
-
-                        
                         
                         if (!configurationDictionary.ContainsKey(methodParameter.Name))
                         {
@@ -113,26 +113,17 @@ namespace Weikio.ApiFramework.ApiProviders.PluginFramework
 
                     try
                     {
-                        // Todo: Retry policy should be configurable
                         var initializationCount = 0;
+                        
+                        var endpointRetryPolicyOptions = _endpointInitializationOptions.Get(endpoint.Name);
 
-                        var retryPolicy = Policy
-                            .Handle<Exception>()
-                            .WaitAndRetryAsync(3, i => TimeSpan.FromSeconds(5), (exception, span, arg3, arg4) =>
-                            {
-                                endpoint.Status.UpdateStatus(EndpointStatusEnum.InitializingFailed,
-                                    "Failed to initialize. Trying again shortly. Error: " + exception);
-                                _logger.LogInformation($"Failed to initialize endpoint with {endpoint.Route}, trying again in {span.TotalSeconds} .");
-                            });
+                        var retryPolicy = endpointRetryPolicyOptions.RetryPolicy(endpointRetryPolicyOptions, endpoint, _logger);
 
                         await retryPolicy.ExecuteAsync(async () =>
                         {
                             initializationCount += 1;
 
-                            if (initializationCount > 1)
-                            {
-                                endpoint.Status.UpdateStatus(EndpointStatusEnum.Initializing, $"Initializing, attempt #{initializationCount}");
-                            }
+                            await endpointRetryPolicyOptions.OnInitialization(endpointRetryPolicyOptions, endpoint, initializationCount, _logger);
 
                             var tOut = (Task<IEnumerable<Type>>) initializerMethod.Invoke(null, arguments.ToArray());
                             var createdApis = await tOut;
@@ -140,7 +131,7 @@ namespace Weikio.ApiFramework.ApiProviders.PluginFramework
                             result.AddRange(createdApis);
                         });
                         
-                        _logger.LogDebug("Initialized {Endpoint} with {Route}", endpoint, endpoint.Route);
+                        await endpointRetryPolicyOptions.OnInitialized(endpointRetryPolicyOptions, endpoint, _logger);
                     }
                     catch (Exception e)
                     {
