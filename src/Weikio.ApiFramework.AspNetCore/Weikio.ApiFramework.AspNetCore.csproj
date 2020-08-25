@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
@@ -30,7 +30,7 @@
 
   <ItemGroup>
     <PackageReference Include="MinVer" Version="2.0.0" />
-    <PackageReference Include="Weikio.PluginFramework" Version="1.0.0-alpha.*" />
+    <PackageReference Include="Weikio.PluginFramework" Version="1.0.0-alpha.0.17" />
   </ItemGroup>
   
   <ItemGroup>
