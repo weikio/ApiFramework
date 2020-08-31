@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.Json;
@@ -94,7 +94,7 @@ namespace Weikio.ApiFramework.Core.Infrastructure
                                 configProperty.SetValue(obj, convertedConfigValue);
                             }));
                         }
-                        else if (endpoint.Configuration is IDictionary<string, object> dictionary && dictionary.Count > 1)
+                        else if (endpoint.Configuration is IDictionary<string, object> dictionary && dictionary.Count >= 1)
                         {
                             // If we have configuration for the endpoint but no Configuration-property in the Api, go through the configuration's keys one by one
                             var controllerProperties = controller.ControllerType.GetProperties().ToList();
