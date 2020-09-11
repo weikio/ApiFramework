@@ -7,12 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Polly;
-using Weikio.ApiFramework.Abstractions;
-using Weikio.ApiFramework.ApiProviders.PluginFramework;
 using Weikio.ApiFramework.AspNetCore;
-using Weikio.ApiFramework.Core.Extensions;
-using Weikio.ApiFramework.Plugins.Soap;
 
 namespace Weikio.ApiFramework.Samples.CodeConfiguration
 {
@@ -47,7 +42,6 @@ namespace Weikio.ApiFramework.Samples.CodeConfiguration
                 options.AutoResolveEndpoints = false;
             });
 
-            services.AddSoapApi("/soaptest", "http://localhost:54533/Service1.svc");
             
                 // }).AddApi(typeof(ApiFactory))
                 // .AddEndpoint("/soaptest", "Weikio.ApiFramework.Plugins.Soap.ApiFactory",
