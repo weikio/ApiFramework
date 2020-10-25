@@ -1,9 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using System.Runtime.CompilerServices;
-using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Weikio.ApiFramework.SDK;
@@ -23,6 +19,7 @@ namespace Weikio.ApiFramework.Abstractions
         public string[] Tags { get; }
         public IHealthCheck HealthCheck { get; private set; }
         public EndpointStatus Status { get; }
+        public List<object> ExtendedMetadata { get; private set; }
 
         public override string ToString()
         {
@@ -93,6 +90,12 @@ namespace Weikio.ApiFramework.Abstractions
                 Status.UpdateStatus(EndpointStatusEnum.Failed, "Failed: " + e);
             }
         }
+
+        public void SetExtendedMetadata(List<object> metadata)
+        {
+            ExtendedMetadata = metadata;
+        }
+        
 
         private async Task<List<Type>> InitializeApi()
         {

@@ -87,11 +87,11 @@ namespace Weikio.ApiFramework.Core.Infrastructure
                         {
                             // Create configuration setter delegate. This is executed from <see cref="ApiConfigurationActionFilter"/>
                             var convertedConfigValue = JsonSerializer.Deserialize(JsonSerializer.Serialize(endpointConfiguration), configProperty.PropertyType);
-                            item.EndpointMetadata.Add(convertedConfigValue);
+                            item.EndpointMetadata.Add(endpointConfiguration);
 
                             item.EndpointMetadata.Add(new Action<object>(obj =>
                             {
-                                configProperty.SetValue(obj, convertedConfigValue);
+                                configProperty.SetValue(obj, endpointConfiguration);
                             }));
                         }
                         else if (endpoint.Configuration is IDictionary<string, object> dictionary && dictionary.Count > 1)
@@ -134,6 +134,14 @@ namespace Weikio.ApiFramework.Core.Infrastructure
                         {
                             // We don't know what to do with the configuration.
                             // TODO: Throw?
+                        }
+                    }
+
+                    if (endpoint?.ExtendedMetadata?.Any() == true)
+                    {
+                        foreach (var o in endpoint.ExtendedMetadata)
+                        {
+                            item.EndpointMetadata.Add(o);
                         }
                     }
 

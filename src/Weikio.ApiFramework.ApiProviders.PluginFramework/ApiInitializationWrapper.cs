@@ -5,6 +5,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text.Json;
 using System.Threading.Tasks;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Polly;
@@ -16,11 +17,13 @@ namespace Weikio.ApiFramework.ApiProviders.PluginFramework
     {
         private readonly ILogger<ApiInitializationWrapper> _logger;
         private readonly IOptionsMonitor<EndpointInitializationOptions> _endpointInitializationOptions;
+        private readonly IServiceProvider _serviceProvider;
 
-        public ApiInitializationWrapper(ILogger<ApiInitializationWrapper> logger, IOptionsMonitor<EndpointInitializationOptions> endpointInitializationOptions)
+        public ApiInitializationWrapper(ILogger<ApiInitializationWrapper> logger, IOptionsMonitor<EndpointInitializationOptions> endpointInitializationOptions, IServiceProvider serviceProvider)
         {
             _logger = logger;
             _endpointInitializationOptions = endpointInitializationOptions;
+            _serviceProvider = serviceProvider;
         }
 
         public Func<Endpoint, Task<IEnumerable<Type>>> Wrap(List<MethodInfo> initializerMethods)
@@ -44,20 +47,20 @@ namespace Weikio.ApiFramework.ApiProviders.PluginFramework
 
                 var result = new List<Type>();
 
-                IDictionary<string, object> configurationDictionary;
+                IDictionary<string, object> configurationDictionary = null;
 
                 if (endpoint.Configuration is IDictionary<string, object> configuration)
                 {
                     configurationDictionary = configuration;
                 }
-                else if (endpoint.Configuration != null)
-                {
-                    configurationDictionary =
-                        new Dictionary<string, object>(
-                            JsonSerializer.Deserialize<Dictionary<string, object>>(
-                                JsonSerializer.Serialize(endpoint.Configuration)), StringComparer.InvariantCultureIgnoreCase);
-                }
-                else
+                // else if (endpoint.Configuration != null)
+                // {
+                //     configurationDictionary =
+                //         new Dictionary<string, object>(
+                //             JsonSerializer.Deserialize<Dictionary<string, object>>(
+                //                 JsonSerializer.Serialize(endpoint.Configuration)), StringComparer.InvariantCultureIgnoreCase);
+                // }
+                else if (endpoint.Configuration == null)
                 {
                     configurationDictionary = new Dictionary<string, object>();
                 }
@@ -78,37 +81,49 @@ namespace Weikio.ApiFramework.ApiProviders.PluginFramework
                         };
                         
                         if (string.Equals(methodParameter.Name, "configuration", StringComparison.InvariantCultureIgnoreCase) &&
-                            methodParameter.ParameterType != typeof(string))
+                            methodParameter.ParameterType != typeof(string) && endpoint.Configuration != null)
                         {
-                            var arg = JsonSerializer.Deserialize(JsonSerializer.Serialize(configurationDictionary), methodParameter.ParameterType);
-                            arguments.Add(arg);
+                            if (configurationDictionary == null)
+                            {
+                                arguments.Add(endpoint.Configuration);
 
-                            continue;
+                                continue;
+                            }
+                            else
+                            {
+                                var arg = JsonSerializer.Deserialize(JsonSerializer.Serialize(configurationDictionary), methodParameter.ParameterType);
+                                arguments.Add(arg);
+
+                                continue;
+                            }
                         };
-                        
-                        if (!configurationDictionary.ContainsKey(methodParameter.Name))
+
+                        if (configurationDictionary != null)
                         {
-                            arguments.Add(GetDefaultValue(methodParameter.ParameterType));
+                            if (!configurationDictionary.ContainsKey(methodParameter.Name))
+                            {
+                                arguments.Add(GetDefaultValue(methodParameter.ParameterType));
 
-                            continue;
-                        }
+                                continue;
+                            }
 
-                        var configurationValue = configurationDictionary[methodParameter.Name];
+                            var configurationValue = configurationDictionary[methodParameter.Name];
 
-                        if (configurationValue is string)
-                        {
-                            var configurationValueAsMethodParameterType = Convert.ChangeType(configurationValue, methodParameter.ParameterType);
-                            arguments.Add(configurationValueAsMethodParameterType);
+                            if (configurationValue is string)
+                            {
+                                var configurationValueAsMethodParameterType = Convert.ChangeType(configurationValue, methodParameter.ParameterType);
+                                arguments.Add(configurationValueAsMethodParameterType);
                             
-                            continue;
+                                continue;
+                            }
+                            
+                            var json = JsonSerializer.Serialize(configurationValue);
+
+                            var obj = JsonSerializer.Deserialize(json, methodParameter.ParameterType,
+                                new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+
+                            arguments.Add(obj);
                         }
-
-                        var json = JsonSerializer.Serialize(configurationValue);
-
-                        var obj = JsonSerializer.Deserialize(json, methodParameter.ParameterType,
-                            new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
-
-                        arguments.Add(obj);
                     }
 
                     try
@@ -126,8 +141,19 @@ namespace Weikio.ApiFramework.ApiProviders.PluginFramework
                             await endpointRetryPolicyOptions.OnInitialization(endpointRetryPolicyOptions, endpoint, initializationCount, _logger);
 
                             var tOut = (Task<IEnumerable<Type>>) initializerMethod.Invoke(null, arguments.ToArray());
-                            var createdApis = await tOut;
+                            var createdApis = (await tOut).ToList();
 
+                            foreach (var createdApi in createdApis)
+                            {
+                                if (typeof(IEndpointMetadataExtender).IsAssignableFrom(createdApi))
+                                {
+                                    var apiInstance = (IEndpointMetadataExtender) ActivatorUtilities.CreateInstance(_serviceProvider, createdApi);
+                                    var extendedMetadata = await apiInstance.GetMetadata(endpoint);
+                                    
+                                    endpoint.SetExtendedMetadata(extendedMetadata);
+                                }
+                            }
+                            
                             result.AddRange(createdApis);
                         });
                         

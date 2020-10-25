@@ -20,16 +20,16 @@ namespace Weikio.ApiFramework.ApiProviders.PluginFramework
     {
         private readonly IPluginCatalog _pluginCatalog;
         private readonly IPluginExporter _exporter;
-        private readonly IApiInitializationWrapper _initializationWrapper;
+        private readonly IApiInitializationWrapper _factoryWrapper;
         private readonly IApiHealthCheckWrapper _healthCheckWrapper;
         private readonly ILogger<PluginFrameworkApiProvider> _logger;
 
-        public PluginFrameworkApiProvider(IPluginCatalog pluginCatalog, IPluginExporter exporter, IApiInitializationWrapper initializationWrapper,
+        public PluginFrameworkApiProvider(IPluginCatalog pluginCatalog, IPluginExporter exporter, IApiInitializationWrapper factoryWrapper,
             IApiHealthCheckWrapper healthCheckWrapper, ILogger<PluginFrameworkApiProvider> logger)
         {
             _pluginCatalog = pluginCatalog;
             _exporter = exporter;
-            _initializationWrapper = initializationWrapper;
+            _factoryWrapper = factoryWrapper;
             _healthCheckWrapper = healthCheckWrapper;
             _logger = logger;
         }
@@ -172,9 +172,9 @@ namespace Weikio.ApiFramework.ApiProviders.PluginFramework
 
             var initializerMethods = new List<MethodInfo>();
 
-            foreach (var initializerType in initializersTypes)
+            foreach (var factoryTypes in initializersTypes)
             {
-                initializerMethods.AddRange(initializerType.GetMethods()
+                initializerMethods.AddRange(factoryTypes.GetMethods()
                     .Where(m => m.IsStatic && typeof(Task<IEnumerable<Type>>).IsAssignableFrom(m.ReturnType)));
             }
 
@@ -185,11 +185,11 @@ namespace Weikio.ApiFramework.ApiProviders.PluginFramework
                 healthCheckFactoryMethod = healthCheckType.GetMethods().First(m => m.IsStatic && typeof(Task<IHealthCheck>).IsAssignableFrom(m.ReturnType));
             }
 
-            var initializer = _initializationWrapper.Wrap(initializerMethods);
+            var factory = _factoryWrapper.Wrap(initializerMethods);
             var healthCheckRunner = _healthCheckWrapper.Wrap(healthCheckFactoryMethod);
 
             var result = new Api(definition, plugin.PluginTypes.Where(x => x.Tag == "Api").Select(x => x.Type).ToList(),
-                initializer, healthCheckRunner);
+                factory, healthCheckRunner);
             
             _logger.LogDebug("Got {Api} from {ApiDefinition}", result, definition);
 
