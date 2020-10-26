@@ -19,7 +19,7 @@ namespace Weikio.ApiFramework.Abstractions
         public string[] Tags { get; }
         public IHealthCheck HealthCheck { get; private set; }
         public EndpointStatus Status { get; }
-        public List<object> ExtendedMetadata { get; private set; }
+        public List<object> Metadata { get; private set; } = new List<object>();
 
         public override string ToString()
         {
@@ -91,9 +91,9 @@ namespace Weikio.ApiFramework.Abstractions
             }
         }
 
-        public void SetExtendedMetadata(List<object> metadata)
+        public void AddMetadata(object metadata)
         {
-            ExtendedMetadata = metadata;
+            Metadata.Add(metadata);
         }
         
 

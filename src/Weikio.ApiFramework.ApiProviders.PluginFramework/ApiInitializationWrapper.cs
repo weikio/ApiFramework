@@ -148,9 +148,12 @@ namespace Weikio.ApiFramework.ApiProviders.PluginFramework
                                 if (typeof(IEndpointMetadataExtender).IsAssignableFrom(createdApi))
                                 {
                                     var apiInstance = (IEndpointMetadataExtender) ActivatorUtilities.CreateInstance(_serviceProvider, createdApi);
-                                    var extendedMetadata = await apiInstance.GetMetadata(endpoint);
-                                    
-                                    endpoint.SetExtendedMetadata(extendedMetadata);
+                                    var endpointMetadata = await apiInstance.GetMetadata(endpoint);
+
+                                    foreach (var metadata in endpointMetadata)
+                                    {
+                                        endpoint.AddMetadata(metadata);
+                                    }
                                 }
                             }
                             

@@ -14,11 +14,13 @@ namespace Weikio.ApiFramework.Core.Infrastructure
     public class ApiControllerConvention : IControllerModelConvention
     {
         private readonly EndpointManager _endpointManager;
+        private readonly IEndpointRouteTemplateProvider _endpointRouteTemplateProvider;
         private readonly ApiFrameworkOptions _options;
 
-        public ApiControllerConvention(EndpointManager endpointManager, IOptions<ApiFrameworkOptions> options)
+        public ApiControllerConvention(EndpointManager endpointManager, IOptions<ApiFrameworkOptions> options, IEndpointRouteTemplateProvider endpointRouteTemplateProvider)
         {
             _endpointManager = endpointManager;
+            _endpointRouteTemplateProvider = endpointRouteTemplateProvider;
             _options = options.Value;
         }
 
@@ -57,7 +59,7 @@ namespace Weikio.ApiFramework.Core.Infrastructure
 
                 foreach (var endpoint in apiController.Endpoints)
                 {
-                    var template = GetRouteTemplate(endpoint.Route);
+                    var template = _endpointRouteTemplateProvider.GetRouteTemplate(endpoint);
 
                     if (controllerNameParts.Length > 1)
                     {
@@ -86,7 +88,7 @@ namespace Weikio.ApiFramework.Core.Infrastructure
                         if (configProperty != null)
                         {
                             // Create configuration setter delegate. This is executed from <see cref="ApiConfigurationActionFilter"/>
-                            var convertedConfigValue = JsonSerializer.Deserialize(JsonSerializer.Serialize(endpointConfiguration), configProperty.PropertyType);
+                            // var convertedConfigValue = JsonSerializer.Deserialize(JsonSerializer.Serialize(endpointConfiguration), configProperty.PropertyType);
                             item.EndpointMetadata.Add(endpointConfiguration);
 
                             item.EndpointMetadata.Add(new Action<object>(obj =>
@@ -137,9 +139,9 @@ namespace Weikio.ApiFramework.Core.Infrastructure
                         }
                     }
 
-                    if (endpoint?.ExtendedMetadata?.Any() == true)
+                    if (endpoint?.Metadata?.Any() == true)
                     {
-                        foreach (var o in endpoint.ExtendedMetadata)
+                        foreach (var o in endpoint.Metadata)
                         {
                             item.EndpointMetadata.Add(o);
                         }
@@ -150,26 +152,6 @@ namespace Weikio.ApiFramework.Core.Infrastructure
 
                 controller.ApiExplorer = new ApiExplorerModel { IsVisible = true, GroupName = "api_framework_endpoint" };
             }
-        }
-
-        private string GetRouteTemplate(string endpointRoute)
-        {
-            if (string.IsNullOrWhiteSpace(endpointRoute))
-            {
-                throw new ArgumentNullException(nameof(endpointRoute));
-            }
-
-            if (string.IsNullOrWhiteSpace(_options.ApiAddressBase))
-            {
-                return endpointRoute;
-            }
-
-            if (_options.ApiAddressBase.EndsWith('/'))
-            {
-                return _options.ApiAddressBase + endpointRoute.TrimStart('/').TrimEnd('/').Trim();
-            }
-
-            return _options.ApiAddressBase + '/' + endpointRoute.TrimStart('/').TrimEnd('/').Trim();
         }
     }
 }

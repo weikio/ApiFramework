@@ -1,25 +1,10 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using NJsonSchema;
-using NSwag;
+﻿using System.Linq;
 using NSwag.Generation.Processors;
 using NSwag.Generation.Processors.Contexts;
 using Weikio.ApiFramework.Core.Endpoints;
 
 namespace Weikio.ApiFramework.AspNetCore.NSwag
 {
-    public class OpenApiDocumentExtensions
-    {
-        public Dictionary<string, OpenApiPathItem> AdditionalOperationPaths { get; set; }
-        public List<KeyValuePair<string, JsonSchema>> AdditionalSchemas { get; set; }
-
-        public OpenApiDocumentExtensions(Dictionary<string, OpenApiPathItem> additionalOperationPaths, List<KeyValuePair<string, JsonSchema>> additionalSchemas)
-        {
-            AdditionalOperationPaths = additionalOperationPaths;
-            AdditionalSchemas = additionalSchemas;
-        }
-    }
-    
     public class OpenApiExtenderDocumentProcessor : IDocumentProcessor
     {
         private readonly EndpointManager _endpointManager;
@@ -35,12 +20,12 @@ namespace Weikio.ApiFramework.AspNetCore.NSwag
 
             foreach (var endpoint in endpoints)
             {
-                if (endpoint.ExtendedMetadata?.Any() != true)
+                if (endpoint.Metadata?.Any() != true)
                 {
                     continue;
                 }
 
-                foreach (var extendedMetadata in endpoint.ExtendedMetadata)
+                foreach (var extendedMetadata in endpoint.Metadata)
                 {
                     if (extendedMetadata is OpenApiDocumentExtensions openApiContent)
                     {

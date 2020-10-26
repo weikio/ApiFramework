@@ -115,7 +115,17 @@ namespace Weikio.ApiFramework.Samples.CodeConfiguration
 
                             return token;
                         },
-                        ConfigureAdditionalHeaders = (context, state) => new Dictionary<string, string> { { "Authorization", "Bearer " + state } }
+                        Mode = ApiMode.Proxy,
+                        ConfigureAdditionalHeaders = (context, state) => new Dictionary<string, string> { { "Authorization", "Bearer " + state } },
+                        IncludeOperation = (operationId, operation, config) =>
+                        {
+                            if (string.Equals(operationId, "get", StringComparison.InvariantCultureIgnoreCase))
+                            {
+                                return true;
+                            }
+
+                            return false;
+                        }
                     });
 
             // }).AddApi(typeof(ApiFactory))

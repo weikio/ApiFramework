@@ -9,7 +9,7 @@ using Weikio.ApiFramework.SDK;
 
 namespace Weikio.ApiFramework.Core.Infrastructure
 {
-    public class  ApiActionConvention : IActionModelConvention
+    public class ApiActionConvention : IActionModelConvention
     {
         private readonly EndpointManager _endpointManager;
         private readonly IEndpointHttpVerbResolver _endpointHttpVerbResolver;
