@@ -48,7 +48,6 @@ namespace Weikio.ApiFramework.Core.Infrastructure
 
                 var hasFixedHttpConventions = action.Attributes.FirstOrDefault(x => x.GetType() == typeof(FixedHttpConventionsAttribute)) != null;
 
-
                 if (hasFixedHttpConventions)
                 {
                     continue;
@@ -115,17 +114,17 @@ namespace Weikio.ApiFramework.Core.Infrastructure
                     action.Selectors.Clear();
                 }
 
-                var model = _oDataOptions.Models["odata"].Item1;
+                var model = _oDataOptions.Models["/odata"].Item1;
                 var entitySet = model.EntityContainer.FindEntitySet("Customer");
                 
                 var path = new ODataPathTemplate(new EntitySetSegmentTemplate(entitySet));
                 var odataMetadata = new ODataRoutingMetadata("odata", model, path);
 
-                // action.AddSelector("get", "odata", model, path);
-                selector.EndpointMetadata.Add(odataMetadata);
-                selector.EndpointMetadata.Add(new EndpointNameMetadata(Guid.NewGuid().ToString()));
-
                 action.Selectors.Add(selector);
+
+                action.AddSelector("get", "/odata", model, path);
+                // selector.EndpointMetadata.Add(odataMetadata);
+                // selector.EndpointMetadata.Add(new EndpointNameMetadata(Guid.NewGuid().ToString()));
             }
         }
     }

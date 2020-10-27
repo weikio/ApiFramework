@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
@@ -9,6 +10,8 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.OData;
+using Microsoft.AspNetCore.OData.Batch;
+using Microsoft.AspNetCore.OData.Extensions;
 using Microsoft.AspNetCore.OData.Query;
 using Microsoft.AspNetCore.OData.Routing;
 using Microsoft.AspNetCore.OData.Routing.Template;
@@ -102,6 +105,8 @@ namespace Weikio.ApiFramework.Samples.CodeConfiguration
             var mvcBuilder = services.AddMvc(options => { })
                 .SetCompatibilityVersion(CompatibilityVersion.Latest);
 
+            services.AddRazorPages();
+
 //            services.AddFunctionFramework(Configuration, mvcBuilder, options =>
 //            {
 //                options.AutoResolveFunctions = false;
@@ -110,7 +115,7 @@ namespace Weikio.ApiFramework.Samples.CodeConfiguration
 
             services.AddOData(options =>
                 {
-                    options.AddModel("odata", GetEdmModel());
+                    options.AddModel("/odata", GetEdmModel());
                     options.MaxTop = 500;
                 }
             );
@@ -127,9 +132,10 @@ namespace Weikio.ApiFramework.Samples.CodeConfiguration
                 {
                     options.AutoResolveApis = false;
                     options.AutoResolveEndpoints = false;
+                    options.ApiAddressBase = "";
                 })
                 .AddApi(typeof(CustomersApi))
-                .AddEndpoint("/Customers", "Weikio.ApiFramework.Samples.CodeConfiguration.CustomersApi")
+                .AddEndpoint("/api/Customers", "Weikio.ApiFramework.Samples.CodeConfiguration.CustomersApi")
                 // .AddApi(typeof(ApiFactory))
                 // .AddEndpoint("/mycustom", "Weikio.ApiFramework.Plugins.OpenApi.ApiFactory",
                 //     new ApiOptions()
@@ -249,6 +255,8 @@ namespace Weikio.ApiFramework.Samples.CodeConfiguration
 
             app.Use(next => context =>
             {
+                var odataFeature = context.Request.ODataFeature();
+                
                 var endpoint = context.GetEndpoint();
                 if (endpoint == null)
                 {
