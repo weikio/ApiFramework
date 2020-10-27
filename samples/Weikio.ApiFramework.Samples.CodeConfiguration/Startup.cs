@@ -1,20 +1,30 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.OData;
+using Microsoft.AspNetCore.OData.Query;
+using Microsoft.AspNetCore.OData.Routing;
+using Microsoft.AspNetCore.OData.Routing.Template;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.OData.Edm;
+using Microsoft.OData.ModelBuilder;
 using Newtonsoft.Json.Linq;
 using NSwag.Generation.Processors;
 using Weikio.ApiFramework.AspNetCore;
 using Weikio.ApiFramework.AspNetCore.NSwag;
 using Weikio.ApiFramework.Core.Extensions;
+using Weikio.ApiFramework.OData;
 using Weikio.ApiFramework.Plugins.OpenApi;
+using Weikio.ApiFramework.SDK;
 
 namespace Weikio.ApiFramework.Samples.CodeConfiguration
 {
@@ -98,35 +108,53 @@ namespace Weikio.ApiFramework.Samples.CodeConfiguration
 //                options.AutoResolveEndpoints = false;
 //            });
 
+            services.AddOData(options =>
+                {
+                    options.AddModel("odata", GetEdmModel());
+                    options.MaxTop = 500;
+                }
+            );
+
+            IEdmModel GetEdmModel()
+            {
+                var odataBuilder = new ODataConventionModelBuilder();
+                odataBuilder.EntitySet<Customer>("Customer");
+
+                return odataBuilder.GetEdmModel();
+            }
+
             var apiFrameworkBuilder = services.AddApiFramework(options =>
                 {
                     options.AutoResolveApis = false;
                     options.AutoResolveEndpoints = false;
                 })
-                .AddApi(typeof(ApiFactory))
-                .AddEndpoint("/mycustom", "Weikio.ApiFramework.Plugins.OpenApi.ApiFactory",
-                    new ApiOptions()
-                    {
-                        SpecificationUrl = "https://dev.procountor.com/static/swagger.latest.json",
-                        ApiUrl = "https://api.procountor.com/latest/api",
-                        BeforeRequest = async context =>
-                        {
-                            var token = await GetAccessToken();
-
-                            return token;
-                        },
-                        Mode = ApiMode.Proxy,
-                        ConfigureAdditionalHeaders = (context, state) => new Dictionary<string, string> { { "Authorization", "Bearer " + state } },
-                        IncludeOperation = (operationId, operation, config) =>
-                        {
-                            if (string.Equals(operationId, "get", StringComparison.InvariantCultureIgnoreCase))
-                            {
-                                return true;
-                            }
-
-                            return false;
-                        }
-                    });
+                .AddApi(typeof(CustomersApi))
+                .AddEndpoint("/Customers", "Weikio.ApiFramework.Samples.CodeConfiguration.CustomersApi")
+                // .AddApi(typeof(ApiFactory))
+                // .AddEndpoint("/mycustom", "Weikio.ApiFramework.Plugins.OpenApi.ApiFactory",
+                //     new ApiOptions()
+                //     {
+                //         SpecificationUrl = "https://dev.procountor.com/static/swagger.latest.json",
+                //         ApiUrl = "https://api.procountor.com/latest/api",
+                //         BeforeRequest = async context =>
+                //         {
+                //             var token = await GetAccessToken();
+                //
+                //             return token;
+                //         },
+                //         Mode = ApiMode.Proxy,
+                //         ConfigureAdditionalHeaders = (context, state) => new Dictionary<string, string> { { "Authorization", "Bearer " + state } },
+                //         IncludeOperation = (operationId, operation, config) =>
+                //         {
+                //             if (string.Equals(operationId, "get", StringComparison.InvariantCultureIgnoreCase))
+                //             {
+                //                 return true;
+                //             }
+                //
+                //             return false;
+                //         }
+                //     })
+                .AddOData();
 
             // }).AddApi(typeof(ApiFactory))
             // .AddEndpoint("/soaptest", "Weikio.ApiFramework.Plugins.Soap.ApiFactory",
@@ -219,6 +247,24 @@ namespace Weikio.ApiFramework.Samples.CodeConfiguration
 
             app.UseHttpsRedirection();
 
+            app.Use(next => context =>
+            {
+                var endpoint = context.GetEndpoint();
+                if (endpoint == null)
+                {
+                    return next(context);
+                }
+
+                IEnumerable templates;
+                var metadata = endpoint.Metadata.GetMetadata<IODataRoutingMetadata>();
+                if (metadata != null)
+                {
+                    templates = metadata.Template.GetTemplates();
+                }
+
+                return next(context); // put a breaking point here
+            });
+            
             app.UseEndpoints(endpoints =>
             {
                 endpoints
@@ -229,5 +275,34 @@ namespace Weikio.ApiFramework.Samples.CodeConfiguration
                 endpoints.MapControllerRoute("default", "{controller=Home}/{action=Index}/{id?}");
             });
         }
+    }
+
+    public class CustomersApi : ControllerBase
+    {
+        // [FixedHttpConventions]
+        [EnableQuery]
+        [HttpGet]
+        public IEnumerable<Customer> Get()
+        {
+            return new List<Customer>()
+            {
+                new Customer()
+                {
+                    Id = Guid.NewGuid(),
+                    Name = "Test",
+                },
+                new Customer()
+                {
+                    Id = Guid.NewGuid(),
+                    Name = "Another",
+                },
+            };
+        }
+    }
+
+    public class Customer
+    {
+        public Guid Id { get; set; }
+        public string Name { get; set; }
     }
 }

@@ -1,8 +1,15 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ActionConstraints;
 using Microsoft.AspNetCore.Mvc.ApplicationModels;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Microsoft.AspNetCore.OData;
+using Microsoft.AspNetCore.OData.Extensions;
+using Microsoft.AspNetCore.OData.Routing;
+using Microsoft.AspNetCore.OData.Routing.Template;
+using Microsoft.AspNetCore.Routing;
+using Microsoft.Extensions.Options;
 using Weikio.ApiFramework.Core.Endpoints;
 using Weikio.ApiFramework.Core.Extensions;
 using Weikio.ApiFramework.SDK;
@@ -13,13 +20,15 @@ namespace Weikio.ApiFramework.Core.Infrastructure
     {
         private readonly EndpointManager _endpointManager;
         private readonly IEndpointHttpVerbResolver _endpointHttpVerbResolver;
+        private readonly ODataOptions _oDataOptions;
 
         //private readonly Func<EndpointCollection> _endpointsFactory;
 
-        public ApiActionConvention(EndpointManager endpointManager, IEndpointHttpVerbResolver endpointHttpVerbResolver)
+        public ApiActionConvention(EndpointManager endpointManager, IEndpointHttpVerbResolver endpointHttpVerbResolver, IOptions<ODataOptions> oDataOptions)
         {
             _endpointManager = endpointManager;
             _endpointHttpVerbResolver = endpointHttpVerbResolver;
+            _oDataOptions = oDataOptions.Value;
         }
 
         public void Apply(ActionModel action)
@@ -38,6 +47,7 @@ namespace Weikio.ApiFramework.Core.Infrastructure
                 }
 
                 var hasFixedHttpConventions = action.Attributes.FirstOrDefault(x => x.GetType() == typeof(FixedHttpConventionsAttribute)) != null;
+
 
                 if (hasFixedHttpConventions)
                 {
@@ -104,6 +114,16 @@ namespace Weikio.ApiFramework.Core.Infrastructure
                 {
                     action.Selectors.Clear();
                 }
+
+                var model = _oDataOptions.Models["odata"].Item1;
+                var entitySet = model.EntityContainer.FindEntitySet("Customer");
+                
+                var path = new ODataPathTemplate(new EntitySetSegmentTemplate(entitySet));
+                var odataMetadata = new ODataRoutingMetadata("odata", model, path);
+
+                // action.AddSelector("get", "odata", model, path);
+                selector.EndpointMetadata.Add(odataMetadata);
+                selector.EndpointMetadata.Add(new EndpointNameMetadata(Guid.NewGuid().ToString()));
 
                 action.Selectors.Add(selector);
             }
