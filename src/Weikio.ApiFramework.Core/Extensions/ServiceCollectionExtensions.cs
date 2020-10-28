@@ -81,6 +81,7 @@ namespace Weikio.ApiFramework.Core.Extensions
             services.TryAddSingleton<HealthProbe>();
             services.TryAddSingleton<IApiProviderInitializer, ApiProviderInitializer>();
             services.TryAddSingleton<IEndpointInitializer, EndpointInitializer>();
+            services.TryAddSingleton<IEndpointRouteTemplateProvider, DefaultEndpointRouteTemplateProvider>();
             
             // Services which alter the group names of the API Descriptions. These are used for Open Api / Swagger generation. Each endpoint by default belongs to an unique api group.
             services.TryAddSingleton<IEndpointGroupNameProvider, EndpointGroupNameProvider>();

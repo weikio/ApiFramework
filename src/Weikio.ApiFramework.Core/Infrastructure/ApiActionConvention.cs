@@ -5,10 +5,11 @@ using Microsoft.AspNetCore.Mvc.ApplicationModels;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Weikio.ApiFramework.Core.Endpoints;
 using Weikio.ApiFramework.Core.Extensions;
+using Weikio.ApiFramework.SDK;
 
 namespace Weikio.ApiFramework.Core.Infrastructure
 {
-    public class  ApiActionConvention : IActionModelConvention
+    public class ApiActionConvention : IActionModelConvention
     {
         private readonly EndpointManager _endpointManager;
         private readonly IEndpointHttpVerbResolver _endpointHttpVerbResolver;
@@ -32,6 +33,13 @@ namespace Weikio.ApiFramework.Core.Infrastructure
             foreach (var dynamicControllerType in dynamicControllersTypes)
             {
                 if (!action.Controller.ControllerType.IsAssignableFrom(dynamicControllerType))
+                {
+                    continue;
+                }
+
+                var hasFixedHttpConventions = action.Attributes.FirstOrDefault(x => x.GetType() == typeof(FixedHttpConventionsAttribute)) != null;
+
+                if (hasFixedHttpConventions)
                 {
                     continue;
                 }

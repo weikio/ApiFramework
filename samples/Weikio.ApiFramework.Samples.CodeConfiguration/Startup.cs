@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Net.Http;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
@@ -7,7 +9,12 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Newtonsoft.Json.Linq;
+using NSwag.Generation.Processors;
 using Weikio.ApiFramework.AspNetCore;
+using Weikio.ApiFramework.AspNetCore.NSwag;
+using Weikio.ApiFramework.Core.Extensions;
+using Weikio.ApiFramework.Plugins.OpenApi;
 
 namespace Weikio.ApiFramework.Samples.CodeConfiguration
 {
@@ -35,23 +42,22 @@ namespace Weikio.ApiFramework.Samples.CodeConfiguration
 //                options.AutoResolveEndpoints = false;
 //            });
 
-
             var apiFrameworkBuilder = services.AddApiFramework(options =>
             {
                 options.AutoResolveApis = false;
                 options.AutoResolveEndpoints = false;
             });
 
-            
-                // }).AddApi(typeof(ApiFactory))
-                // .AddEndpoint("/soaptest", "Weikio.ApiFramework.Plugins.Soap.ApiFactory",
-                //     configuration: new
-                //     {
-                //         soapOptions = new SoapOptions()
-                //         {
-                //             WsdlLocation = "http://localhost:54533/Service1.svc"
-                //         }
-                //     });
+
+            // }).AddApi(typeof(ApiFactory))
+            // .AddEndpoint("/soaptest", "Weikio.ApiFramework.Plugins.Soap.ApiFactory",
+            //     configuration: new
+            //     {
+            //         soapOptions = new SoapOptions()
+            //         {
+            //             WsdlLocation = "http://localhost:54533/Service1.svc"
+            //         }
+            //     });
 
 //             services.AddApiFramework(options =>
 //                 {
@@ -72,7 +78,7 @@ namespace Weikio.ApiFramework.Samples.CodeConfiguration
 // //                .AddEndpoint("/test", "Weikio.ApiFramework.Plugins.HelloWorld", new {HelloString = "Hey there from first configuration"})
 // //                .AddEndpoint("/otherEndpoint", "Weikio.ApiFramework.Plugins.HelloWorld", new {HelloString = "This is the second configuration"});
 //                 ;
-            
+
 //             services.AddApiFramework(options =>
 //                 {
 //                     options.AutoResolveEndpoints = false;
@@ -109,8 +115,8 @@ namespace Weikio.ApiFramework.Samples.CodeConfiguration
 //                options.FunctionAssemblies = new List<string>() {typeof(Weikio.ApiFramework.Plugins.HelloWorld.HelloWorldFunction).Assembly.Location};
 //            });
 
-            services.AddSwaggerDocument(document => { document.Title = "Api Framework"; });
-
+            services.AddOpenApiDocument(document => { document.Title = "Api Framework"; });
+            services.AddTransient<IDocumentProcessor, OpenApiExtenderDocumentProcessor>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
