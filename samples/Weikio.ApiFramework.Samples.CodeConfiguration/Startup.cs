@@ -20,62 +20,6 @@ namespace Weikio.ApiFramework.Samples.CodeConfiguration
 {
     public class Startup
     {
-        private async Task<string> GetAccessToken()
-        {
-            var options = new ProcountorOptions();
-
-            var accessParams = new Dictionary<string, string>
-            {
-                { "grant_type", "client_credentials" },
-                { "client_id", options.ClientId },
-                { "client_secret", options.ClientSecret },
-                { "redirect_uri", options.RedirectUri },
-                { "api_key", options.ApiKey }
-            };
-
-            var accessUrl = $"{options.Url}/oauth/token";
-
-            var accessContent = new FormUrlEncodedContent(accessParams);
-
-            var accessRequest = new HttpRequestMessage()
-            {
-                RequestUri = new Uri(accessUrl, UriKind.Absolute), Method = HttpMethod.Post, Content = accessContent
-            };
-
-            var client = GetHttpClient();
-
-            var resAccess = await client.SendAsync(accessRequest);
-
-            var s = await resAccess.Content.ReadAsStringAsync();
-
-            var obj = JObject.Parse(s);
-
-            var accessToken = obj["access_token"].Value<string>();
-
-            return accessToken;
-        }
-
-        private static HttpClient GetHttpClient()
-        {
-            var httpClientHandler = new HttpClientHandler { AllowAutoRedirect = false };
-            var result = new HttpClient(httpClientHandler);
-
-            return result;
-        }
-
-        public class ProcountorOptions
-        {
-            public string Company { get; set; } = string.Empty;
-            public string ClientId { get; set; } = "adafyClient";
-            public string ClientSecret { get; set; } = "secret_LQMVqYV3QMZwHvtouqyJUV8OzfCKWfwcimFdCzHYli6sULs14N";
-            public string RedirectUri { get; set; } = "https://proc.adafy.com/integration/auth/redirect";
-
-            public string ApiKey { get; set; } =
-                "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIzMzM3OSIsImF1ZCI6ImFkYWZ5Q2xpZW50IiwiaXNzIjoiaHR0cHM6Ly9hcGkucHJvY291bnRvci5jb20iLCJpYXQiOjE2MDI4NDE2NTIsImp0aSI6ImM5ZjBmZWI2LTc3ZTQtNGI4YS04ZGIwLWI1ZTVkYWY3MjRlOCIsImNpZCI6MTQxNDV9.hMcJSiEYVOW9R28PlhgXSNAFIBJy_11b93hz5_VbmQM";
-
-            public string Url { get; set; } = "https://api.procountor.com/latest/api";
-        }
-
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
@@ -99,34 +43,11 @@ namespace Weikio.ApiFramework.Samples.CodeConfiguration
 //            });
 
             var apiFrameworkBuilder = services.AddApiFramework(options =>
-                {
-                    options.AutoResolveApis = false;
-                    options.AutoResolveEndpoints = false;
-                })
-                .AddApi(typeof(ApiFactory))
-                .AddEndpoint("/mycustom", "Weikio.ApiFramework.Plugins.OpenApi.ApiFactory",
-                    new ApiOptions()
-                    {
-                        SpecificationUrl = "https://dev.procountor.com/static/swagger.latest.json",
-                        ApiUrl = "https://api.procountor.com/latest/api",
-                        BeforeRequest = async context =>
-                        {
-                            var token = await GetAccessToken();
+            {
+                options.AutoResolveApis = false;
+                options.AutoResolveEndpoints = false;
+            });
 
-                            return token;
-                        },
-                        Mode = ApiMode.Proxy,
-                        ConfigureAdditionalHeaders = (context, state) => new Dictionary<string, string> { { "Authorization", "Bearer " + state } },
-                        IncludeOperation = (operationId, operation, config) =>
-                        {
-                            if (string.Equals(operationId, "get", StringComparison.InvariantCultureIgnoreCase))
-                            {
-                                return true;
-                            }
-
-                            return false;
-                        }
-                    });
 
             // }).AddApi(typeof(ApiFactory))
             // .AddEndpoint("/soaptest", "Weikio.ApiFramework.Plugins.Soap.ApiFactory",
