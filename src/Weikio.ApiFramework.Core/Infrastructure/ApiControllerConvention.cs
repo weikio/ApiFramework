@@ -1,13 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text.Json;
+using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ApplicationModels;
 using Microsoft.Extensions.Options;
+using Newtonsoft.Json;
 using Weikio.ApiFramework.Abstractions;
 using Weikio.ApiFramework.Core.Configuration;
 using Weikio.ApiFramework.Core.Endpoints;
+using JsonSerializer = System.Text.Json.JsonSerializer;
 
 namespace Weikio.ApiFramework.Core.Infrastructure
 {
@@ -89,11 +91,18 @@ namespace Weikio.ApiFramework.Core.Infrastructure
                         {
                             // Create configuration setter delegate. This is executed from <see cref="ApiConfigurationActionFilter"/>
                             // var convertedConfigValue = JsonSerializer.Deserialize(JsonSerializer.Serialize(endpointConfiguration), configProperty.PropertyType);
-                            item.EndpointMetadata.Add(endpointConfiguration);
+
+                            var config = endpointConfiguration;
+                            if (endpointConfiguration.GetType() != configProperty.PropertyType)
+                            {
+                                config = JsonConvert.DeserializeObject(JsonConvert.SerializeObject(endpointConfiguration), configProperty.PropertyType);
+                            }
+                            
+                            item.EndpointMetadata.Add(config);
 
                             item.EndpointMetadata.Add(new Action<object>(obj =>
                             {
-                                configProperty.SetValue(obj, endpointConfiguration);
+                                configProperty.SetValue(obj, config);
                             }));
                         }
                         else if (endpoint.Configuration is IDictionary<string, object> dictionary && dictionary.Count > 1)
