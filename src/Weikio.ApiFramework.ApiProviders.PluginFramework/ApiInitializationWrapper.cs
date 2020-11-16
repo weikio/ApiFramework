@@ -8,8 +8,10 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Newtonsoft.Json;
 using Polly;
 using Weikio.ApiFramework.Abstractions;
+using JsonSerializer = System.Text.Json.JsonSerializer;
 
 namespace Weikio.ApiFramework.ApiProviders.PluginFramework
 {
@@ -91,7 +93,8 @@ namespace Weikio.ApiFramework.ApiProviders.PluginFramework
                             }
                             else
                             {
-                                var arg = JsonSerializer.Deserialize(JsonSerializer.Serialize(configurationDictionary), methodParameter.ParameterType);
+                                var jsonConfiguration = JsonConvert.SerializeObject(configurationDictionary);
+                                var arg = JsonConvert.DeserializeObject(jsonConfiguration, methodParameter.ParameterType);
                                 arguments.Add(arg);
 
                                 continue;
