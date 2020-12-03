@@ -16,7 +16,7 @@ namespace Weikio.ApiFramework.Core.Configuration
         public IEndpointHttpVerbResolver EndpointHttpVerbResolver { get; set; }
 
 //        public Func<MetadataReader, TypeDefinition, bool> FunctionResolver { get; set; } = FunctionLocator.IsFunction;
-        public bool AutoResolveEndpoints { get; set; } = true;
+        public bool AutoResolveEndpoints { get; set; } = false;
 
 //        public bool AutoResolveFunctions { get; set; } = true;
 //        public List<string> FunctionAssemblies { get; set; } = new List<string>();

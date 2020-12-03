@@ -1,21 +1,19 @@
-﻿using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Builder;
+﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using NSwag.Generation.Processors;
 using Weikio.ApiFramework.Admin;
 using Weikio.ApiFramework.AspNetCore;
-using Weikio.ApiFramework.Core.Extensions;
-using Weikio.ApiFramework.Core.Infrastructure;
-using Weikio.ApiFramework.Plugins.Broken;
-using Weikio.ApiFramework.Plugins.HealthCheck;
-using Weikio.ApiFramework.Plugins.HelloWorld;
-using Weikio.ApiFramework.Plugins.JsonNetNew;
-using Weikio.ApiFramework.Plugins.JsonNetOld;
+using Weikio.ApiFramework.AspNetCore.StarterKit;
+using Weikio.ApiFramework.Plugins.MySql;
+using Weikio.ApiFramework.Plugins.MySql.Configuration;
+using Weikio.ApiFramework.Plugins.OpenApi;
+using Weikio.ApiFramework.Plugins.Procountor;
+using Weikio.ApiFramework.Plugins.SqlServer;
+using Weikio.ApiFramework.Plugins.SqlServer.Configuration;
 
 namespace Weikio.ApiFramework.Samples.Admin
 {
@@ -31,36 +29,60 @@ namespace Weikio.ApiFramework.Samples.Admin
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddResponseCaching();
-            services.AddRouting();
+            services.AddControllers();
 
-            var mvcBuilder = services.AddMvc(options =>
-                {
-                    options.Filters.Add(new ApiConfigurationActionFilter());
-                })
-                .SetCompatibilityVersion(CompatibilityVersion.Latest);
-
-            services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
-                .AddCookie();
-
-            services
-                .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-                .AddJwtBearer();
-
-            services.AddAuthorization(options =>
-            {
-                options.AddPolicy("custom", policy =>
-                {
-                    policy.RequireAuthenticatedUser();
-
-                    policy.RequireAssertion(context =>
+            services.AddApiFramework()
+                .AddMySql("/data",
+                    new MySqlOptions()
                     {
-                        var res = false;
-
-                        return res;
-                    });
+                        ConnectionString =
+                            "server=192.168.1.11;port=3306;uid=root;pwd=30KWMIl98mAD;database=employees;Convert Zero Datetime=True;Allow Zero Datetime=False",
+                        Tables = new[] { "title*" }
+                    })
+                .AddSqlServer("/eshop",
+                    new SqlServerOptions()
+                    {
+                        ConnectionString =
+                            "Server=192.168.1.11;User ID=sa;Password=At6Y1x7AwU7O;Integrated Security=false;Initial Catalog=Microsoft.eShopOnWeb.CatalogDb;",
+                        ExcludedTables = new[] { "__*" }
+                    })
+                .AddOpenApi("/pets", new ApiOptions()
+                {
+                    Mode = ApiMode.Proxy,
+                    SpecificationUrl = "https://petstore.swagger.io/v2/swagger.json",
+                    TagTransformMode = TagTransformModeEnum.UseEndpointNameOrRoute
                 });
-            });
+
+            // services.AddResponseCaching();
+            // services.AddRouting();
+            //
+            // var mvcBuilder = services.AddMvc(options =>
+            //     {
+            //         options.Filters.Add(new ApiConfigurationActionFilter());
+            //     })
+            //     .SetCompatibilityVersion(CompatibilityVersion.Latest);
+
+            // services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+            //     .AddCookie();
+            //
+            // services
+            //     .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+            //     .AddJwtBearer();
+
+            // services.AddAuthorization(options =>
+            // {
+            //     options.AddPolicy("custom", policy =>
+            //     {
+            //         policy.RequireAuthenticatedUser();
+            //
+            //         policy.RequireAssertion(context =>
+            //         {
+            //             var res = false;
+            //
+            //             return res;
+            //         });
+            //     });
+            // });
 
             // services.AddApiFramework(options =>
             //     {
@@ -83,32 +105,29 @@ namespace Weikio.ApiFramework.Samples.Admin
             //         options.EndpointAdminRouteRoot = "myadmin/here/itis";
             //     });
 
-            services.AddOpenApiDocument(document =>
-            {
-                document.Title = "Api Framework";
-                document.DocumentName = "api";
-                // document.OperationProcessors.Add(new ApiFrameworkTagOperationProcessor("api_framework_endpoint"));
-            });
-            
-            services.AddOpenApiDocument(document =>
-            {
-                document.Title = "Api Framework";
-                document.DocumentName = "external";
-                // document.OperationProcessors.Add(new ApiFrameworkTagOperationProcessor("external"));
-            });
+            // services.AddOpenApiDocument(document =>
+            // {
+            //     document.Title = "Api Framework";
+            //     document.DocumentName = "api";
+            //     // document.OperationProcessors.Add(new ApiFrameworkTagOperationProcessor("api_framework_endpoint"));
+            // });
+            //
+            // services.AddOpenApiDocument(document =>
+            // {
+            //     document.Title = "Api Framework";
+            //     document.DocumentName = "external";
+            //     // document.OperationProcessors.Add(new ApiFrameworkTagOperationProcessor("external"));
+            // });
+            //
+            // services.AddOpenApiDocument(document =>
+            // {
+            //     document.Title = "Api Framework";
+            //     document.ApiGroupNames = new[] { "api_framework_admin" };
+            //     document.DocumentName = "api_admin";
+            // });
+            //
 
-            services.AddOpenApiDocument(document =>
-            {
-                document.Title = "Api Framework";
-                document.ApiGroupNames = new[] { "api_framework_admin" };
-                document.DocumentName = "api_admin";
-            });
 
-            services.AddOpenApiDocument(document =>
-            {
-                document.Title = "Everything";
-                document.DocumentName = "all";
-            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -118,27 +137,16 @@ namespace Weikio.ApiFramework.Samples.Admin
             {
                 app.UseDeveloperExceptionPage();
             }
-            else
-            {
-                // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
-                app.UseHsts();
-            }
 
+            app.UseHttpsRedirection();
             app.UseRouting();
-            app.UseResponseCaching();
 
             app.UseOpenApi();
             app.UseSwaggerUi3();
 
-            app.UseHttpsRedirection();
-
             app.UseEndpoints(endpoints =>
             {
-                endpoints
-                    .MapHealthChecks("/myhealth", new HealthCheckOptions { Predicate = check => check.Tags.Contains("api_framework_endpoint") });
-
-                endpoints.MapRazorPages();
-                endpoints.MapDefaultControllerRoute();
+                endpoints.MapControllers();
             });
         }
     }

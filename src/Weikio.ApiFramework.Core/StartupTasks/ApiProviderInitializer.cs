@@ -40,27 +40,33 @@ namespace Weikio.ApiFramework.Core.StartupTasks
             });
         }
         
-        private async Task Run(CancellationToken cancellationToken)
+        private Task Run(CancellationToken cancellationToken)
         {
             _logger.LogInformation("Initializing the Api provider");
 
-            await _apiProvider.Initialize(cancellationToken);
-
-            var allApis = await _apiProvider.List();
-
-            _logger.LogDebug($"There's {allApis.Count} apis available:");
-
-            foreach (var apiDefinition in allApis)
+            _backgroundTaskQueue.QueueBackgroundWorkItem(async ct =>
             {
-                _logger.LogDebug($"{apiDefinition}");
-            }
+                await _apiProvider.Initialize(cancellationToken).ConfigureAwait(false);
 
-            _logger.LogInformation("Api provider initialized");
+                var allApis = await _apiProvider.List();
 
-            if (_options.AutoInitializeConfiguredEndpoints)
-            {
-                _endpointStartupHandler.Start(cancellationToken);
-            }
+                _logger.LogDebug($"There's {allApis.Count} apis available:");
+
+                foreach (var apiDefinition in allApis)
+                {
+                    _logger.LogDebug($"{apiDefinition}");
+                }
+
+                _logger.LogInformation("Api provider initialized");
+
+                if (_options.AutoInitializeConfiguredEndpoints)
+                {
+                    _endpointStartupHandler.Start(cancellationToken);
+                }
+            });
+
+            return Task.CompletedTask;
+
         }
     }
 }

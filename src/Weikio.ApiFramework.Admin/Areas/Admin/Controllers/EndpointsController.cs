@@ -61,6 +61,14 @@ namespace Weikio.ApiFramework.Admin.Areas.Admin.Controllers
 
 //            var configuration = System.Text.Json.JsonSerializer.Deserialize<Dictionary<string, object>>(endpointDto.JsonConfiguration);
 //            
+            // if (endpointDto.JsonConfiguration != null)
+            // {
+            //     foreach (var o in endpointDto.JsonConfiguration)
+            //     {
+            //         var key = o.Key;
+            //         var val = ((JsonElement)o.Value).
+            //     }
+            // }
             var endpoint = new Endpoint(endpointDto.Route, api, endpointDto.JsonConfiguration);
 
             _endpointManager.AddEndpoint(endpoint);

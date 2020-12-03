@@ -5,9 +5,9 @@ namespace Weikio.ApiFramework.AspNetCore
 {
     public class ApiFrameworkAspNetCoreOptions
     {
-        public bool AutoResolveApis { get; set; } = true;
+        public bool AutoResolveApis { get; set; } = false;
         public string ApiAddressBase { get; set; } = "/api";
-        public bool AutoResolveEndpoints { get; set; } = true;
+        public bool AutoResolveEndpoints { get; set; } = false;
 
         public List<(string Route, string ApiAssemblyName, object Configuration, IHealthCheck healthCheck, string GroupName)> Endpoints { get; set; } =
             new List<(string Route, string ApiAssemblyName, object Configuration, IHealthCheck healthCheck, string groupName)>();

@@ -14,6 +14,8 @@ using NSwag.Generation.Processors;
 using Weikio.ApiFramework.AspNetCore;
 using Weikio.ApiFramework.AspNetCore.NSwag;
 using Weikio.ApiFramework.Core.Extensions;
+using Weikio.ApiFramework.Plugins.MySql;
+using Weikio.ApiFramework.Plugins.MySql.Configuration;
 using Weikio.ApiFramework.Plugins.OpenApi;
 
 namespace Weikio.ApiFramework.Samples.CodeConfiguration
@@ -46,8 +48,11 @@ namespace Weikio.ApiFramework.Samples.CodeConfiguration
             {
                 options.AutoResolveApis = false;
                 options.AutoResolveEndpoints = false;
-            });
-
+            }).AddMySql("/mysql", new MySqlOptions()
+            {
+                ConnectionString = "server=2.tcp.eu.ngrok.io;port:13265;uid=root;pwd=30KWMIl98mAD;database=nation"
+            });;
+            
 
             // }).AddApi(typeof(ApiFactory))
             // .AddEndpoint("/soaptest", "Weikio.ApiFramework.Plugins.Soap.ApiFactory",
