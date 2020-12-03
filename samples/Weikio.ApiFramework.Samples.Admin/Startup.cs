@@ -1,19 +1,8 @@
 ﻿using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using NSwag.Generation.Processors;
-using Weikio.ApiFramework.Admin;
-using Weikio.ApiFramework.AspNetCore;
-using Weikio.ApiFramework.AspNetCore.StarterKit;
-using Weikio.ApiFramework.Plugins.MySql;
-using Weikio.ApiFramework.Plugins.MySql.Configuration;
-using Weikio.ApiFramework.Plugins.OpenApi;
-using Weikio.ApiFramework.Plugins.Procountor;
-using Weikio.ApiFramework.Plugins.SqlServer;
-using Weikio.ApiFramework.Plugins.SqlServer.Configuration;
 
 namespace Weikio.ApiFramework.Samples.Admin
 {
@@ -30,28 +19,28 @@ namespace Weikio.ApiFramework.Samples.Admin
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
-
-            services.AddApiFramework()
-                .AddMySql("/data",
-                    new MySqlOptions()
-                    {
-                        ConnectionString =
-                            "server=192.168.1.11;port=3306;uid=root;pwd=30KWMIl98mAD;database=employees;Convert Zero Datetime=True;Allow Zero Datetime=False",
-                        Tables = new[] { "title*" }
-                    })
-                .AddSqlServer("/eshop",
-                    new SqlServerOptions()
-                    {
-                        ConnectionString =
-                            "Server=192.168.1.11;User ID=sa;Password=At6Y1x7AwU7O;Integrated Security=false;Initial Catalog=Microsoft.eShopOnWeb.CatalogDb;",
-                        ExcludedTables = new[] { "__*" }
-                    })
-                .AddOpenApi("/pets", new ApiOptions()
-                {
-                    Mode = ApiMode.Proxy,
-                    SpecificationUrl = "https://petstore.swagger.io/v2/swagger.json",
-                    TagTransformMode = TagTransformModeEnum.UseEndpointNameOrRoute
-                });
+            //
+            // services.AddApiFramework()
+            //     .AddMySql("/data",
+            //         new MySqlOptions()
+            //         {
+            //             ConnectionString =
+            //                 "server=192.168.1.11;port=3306;uid=root;pwd=30KWMIl98mAD;database=employees;Convert Zero Datetime=True;Allow Zero Datetime=False",
+            //             Tables = new[] { "title*" }
+            //         })
+            //     .AddSqlServer("/eshop",
+            //         new SqlServerOptions()
+            //         {
+            //             ConnectionString =
+            //                 "Server=192.168.1.11;User ID=sa;Password=At6Y1x7AwU7O;Integrated Security=false;Initial Catalog=Microsoft.eShopOnWeb.CatalogDb;",
+            //             ExcludedTables = new[] { "__*" }
+            //         })
+            //     .AddOpenApi("/pets", new ApiOptions()
+            //     {
+            //         Mode = ApiMode.Proxy,
+            //         SpecificationUrl = "https://petstore.swagger.io/v2/swagger.json",
+            //         TagTransformMode = TagTransformModeEnum.UseEndpointNameOrRoute
+            //     });
 
             // services.AddResponseCaching();
             // services.AddRouting();

@@ -26,32 +26,31 @@ namespace Weikio.ApiFramework.AspNetCore.StarterKit
         {
             var builder = services.AddApiFramework();
 
-            // builder.AddAdmin();
-            //
-            // services.AddTransient<IDocumentProcessor, CustomOpenApiExtenderDocumentProcessor>();
-            //
-            // services.AddOpenApiDocument(document =>
-            // {
-            //     document.Title = "Api Framework - APIs";
-            //     document.DocumentName = "Api";
-            //     document.ApiGroupNames = new[] { "api_framework_endpoint" };
-            //     document.OperationProcessors.Add(new ApiFrameworkTagOperationProcessor());
-            // });
-            //
-            // services.AddOpenApiDocument(document =>
-            // {
-            //     document.Title = "Api Framework - Admin";
-            //     document.ApiGroupNames = new[] { "api_framework_admin" };
-            //     document.DocumentName = "Admin";
-            // });
-            //
-            // services.AddOpenApiDocument(document =>
-            // {
-            //     document.Title = "Api Framework - Everything";
-            //     document.DocumentName = "All";
-            //     document.OperationProcessors.Add(new ApiFrameworkTagOperationProcessor());
-            // });
-
+            builder.AddAdmin();
+            
+            services.AddTransient<IDocumentProcessor, CustomOpenApiExtenderDocumentProcessor>();
+            
+            services.AddOpenApiDocument(document =>
+            {
+                document.Title = "Api Framework - APIs";
+                document.DocumentName = "Api";
+                document.ApiGroupNames = new[] { "api_framework_endpoint" };
+                document.OperationProcessors.Add(new ApiFrameworkTagOperationProcessor());
+            });
+            
+            services.AddOpenApiDocument(document =>
+            {
+                document.Title = "Api Framework - Admin";
+                document.ApiGroupNames = new[] { "api_framework_admin" };
+                document.DocumentName = "Admin";
+            });
+            
+            services.AddOpenApiDocument(document =>
+            {
+                document.Title = "Api Framework - Everything";
+                document.DocumentName = "All";
+                document.OperationProcessors.Add(new ApiFrameworkTagOperationProcessor());
+            });
 
             return builder;
         }

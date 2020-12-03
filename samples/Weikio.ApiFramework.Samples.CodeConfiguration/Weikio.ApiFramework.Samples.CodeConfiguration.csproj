@@ -7,8 +7,6 @@
     <PackageReference Include="NSwag.AspNetCore" Version="13.8.2" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\ApiFramework.Plugins.MySql\src\Weikio.ApiFramework.Plugins.MySql\Weikio.ApiFramework.Plugins.MySQL.csproj" />
-    <ProjectReference Include="..\..\..\ApiFramework.Plugins.OpenApi\src\Weikio.ApiFramework.Plugins.OpenApi\Weikio.ApiFramework.Plugins.OpenApi.csproj" />
     <ProjectReference Include="..\..\src\Plugins\Weikio.ApiFramework.Plugins.HealthCheck\Weikio.ApiFramework.Plugins.HealthCheck.csproj" />
     <ProjectReference Include="..\..\src\Plugins\Weikio.ApiFramework.Plugins.HelloWorld\Weikio.ApiFramework.Plugins.HelloWorld.csproj" />
     <ProjectReference Include="..\..\src\Weikio.ApiFramework.ApiProviders.PluginFramework\Weikio.ApiFramework.ApiProviders.PluginFramework.csproj" />
@@ -21,5 +19,6 @@
     <PackageReference Include="System.ServiceModel.Http" Version="4.4.*" />
     <PackageReference Include="System.ServiceModel.NetTcp" Version="4.4.*" />
     <PackageReference Include="System.ServiceModel.Security" Version="4.4.*" />
+    <PackageReference Include="Microsoft.CodeAnalysis.Common" Version="3.3.1"/>
   </ItemGroup>
 </Project>

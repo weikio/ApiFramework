@@ -13,7 +13,6 @@
     <ProjectReference Include="..\..\..\ApiFramework.Plugins.MySql\src\Weikio.ApiFramework.Plugins.MySql\Weikio.ApiFramework.Plugins.MySQL.csproj" />
     <ProjectReference Include="..\..\..\ApiFramework.Plugins.OpenApi\src\Weikio.ApiFramework.Plugins.OpenApi\Weikio.ApiFramework.Plugins.OpenApi.csproj" />
     <ProjectReference Include="..\..\..\ApiFramework.Plugins.Procountor\src\Weikio.ApiFramework.Plugins.Procountor\Weikio.ApiFramework.Plugins.Procountor.csproj" />
-    <ProjectReference Include="..\..\..\ApiFramework.Plugins.SqlServer\src\Weikio.ApiFramework.Plugins.SqlServer\Weikio.ApiFramework.Plugins.SqlServer.csproj" />
     <ProjectReference Include="..\..\src\Weikio.ApiFramework.AspNetCore.StarterKit\Weikio.ApiFramework.AspNetCore.StarterKit.csproj" />
   </ItemGroup>
 

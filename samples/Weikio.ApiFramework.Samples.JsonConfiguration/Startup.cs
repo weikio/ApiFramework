@@ -4,18 +4,11 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
 using NSwag;
 using NSwag.Generation.Processors.Security;
 using Weikio.ApiFramework.AspNetCore;
-using Weikio.ApiFramework.Core.Configuration;
-using Weikio.ApiFramework.Core.Extensions;
-using Weikio.ApiFramework.Plugins.MySql.Configuration;
-using Weikio.ApiFramework.Plugins.Procountor;
 using Weikio.ApiFramework.SDK;
-using Weikio.PluginFramework.Abstractions;
-using Weikio.PluginFramework.Catalogs;
 
 namespace Weikio.ApiFramework.Samples.JsonConfiguration
 {
