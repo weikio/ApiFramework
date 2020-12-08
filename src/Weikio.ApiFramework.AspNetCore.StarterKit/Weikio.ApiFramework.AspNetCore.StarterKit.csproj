@@ -29,6 +29,10 @@
   <ItemGroup>
     <PackageReference Include="MinVer" Version="2.0.0" />
     <PackageReference Include="NSwag.AspNetCore" Version="13.8.2" />
+<!--    <PackageReference Include="Weikio.PluginFramework.Catalogs.Nuget" Version="1.0.0-alpha.0.17" />-->
+<!--    <PackageReference Include="Weikio.PluginFramework.Catalogs.Roslyn" Version="1.0.0-alpha.0.17" />-->
+<!--    <PackageReference Include="Weikio.PluginFramework" Version="1.0.0-alpha.0.17" />-->
+
   </ItemGroup>
 
   <ItemGroup>
