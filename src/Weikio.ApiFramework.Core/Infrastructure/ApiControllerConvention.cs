@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ApplicationModels;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using Weikio.ApiFramework.Abstractions;
@@ -17,12 +18,14 @@ namespace Weikio.ApiFramework.Core.Infrastructure
     {
         private readonly EndpointManager _endpointManager;
         private readonly IEndpointRouteTemplateProvider _endpointRouteTemplateProvider;
+        private readonly ILogger<ApiControllerConvention> _logger;
         private readonly ApiFrameworkOptions _options;
 
-        public ApiControllerConvention(EndpointManager endpointManager, IOptions<ApiFrameworkOptions> options, IEndpointRouteTemplateProvider endpointRouteTemplateProvider)
+        public ApiControllerConvention(EndpointManager endpointManager, IOptions<ApiFrameworkOptions> options, IEndpointRouteTemplateProvider endpointRouteTemplateProvider, ILogger<ApiControllerConvention> logger)
         {
             _endpointManager = endpointManager;
             _endpointRouteTemplateProvider = endpointRouteTemplateProvider;
+            _logger = logger;
             _options = options.Value;
         }
 
@@ -59,6 +62,20 @@ namespace Weikio.ApiFramework.Core.Infrastructure
                 var controllerNameParts = controllerName.Split('_');
                 controller.ControllerName = controllerNameParts.Last();
 
+                var hasDuplicateEndpoints = apiController.Endpoints.GroupBy(x => x.Route).Any(x => x.Count() > 1);
+
+                if (hasDuplicateEndpoints)
+                {
+                    _logger.LogWarning("Api {ApiName} has duplicate routes in endpoints. Adding index number to duplicate routes. Endpoint routes:", apiController.ControllerType.FullName);
+
+                    foreach (var endpoint in apiController.Endpoints)
+                    {
+                        _logger.LogWarning(endpoint.Route);
+                    }                    
+                }
+
+                var routeCounts = new Dictionary<string, int>();
+                
                 foreach (var endpoint in apiController.Endpoints)
                 {
                     var template = _endpointRouteTemplateProvider.GetRouteTemplate(endpoint);
@@ -71,6 +88,20 @@ namespace Weikio.ApiFramework.Core.Infrastructure
                     if (endpoint.ApiTypes.Count() > 1)
                     {
                         template = $"{template}/{controllerNameParts.Last()}";
+                    }
+
+                    if (routeCounts.ContainsKey(template) == false)
+                    {
+                        routeCounts[template] = 0;
+                    }
+
+                    routeCounts[template] += 1;
+
+                    var currentCount = routeCounts[template];
+
+                    if (currentCount > 1)
+                    {
+                        template = template + (currentCount - 1);
                     }
 
                     var item = new SelectorModel { AttributeRouteModel = new AttributeRouteModel(new RouteAttribute(template)) };

@@ -2,6 +2,7 @@
 using System.Reflection;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
+using Microsoft.Extensions.Options;
 using Weikio.ApiFramework.Abstractions;
 using Weikio.ApiFramework.Abstractions.DependencyInjection;
 using Weikio.ApiFramework.Core.Configuration;
@@ -81,8 +82,17 @@ namespace Weikio.ApiFramework.AspNetCore
         {
             builder.Services.AddTransient<IPluginCatalog>(services =>
             {
+                var optionsMonitor = services.GetRequiredService<IOptionsMonitor<PluginNameAndVersionOptions>>();
+                var namingOptions = optionsMonitor.Get(typeof(AssemblyPluginCatalog).FullName);
+                
                 var assemblyPath = assembly.Location;
-                var assemblyCatalog = new AssemblyPluginCatalog(assemblyPath);
+
+                var assemblyPluginCatalogOptions = new AssemblyPluginCatalogOptions()
+                {
+                    PluginNameOptions = namingOptions.NameOptions
+                };
+                
+                var assemblyCatalog = new AssemblyPluginCatalog(assemblyPath, assemblyPluginCatalogOptions);
 
                 return assemblyCatalog;
             });

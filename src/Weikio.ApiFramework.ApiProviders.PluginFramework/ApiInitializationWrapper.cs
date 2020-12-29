@@ -13,7 +13,7 @@ using JsonSerializer = System.Text.Json.JsonSerializer;
 
 namespace Weikio.ApiFramework.ApiProviders.PluginFramework
 {
-    public class ApiInitializationWrapper : IApiInitializationWrapper
+    internal class ApiInitializationWrapper : IApiInitializationWrapper
     {
         private readonly ILogger<ApiInitializationWrapper> _logger;
         private readonly IOptionsMonitor<EndpointInitializationOptions> _endpointInitializationOptions;
@@ -26,9 +26,9 @@ namespace Weikio.ApiFramework.ApiProviders.PluginFramework
             _serviceProvider = serviceProvider;
         }
 
-        public Func<Endpoint, Task<IEnumerable<Type>>> Wrap(List<MethodInfo> initializerMethods)
+        public Func<Endpoint, Task<IEnumerable<Type>>> Wrap(List<Type> factoryTypes)
         {
-            if (initializerMethods?.Any() != true)
+            if (factoryTypes?.Any() != true)
             {
                 return null;
             }
@@ -53,20 +53,52 @@ namespace Weikio.ApiFramework.ApiProviders.PluginFramework
                 {
                     configurationDictionary = configuration;
                 }
-                // else if (endpoint.Configuration != null)
-                // {
-                //     configurationDictionary =
-                //         new Dictionary<string, object>(
-                //             JsonSerializer.Deserialize<Dictionary<string, object>>(
-                //                 JsonSerializer.Serialize(endpoint.Configuration)), StringComparer.InvariantCultureIgnoreCase);
-                // }
                 else if (endpoint.Configuration == null)
                 {
                     configurationDictionary = new Dictionary<string, object>();
                 }
-
-                foreach (var initializerMethod in initializerMethods)
+                
+                foreach (var factoryType in factoryTypes)
                 {
+                    var staticFactoryMethod = factoryType
+                        .GetMethods().FirstOrDefault(m => m.IsStatic && typeof(Task<IEnumerable<Type>>).IsAssignableFrom(m.ReturnType));
+
+                    var hasStaticFactoryMethod = staticFactoryMethod != null && factoryType.IsAbstract && factoryType.IsSealed;
+
+                    MethodInfo initializerMethod = null;
+                    object factoryInstance = null;
+
+                    if (hasStaticFactoryMethod)
+                    {
+                        initializerMethod = staticFactoryMethod;
+                    }
+                    else
+                    {
+                        factoryInstance = ActivatorUtilities.CreateInstance(_serviceProvider, factoryType);
+                        var allMethods = factoryInstance.GetType().GetMethods(BindingFlags.Instance | BindingFlags.Public | BindingFlags.DeclaredOnly);
+
+                        foreach (var methodInfo in allMethods)
+                        {
+                            var methodReturnType = methodInfo.ReturnType;
+
+                            // Not the prettiest solution but is OK for the first release
+                            if (methodReturnType == typeof(Type) || methodReturnType == typeof(Task<Type>) ||
+                                typeof(IEnumerable<Type>).IsAssignableFrom(methodReturnType) ||
+                                typeof(Task<IEnumerable<Type>>).IsAssignableFrom(methodReturnType) || 
+                                typeof(Task<List<Type>>).IsAssignableFrom(methodReturnType))
+                            {
+                                initializerMethod = methodInfo;
+
+                                break;
+                            }
+                        }
+                    }
+
+                    if (initializerMethod == null)
+                    {
+                        throw new Exception("Couldn't find factory method from type");
+                    }
+                        
                     var methodParameters = initializerMethod.GetParameters().ToList();
                     var arguments = new List<object>();
 
@@ -141,8 +173,48 @@ namespace Weikio.ApiFramework.ApiProviders.PluginFramework
 
                             await endpointRetryPolicyOptions.OnInitialization(endpointRetryPolicyOptions, endpoint, initializationCount, _logger);
 
-                            var tOut = (Task<IEnumerable<Type>>) initializerMethod.Invoke(null, arguments.ToArray());
-                            var createdApis = (await tOut).ToList();
+                            List<Type> createdApis = null;
+
+                            if (factoryInstance == null)
+                            {
+                                var tOut = (Task<IEnumerable<Type>>) initializerMethod.Invoke(null, arguments.ToArray());
+                                createdApis = (await tOut).ToList();
+                            }
+                            else
+                            {
+                                // Not the prettiest solution but is OK for the first release
+                                var methodReturnType = initializerMethod.ReturnType;
+
+                                if (methodReturnType == typeof(Type))
+                                {
+                                    var tOut = (Type) initializerMethod.Invoke(factoryInstance, arguments.ToArray());
+                                    createdApis = new List<Type>() { tOut };
+                                }
+                                else if (methodReturnType == typeof(Task<Type>))
+                                {
+                                    var tOut = (Task<Type>) initializerMethod.Invoke(factoryInstance, arguments.ToArray());
+                                    createdApis = new List<Type>() { (await tOut) }; 
+                                }
+                                else if (typeof(IEnumerable<Type>).IsAssignableFrom(methodReturnType))
+                                {
+                                    var tOut = (IEnumerable<Type>) initializerMethod.Invoke(factoryInstance, arguments.ToArray());
+                                    createdApis = new List<Type>(tOut);
+                                }
+                                else if (typeof(IEnumerable<Task<Type>>).IsAssignableFrom(methodReturnType))
+                                {
+                                    var tOut = (Task<IEnumerable<Type>>) initializerMethod.Invoke(factoryInstance, arguments.ToArray());
+                                    createdApis = new List<Type>((await tOut));
+                                }
+                                else if (typeof(Task<List<Type>>).IsAssignableFrom(methodReturnType))
+                                {
+                                    var tOut = (Task<List<Type>>) initializerMethod.Invoke(factoryInstance, arguments.ToArray());
+                                    createdApis = new List<Type>((await tOut));
+                                }
+                                else
+                                {
+                                    throw new Exception("Unknown factory type");
+                                }
+                            }
 
                             foreach (var createdApi in createdApis)
                             {

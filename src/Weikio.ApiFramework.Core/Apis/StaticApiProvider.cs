@@ -26,29 +26,29 @@ namespace Weikio.ApiFramework.Core.Apis
 
         public bool IsInitialized { get; private set; }
 
-        public Task<List<ApiDefinition>> List()
+        public List<ApiDefinition> List()
         {
             if (!IsInitialized)
             {
-                return Task.FromResult(new List<ApiDefinition>());
+                return new List<ApiDefinition>();
             }
             
             var result = new List<ApiDefinition>(){_api.ApiDefinition};
 
-            return Task.FromResult(result);
+            return result;
         }
 
-        public Task<Api> Get(ApiDefinition definition)
+        public Api Get(ApiDefinition definition)
         {
-            return Task.FromResult(_api);
+            return _api;
         }
 
-        public Task<Api> Get(string name, Version version)
+        public Api Get(string name, Version version)
         {
             return Get(new ApiDefinition(name, version));
         }
 
-        public Task<Api> Get(string name)
+        public Api Get(string name)
         {
             return Get(name, new Version(1, 0, 0, 0));
         }

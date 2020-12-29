@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Text;
 
-namespace Weikio.ApiFramework.SDK
+namespace Weikio.ApiFramework.Abstractions
 {
     public class ApiDefinition
     {

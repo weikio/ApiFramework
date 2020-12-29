@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using Weikio.ApiFramework.SDK;
 
 namespace Weikio.ApiFramework.Abstractions
 {
@@ -11,10 +10,10 @@ namespace Weikio.ApiFramework.Abstractions
         Task Initialize(CancellationToken cancellationToken);
         bool IsInitialized { get; }
 
-        Task<List<ApiDefinition>> List();
+        List<ApiDefinition> List();
 
-        Task<Api> Get(ApiDefinition definition);
-        Task<Api> Get(string name, Version version);
-        Task<Api> Get(string name);
+        Api Get(ApiDefinition definition);
+        Api Get(string name, Version version);
+        Api Get(string name);
     }
 }

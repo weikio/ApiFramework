@@ -6,12 +6,13 @@ using Microsoft.AspNetCore.Mvc.Testing;
 using Weikio.ApiFramework.AspNetCore;
 using Weikio.ApiFramework.Core.Extensions;
 using Xunit;
+using Xunit.Abstractions;
 
 namespace ApiFramework.IntegrationTests
 {
     public class BasicTests : ApiFrameworkTestBase
     {
-        public BasicTests(WebApplicationFactory<Startup> factory) : base(factory)
+        public BasicTests(WebApplicationFactory<Startup> factory, ITestOutputHelper output) : base(factory, output)
         {
         }
 

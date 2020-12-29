@@ -1,26 +1,39 @@
+using System;
 using System.Threading;
 using System.Threading.Tasks;
 using HelloWorld;
 using Microsoft.Extensions.Logging.Abstractions;
 using Weikio.ApiFramework.ApiProviders.PluginFramework;
-using Weikio.PluginFramework.Abstractions;
 using Weikio.PluginFramework.Catalogs;
+using Weikio.PluginFramework.TypeFinding;
 using Xunit;
 
 namespace ApiFramework.IntegrationTests
 {
-    public class TypeApiTests
+    [Collection(nameof(NotThreadSafeResourceCollection))]
+    public class TypeApiTests : IDisposable
     {
+        public TypeApiTests()
+        {
+            var opt = new PluginFrameworkApiProviderOptions();
+            TypeFinderOptions.Defaults.TypeFinderCriterias.Clear();
+
+            foreach (var apiFinderCriterion in opt.ApiFinderCriteria)
+            {
+                TypeFinderOptions.Defaults.TypeFinderCriterias.Add(apiFinderCriterion);
+            }
+        }
+
         [Fact]
         public async Task CanInitializeTypeBasedApi()
         {
-            var provider = new PluginFrameworkApiProvider(new TypePluginCatalog(typeof(HelloWorldApi)), new PluginExporter(),
+            var provider = new PluginFrameworkApiProvider(new TypePluginCatalog(typeof(HelloWorldApi)), 
                 new ApiInitializationWrapperForUnitTests(),
                 new ApiHealthCheckWrapperForUnitTests(), new NullLogger<PluginFrameworkApiProvider>());
 
             await provider.Initialize(new CancellationToken());
 
-            var all = await provider.List();
+            var all = provider.List();
             
             // Assert
             Assert.NotEmpty(all);
@@ -29,29 +42,34 @@ namespace ApiFramework.IntegrationTests
         [Fact]
         public async Task CanGetTypeBasedApi()
         {
-            var provider = new PluginFrameworkApiProvider(new TypePluginCatalog(typeof(HelloWorldApi)), new PluginExporter(),
+            var provider = new PluginFrameworkApiProvider(new TypePluginCatalog(typeof(HelloWorld.HelloWorldApi)),
                 new ApiInitializationWrapperForUnitTests(),
                 new ApiHealthCheckWrapperForUnitTests(), new NullLogger<PluginFrameworkApiProvider>());
 
             await provider.Initialize(new CancellationToken());
 
             // Assert doesn't throw
-            await provider.Get("HelloWorld");
+            provider.Get((typeof(HelloWorld.HelloWorldApi).FullName));
         }
         
         [Fact]
         public async Task TypeBasedApiShouldHaveOnlyOneApi()
         {
-            var provider = new PluginFrameworkApiProvider(new TypePluginCatalog(typeof(HelloWorldApi)), new PluginExporter(),
+            var provider = new PluginFrameworkApiProvider(new TypePluginCatalog(typeof(HelloWorldApi)), 
                 new ApiInitializationWrapperForUnitTests(),
                 new ApiHealthCheckWrapperForUnitTests(), new NullLogger<PluginFrameworkApiProvider>());
 
             await provider.Initialize(new CancellationToken());
 
-            var api = await provider.Get("HelloWorld");
+            var api = provider.Get((typeof(HelloWorld.HelloWorldApi).FullName));
 
             // Assert
             Assert.Single(api.ApiTypes);
+        }
+
+        public void Dispose()
+        {
+            TypeFinderOptions.Defaults.TypeFinderCriterias.Clear();
         }
     }
 }
