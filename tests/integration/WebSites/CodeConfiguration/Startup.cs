@@ -100,7 +100,7 @@ namespace CodeConfiguration
         {
             _apiProvider.Initialize(new CancellationToken()).Wait();
 
-            var allApis = _apiProvider.List().Result;
+            var allApis = _apiProvider.List();
 
             _logger.LogDebug($"There's {allApis.Count} apis available:");
             
@@ -132,7 +132,7 @@ namespace CodeConfiguration
 
             foreach (var endpointDefinition in initialEndpoints)
             {
-                var api = _apiProvider.Get(endpointDefinition.Api).Result;
+                var api = _apiProvider.Get(endpointDefinition.Api);
 
                 var endpoint = new Endpoint(endpointDefinition.Route, api, endpointDefinition.Configuration,
                     GetHealthCheckFactory(api, endpointDefinition));
@@ -143,11 +143,11 @@ namespace CodeConfiguration
 
             if (initialEndpoints.Any() == false && _options.AutoResolveEndpoints)
             {
-                var functions = _apiProvider.List().Result;
+                var functions = _apiProvider.List();
 
                 foreach (var functionDefinition in functions)
                 {
-                    var function = _apiProvider.Get(functionDefinition).Result;
+                    var function = _apiProvider.Get(functionDefinition);
                     var endpoint = new Endpoint(_options.ApiAddressBase, function, null, GetHealthCheckFactory(function));
 
                     _endpointManager.AddEndpoint(endpoint);

@@ -2,19 +2,18 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
-using Weikio.ApiFramework.SDK;
 
 namespace Weikio.ApiFramework.Abstractions
 {
     public class Endpoint
     {
-        public string Route { get; }
+        public string Route { get; set; }
         public Api Api { get; }
         public object Configuration { get; private set; }
         public Func<Endpoint, Task<IHealthCheck>> HealthCheckFactory { get; }
         public List<Type> ApiTypes { get; private set; }
         public string GroupName { get; set; }
-        public string Name { get; }
+        public string Name { get;  set;}
         public string Description { get; }
         public string[] Tags { get; }
         public IHealthCheck HealthCheck { get; private set; }
@@ -101,12 +100,12 @@ namespace Weikio.ApiFramework.Abstractions
         {
             var result = new List<Type>();
 
-            if (Api.Initializer == null)
+            if (Api.Factory == null)
             {
                 return result;
             }
 
-            var task = Api.Initializer(this); 
+            var task = Api.Factory(this); 
             var createdApis = await task;
 
             result.AddRange(createdApis);

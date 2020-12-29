@@ -16,16 +16,16 @@ namespace Weikio.ApiFramework.Core
             _apiProvider = apiProvider;
         }
 
-        public async Task<Status> Get()
+        public Task<Status> Get()
         {
             var result = new Status
             {
                 Endpoints = _endpointManager.Endpoints.ToList(),
                 EndpointManagerStatusEnum = _endpointManager.Status,
-                AvailableApis = await _apiProvider.List()
+                AvailableApis = _apiProvider.List()
             };
 
-            return result;
+            return Task.FromResult(result);
         }
     }
 }

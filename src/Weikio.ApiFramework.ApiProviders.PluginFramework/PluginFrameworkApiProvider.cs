@@ -9,7 +9,6 @@ using Microsoft.Extensions.Logging;
 using Weikio.ApiFramework.Abstractions;
 using Weikio.ApiFramework.SDK;
 using Weikio.PluginFramework.Abstractions;
-using Weikio.PluginFramework.Catalogs;
 
 namespace Weikio.ApiFramework.ApiProviders.PluginFramework
 {
@@ -19,16 +18,14 @@ namespace Weikio.ApiFramework.ApiProviders.PluginFramework
     public class PluginFrameworkApiProvider : IApiProvider
     {
         private readonly IPluginCatalog _pluginCatalog;
-        private readonly IPluginExporter _exporter;
         private readonly IApiInitializationWrapper _factoryWrapper;
         private readonly IApiHealthCheckWrapper _healthCheckWrapper;
         private readonly ILogger<PluginFrameworkApiProvider> _logger;
 
-        public PluginFrameworkApiProvider(IPluginCatalog pluginCatalog, IPluginExporter exporter, IApiInitializationWrapper factoryWrapper,
+        public PluginFrameworkApiProvider(IPluginCatalog pluginCatalog, IApiInitializationWrapper factoryWrapper,
             IApiHealthCheckWrapper healthCheckWrapper, ILogger<PluginFrameworkApiProvider> logger)
         {
             _pluginCatalog = pluginCatalog;
-            _exporter = exporter;
             _factoryWrapper = factoryWrapper;
             _healthCheckWrapper = healthCheckWrapper;
             _logger = logger;
@@ -40,7 +37,7 @@ namespace Weikio.ApiFramework.ApiProviders.PluginFramework
 
             // TODO: Make sure that cancellation token can be passed to initialize
             await _pluginCatalog.Initialize();
-  
+
             IsInitialized = true;
 
             _logger.LogDebug("PluginFrameworkApiProvider initialized");
@@ -48,22 +45,23 @@ namespace Weikio.ApiFramework.ApiProviders.PluginFramework
 
         public bool IsInitialized { get; private set; }
 
-        public async Task<List<ApiDefinition>> List()
+        public List<ApiDefinition> List()
         {
             if (!IsInitialized)
             {
                 return new List<ApiDefinition>();
             }
 
-            var pluginDefinitions = await _pluginCatalog.GetAll();
+            // In Plugin Framework each type is a plugin. In Api Framework each Api can contain multiple types. So we combine the plugins at this point.
+            var pluginDefinitions = _pluginCatalog.GetPlugins().GroupBy(x => new { x.Name, x.Version });
 
             var result = new List<ApiDefinition>();
 
             foreach (var pluginDefinition in pluginDefinitions)
             {
-                var apiDefinition = new ApiDefinition(pluginDefinition.Name, pluginDefinition.Version)
+                var apiDefinition = new ApiDefinition(pluginDefinition.Key.Name, pluginDefinition.Key.Version)
                 {
-                    Description = pluginDefinition.Description, ProductVersion = pluginDefinition.ProductVersion
+                    Description = pluginDefinition.First().Description, ProductVersion = pluginDefinition.First().ProductVersion
                 };
 
                 result.Add(apiDefinition);
@@ -72,138 +70,104 @@ namespace Weikio.ApiFramework.ApiProviders.PluginFramework
             return result;
         }
 
-        public async Task<Api> Get(ApiDefinition definition)
+        public Api Get(ApiDefinition definition)
         {
-            _logger.LogDebug("Getting api by {ApiDefinition}", definition);
-
-            var pluginDefinition = await _pluginCatalog.Get(definition.Name, definition.Version);
-
-            if (pluginDefinition == null)
+            try
             {
-                throw new ApiNotFoundException(definition.Name, definition.Version);
-            }
+                _logger.LogDebug("Getting api by {ApiDefinition}", definition);
 
-            Dictionary<string, Predicate<Type>> typeTaggers;
-            if (pluginDefinition.Source is TypePluginCatalog typePluginCatalog)
-            {
-                // TODO: This isn't a scalable solution but should work for the first version. In the future it might be that typetaggers should be set per catalog.
-                // The problem is that without this if-else handling, TypeCatalog still resolves all the apis in the assembly.
+                var result = GetApiByDefinition(definition);
 
-                var bindFlags = BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic
-                                         | BindingFlags.Static;
-                var field = typePluginCatalog.GetType().GetField("_pluginType", bindFlags);
-                var pluginType = (Type) field.GetValue(typePluginCatalog);
-                
-                typeTaggers = new Dictionary<string, Predicate<Type>>
+                if (result == null)
                 {
-                    { "Api", type => type.FullName.Equals(pluginType.FullName) && !string.Equals(pluginType.Name, "ApiFactory", StringComparison.InvariantCultureIgnoreCase) },
-                    {
-                        "Factory", type =>
-                        {
-                            if (pluginType.Name != "ApiFactory")
-                            {
-                                return false;
-                            }
+                    throw new ApiNotFoundException(definition.Name, definition.Version);
+                }
 
-                            var methods = type.GetMethods().ToList();
-
-                            var factoryMethods = methods
-                                .Where(m => m.IsStatic && typeof(Task<IEnumerable<Type>>).IsAssignableFrom(m.ReturnType));
-
-                            return factoryMethods?.Any() == true;
-                        }
-                    },
-                    {
-                        "HealthCheck", type => false
-                    },
-                };
+                return result;
             }
-            else
+            catch (Exception e)
             {
-                typeTaggers = new Dictionary<string, Predicate<Type>>
+                _logger.LogError(e, "Failed to get api using definition {ApiDefinition}", definition);
+
+                _logger.LogDebug("Available APIs:");
+
+                var allApis = List();
+
+                foreach (var api in allApis)
                 {
-                    { "Api", type => type.Name.EndsWith("Api") },
-                    {
-                        "Factory", type =>
-                        {
-                            if (type.Name != "ApiFactory")
-                            {
-                                return false;
-                            }
+                    _logger.LogDebug(api.ToString());
+                }
 
-                            var methods = type.GetMethods().ToList();
-
-                            var factoryMethods = methods
-                                .Where(m => m.IsStatic && typeof(Task<IEnumerable<Type>>).IsAssignableFrom(m.ReturnType));
-
-                            return factoryMethods?.Any() == true;
-                        }
-                    },
-                    {
-                        "HealthCheck", type =>
-                        {
-                            if (type.Name != "HealthCheckFactory")
-                            {
-                                return false;
-                            }
-
-                            var methods = type.GetMethods().ToList();
-
-                            var factoryMethods = methods
-                                .Where(m => m.IsStatic && typeof(Task<IHealthCheck>).IsAssignableFrom(m.ReturnType));
-
-                            return factoryMethods?.Any() == true;
-                        }
-                    },
-                };
+                throw;
             }
-
-            var plugin = await _exporter.Get(pluginDefinition, typeTaggers);
-
-            var initializersTypes = plugin.PluginTypes.Where(x => x.Tag == "Factory").Select(x => x.Type).ToList();
-            _logger.LogDebug("Found {InitializerTypeCount} initializers for {ApiDefinition}", initializersTypes.Count, definition);
-            
-            var healthCheckType = plugin.PluginTypes.Where(x => x.Tag == "HealthCheck").Select(x => x.Type).FirstOrDefault();
-
-            if (healthCheckType != null)
-            {
-                _logger.LogDebug("Found {HealthCheckType} health check for {ApiDefinition}", healthCheckType, definition);
-            }
-
-            var initializerMethods = new List<MethodInfo>();
-
-            foreach (var factoryTypes in initializersTypes)
-            {
-                initializerMethods.AddRange(factoryTypes.GetMethods()
-                    .Where(m => m.IsStatic && typeof(Task<IEnumerable<Type>>).IsAssignableFrom(m.ReturnType)));
-            }
-
-            MethodInfo healthCheckFactoryMethod = null;
-
-            if (healthCheckType != null)
-            {
-                healthCheckFactoryMethod = healthCheckType.GetMethods().First(m => m.IsStatic && typeof(Task<IHealthCheck>).IsAssignableFrom(m.ReturnType));
-            }
-
-            var factory = _factoryWrapper.Wrap(initializerMethods);
-            var healthCheckRunner = _healthCheckWrapper.Wrap(healthCheckFactoryMethod);
-
-            var result = new Api(definition, plugin.PluginTypes.Where(x => x.Tag == "Api").Select(x => x.Type).ToList(),
-                factory, healthCheckRunner);
-            
-            _logger.LogDebug("Got {Api} from {ApiDefinition}", result, definition);
-
-            return result;
         }
 
-        public async Task<Api> Get(string name, Version version)
+        public Api Get(string name, Version version)
         {
-            return await Get(new ApiDefinition(name, version));
+            return Get(new ApiDefinition(name, version));
         }
 
-        public async Task<Api> Get(string name)
+        public Api Get(string name)
         {
-            return await Get(name, new Version(1, 0, 0, 0));
+            return Get(name, new Version(1, 0, 0, 0));
+        }
+
+        private Api GetApiByDefinition(ApiDefinition apiDefinition)
+        {
+            var allPlugins = _pluginCatalog.GetPlugins();
+
+            try
+            {
+                // In Plugin Framework each type is a plugin. In Api Framework each Api can contain multiple types. So we combine the plugins at this point.
+                var pluginsForApi = allPlugins.Where(x =>
+                    string.Equals(x.Name, apiDefinition.Name, StringComparison.InvariantCultureIgnoreCase) && apiDefinition.Version == x.Version).ToList();
+
+                if (pluginsForApi.Any() != true)
+                {
+                    throw new PluginForApiNotFoundException(apiDefinition.Name, apiDefinition.Version);
+                }
+
+                var factoryTypes = pluginsForApi.Where(x => x.Tags?.Contains("Factory") == true).ToList();
+                _logger.LogDebug("Found {FactoryTypeCount} factories for {ApiDefinition}", factoryTypes.Count, apiDefinition);
+
+                // Only one health check for api is supported
+                var healthCheckType = pluginsForApi.FirstOrDefault(x => x.Tags?.Contains("HealthCheck") == true);
+
+                if (healthCheckType != null)
+                {
+                    _logger.LogDebug("Found {HealthCheckType} health check for {ApiDefinition}", healthCheckType, apiDefinition);
+                }
+
+                MethodInfo healthCheckFactoryMethod = null;
+
+                if (healthCheckType != null)
+                {
+                    healthCheckFactoryMethod = healthCheckType.Type.GetMethods()
+                        .First(m => m.IsStatic && typeof(Task<IHealthCheck>).IsAssignableFrom(m.ReturnType));
+                }
+
+                var factory = _factoryWrapper.Wrap(factoryTypes.Select(x => x.Type).ToList());
+                var healthCheckRunner = _healthCheckWrapper.Wrap(healthCheckFactoryMethod);
+
+                var apiTypes = pluginsForApi.Where(x => x.Tags?.Contains("Api") == true).ToList();
+
+                var result = new Api(apiDefinition, apiTypes.Select(x => x.Type).ToList(),
+                    factory, healthCheckRunner);
+
+                return result;
+            }
+            catch (ApiNotFoundException e)
+            {
+                _logger.LogError(e, "No plugins were found for Api with ApiDefintion {ApiDefinition}.", apiDefinition);
+                _logger.LogDebug("Available plugins:");
+
+                foreach (var plugin in allPlugins)
+                {
+                    _logger.LogDebug(plugin.ToString());
+                }
+
+                return null;
+            }
         }
     }
 }

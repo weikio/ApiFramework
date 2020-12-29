@@ -8,6 +8,6 @@ namespace Weikio.ApiFramework.ApiProviders.PluginFramework
 {
     public interface IApiInitializationWrapper
     {
-        Func<Endpoint, Task<IEnumerable<Type>>> Wrap(List<MethodInfo> initializerMethods);
+        Func<Endpoint, Task<IEnumerable<Type>>> Wrap(List<Type> factoryTypes);
     }
 }

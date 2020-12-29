@@ -48,7 +48,7 @@ namespace Weikio.ApiFramework.Core.StartupTasks
             {
                 await _apiProvider.Initialize(cancellationToken).ConfigureAwait(false);
 
-                var allApis = await _apiProvider.List();
+                var allApis = _apiProvider.List();
 
                 _logger.LogDebug($"There's {allApis.Count} apis available:");
 

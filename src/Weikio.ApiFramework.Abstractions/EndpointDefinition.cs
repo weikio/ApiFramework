@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.Diagnostics.HealthChecks;
 
-namespace Weikio.ApiFramework.SDK
+namespace Weikio.ApiFramework.Abstractions
 {
     public class EndpointDefinition
     {

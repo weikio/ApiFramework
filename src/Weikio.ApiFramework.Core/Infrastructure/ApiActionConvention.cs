@@ -44,14 +44,6 @@ namespace Weikio.ApiFramework.Core.Infrastructure
                     continue;
                 }
 
-                if (action.ActionMethod.Name == "Close" || action.ActionMethod.Name == "Abort" || action.ActionMethod.Name == "Open" || action.ActionMethod.Name == "OpenAsync" || action.ActionMethod.Name == "CloseAsync")
-                {
-                    action.Selectors.Clear();
-                    action.ApiExplorer.IsVisible = false;
-
-                    continue;
-                }
-                
                 var useBody = false;
 
                 var selector = new SelectorModel { };

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -13,6 +14,7 @@ using Weikio.ApiFramework.SDK;
 using Weikio.PluginFramework.Abstractions;
 using Weikio.PluginFramework.Catalogs;
 using Weikio.PluginFramework.Context;
+using Weikio.PluginFramework.TypeFinding;
 
 namespace Weikio.ApiFramework.ApiProviders.PluginFramework
 {
@@ -23,6 +25,23 @@ namespace Weikio.ApiFramework.ApiProviders.PluginFramework
         {
             PluginLoadContextOptions.Defaults.UseHostApplicationAssemblies = UseHostApplicationAssembliesEnum.Always;
 
+            builder.Services.Configure<PluginNameAndVersionOptions>(typeof(AssemblyPluginCatalog).FullName, options =>
+            {
+                options.NameOptions.PluginNameGenerator = (nameOptions, type) =>
+                {
+                    var displayNameAttribute = type.GetCustomAttribute(typeof(DisplayNameAttribute), true) as DisplayNameAttribute;
+
+                    if (displayNameAttribute != null)
+                    {
+                        return displayNameAttribute.DisplayName;
+                    }
+
+                    var assemblyName = type.Assembly.GetName();
+
+                    return assemblyName.Name;
+                };
+            });
+
             builder.Services.Replace(ServiceDescriptor.Singleton<IApiProvider>(services =>
             {
                 var configurationOptions = services.GetService<IOptions<PluginFrameworkApiProviderOptions>>();
@@ -31,7 +50,7 @@ namespace Weikio.ApiFramework.ApiProviders.PluginFramework
                 var logger = services.GetService<ILogger<PluginFrameworkApiProvider>>();
                 var apiPlugins = services.GetServices<ApiPlugin>();
                 var apiPluginOptions = services.GetService<IOptions<ApiPluginOptions>>().Value;
-                
+
                 PluginFrameworkApiProviderOptions options = null;
 
                 if (configurationOptions != null)
@@ -46,17 +65,15 @@ namespace Weikio.ApiFramework.ApiProviders.PluginFramework
                 // TODO: Replace with interface/DI based solution
                 ApiLocator.IsApi = options.ApiResolver;
 
+                TypeFinderOptions.Defaults.TypeFinderCriterias.Clear();
+
+                foreach (var apiFinderCriterion in options.ApiFinderCriteria)
+                {
+                    TypeFinderOptions.Defaults.TypeFinderCriterias.Add(apiFinderCriterion);
+                }
+
                 var registeredPluginCatalogs = GetRegisteredPluginCatalogs(services);
                 var registeredCatalogs = new List<IPluginCatalog>(registeredPluginCatalogs);
-
-                // if (plugins?.Any() == true)
-                // {
-                //     foreach (var apiPlugin in plugins)
-                //     {
-                //         var catalog = new AssemblyPluginCatalog(apiPlugin.Assembly);
-                //         registeredCatalogs.Add(catalog);
-                //     }
-                // }
 
                 foreach (var apiPluginAssembly in apiPluginOptions.ApiPluginAssemblies)
                 {
@@ -64,15 +81,13 @@ namespace Weikio.ApiFramework.ApiProviders.PluginFramework
                     registeredCatalogs.Add(catalog);
                 }
 
-                var exporter = services.GetService<IPluginExporter>();
-
                 if (options.ApiAssemblies?.Any() == true)
                 {
                     var assemblyCatalogs = new List<IPluginCatalog>();
 
-                    foreach (var apiAssembly in options.ApiAssemblies)
+                    foreach (var assemblyPath in options.ApiAssemblies)
                     {
-                        var assemblyCatalog = new AssemblyPluginCatalog(apiAssembly);
+                        var assemblyCatalog = new AssemblyPluginCatalog(assemblyPath);
                         assemblyCatalogs.Add(assemblyCatalog);
                     }
 
@@ -85,7 +100,7 @@ namespace Weikio.ApiFramework.ApiProviders.PluginFramework
                     }
 
                     var compositeCatalog = new CompositePluginCatalog(assemblyCatalogs.ToArray());
-                    var apiProvider = new PluginFrameworkApiProvider(compositeCatalog, exporter, initializationWrapper, healthCheckWrapper, logger);
+                    var apiProvider = new PluginFrameworkApiProvider(compositeCatalog, initializationWrapper, healthCheckWrapper, logger);
 
                     return apiProvider;
                 }
@@ -94,14 +109,12 @@ namespace Weikio.ApiFramework.ApiProviders.PluginFramework
                 {
                     var binDirectory = Path.GetDirectoryName(Assembly.GetEntryAssembly().Location);
                     var folderPluginCatalogOptions = new FolderPluginCatalogOptions();
-                    folderPluginCatalogOptions.PluginResolvers.Add(ApiLocator.IsApi);
 
                     var pluginCatalog = new FolderPluginCatalog(binDirectory, folderPluginCatalogOptions);
 
                     if (!registeredCatalogs.Any())
                     {
-                        var apiProvider =
-                            new PluginFrameworkApiProvider(pluginCatalog, exporter, initializationWrapper, healthCheckWrapper, logger);
+                        var apiProvider = new PluginFrameworkApiProvider(pluginCatalog, initializationWrapper, healthCheckWrapper, logger);
 
                         return apiProvider;
                     }
@@ -114,8 +127,7 @@ namespace Weikio.ApiFramework.ApiProviders.PluginFramework
                             compositeCatalog.AddCatalog(catalog);
                         }
 
-                        var apiProvider = new PluginFrameworkApiProvider(compositeCatalog, exporter, initializationWrapper, healthCheckWrapper, logger
-                            );
+                        var apiProvider = new PluginFrameworkApiProvider(compositeCatalog, initializationWrapper, healthCheckWrapper, logger);
 
                         return apiProvider;
                     }
@@ -125,13 +137,12 @@ namespace Weikio.ApiFramework.ApiProviders.PluginFramework
                 {
                     var compositeCatalog = new CompositePluginCatalog(registeredCatalogs.ToArray());
 
-                    return new PluginFrameworkApiProvider(compositeCatalog, exporter, initializationWrapper, healthCheckWrapper, logger);
+                    return new PluginFrameworkApiProvider(compositeCatalog, initializationWrapper, healthCheckWrapper, logger);
                 }
 
-                return new PluginFrameworkApiProvider(new EmptyPluginCatalog(), exporter, initializationWrapper, healthCheckWrapper, logger);
+                return new PluginFrameworkApiProvider(new EmptyPluginCatalog(), initializationWrapper, healthCheckWrapper, logger);
             }));
 
-            builder.Services.AddTransient<IPluginExporter, PluginExporter>();
             builder.Services.TryAddSingleton<IApiInitializationWrapper, ApiInitializationWrapper>();
             builder.Services.TryAddSingleton<IApiHealthCheckWrapper, ApiHealthCheckWrapper>();
 

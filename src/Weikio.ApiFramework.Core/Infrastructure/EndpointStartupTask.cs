@@ -47,7 +47,7 @@ namespace Weikio.ApiFramework.Core.Infrastructure
 
                 foreach (var endpointDefinition in initialEndpoints)
                 {
-                    var api = await _apiProvider.Get(endpointDefinition.Api);
+                    var api = _apiProvider.Get(endpointDefinition.Api);
 
                     var endpoint = new Endpoint(endpointDefinition, api,
                         GetHealthCheckFactory(api, endpointDefinition));
@@ -58,11 +58,11 @@ namespace Weikio.ApiFramework.Core.Infrastructure
 
                 if (initialEndpoints.Any() == false && _options.AutoResolveEndpoints)
                 {
-                    var functions = await _apiProvider.List();
+                    var functions = _apiProvider.List();
 
                     foreach (var functionDefinition in functions)
                     {
-                        var function = await _apiProvider.Get(functionDefinition);
+                        var function = _apiProvider.Get(functionDefinition);
                         var endpoint = new Endpoint(_options.ApiAddressBase, function, null, GetHealthCheckFactory(function));
 
                         _endpointManager.AddEndpoint(endpoint);

@@ -3,6 +3,7 @@ using System.Reflection;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
+using Weikio.ApiFramework.Abstractions;
 using Weikio.ApiFramework.Abstractions.DependencyInjection;
 
 namespace Weikio.ApiFramework.SDK

@@ -17,24 +17,24 @@ namespace Weikio.ApiFramework.Core.Apis
         }
 
         public bool IsInitialized { get; private set; }
-        public Task<List<ApiDefinition>> List()
+        public List<ApiDefinition> List()
         {
             var result = new List<ApiDefinition>();
 
-            return Task.FromResult(result);
+            return result;
         }
 
-        public Task<Api> Get(ApiDefinition definition)
+        public Api Get(ApiDefinition definition)
         {
             throw new ApiNotFoundException(definition.Name, definition.Version);
         }
 
-        public Task<Api> Get(string name, Version version)
+        public Api Get(string name, Version version)
         {
             return Get(new ApiDefinition(name, version));
         }
 
-        public Task<Api> Get(string name)
+        public Api Get(string name)
         {
             return Get(name, new Version(1, 0, 0, 0));
         }

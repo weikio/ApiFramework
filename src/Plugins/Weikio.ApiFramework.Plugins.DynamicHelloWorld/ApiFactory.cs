@@ -2,9 +2,8 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
-using LamarCodeGeneration;
-using LamarCompiler;
 
 namespace Weikio.ApiFramework.Plugins.DynamicHelloWorld
 {
@@ -12,20 +11,16 @@ namespace Weikio.ApiFramework.Plugins.DynamicHelloWorld
     {
         public static async Task<IEnumerable<Type>> Create(string endpointRoute)
         {
-            var generator = new AssemblyGenerator();
+            var generator = new Weikio.TypeGenerator.CodeToAssemblyGenerator();
 
             string assemblySourceCode;
             var filePath = Path.Combine(Path.GetDirectoryName(typeof(ApiFactory).Assembly.Location), "DynamicHelloWorld.txt");
             var content = await File.ReadAllTextAsync(filePath);
 
-            using (var sourceWriter = new SourceWriter())
-            {
-                sourceWriter.Write(content);
+            var sb = new StringBuilder();
+            sb.Append(content);
 
-                assemblySourceCode = sourceWriter.Code();
-            }
-
-            var assembly = generator.Generate(assemblySourceCode);
+            var assembly = generator.GenerateAssembly(sb.ToString());
 
             return assembly.GetExportedTypes()
                 .Where(x => !x.IsAbstract && x.Name.EndsWith("Api"))
@@ -34,23 +29,18 @@ namespace Weikio.ApiFramework.Plugins.DynamicHelloWorld
 
         public static async Task<IEnumerable<Type>> CreateWithParameters(string postfix, int age, ComplexConfiguration complex)
         {
-            var generator = new AssemblyGenerator();
+            var generator = new Weikio.TypeGenerator.CodeToAssemblyGenerator();
 
-            string assemblySourceCode;
             var filePath = Path.Combine(Path.GetDirectoryName(typeof(ApiFactory).Assembly.Location), "ParametersDynamicHelloWorld.txt");
             var content = await File.ReadAllTextAsync(filePath);
 
             content = content.Replace("##POSTFIX##", postfix);
             content = content.Replace("##AGE##", age.ToString());
 
-            using (var sourceWriter = new SourceWriter())
-            {
-                sourceWriter.Write(content);
+            var sb = new StringBuilder();
+            sb.Append(content);
 
-                assemblySourceCode = sourceWriter.Code();
-            }
-
-            var assembly = generator.Generate(assemblySourceCode);
+            var assembly = generator.GenerateAssembly(sb.ToString());
 
             return assembly.GetExportedTypes()
                 .Where(x => !x.IsAbstract && x.Name.EndsWith("Api"))

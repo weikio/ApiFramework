@@ -9,7 +9,7 @@ namespace ApiFramework.IntegrationTests
 {
     public class ApiInitializationWrapperForUnitTests : IApiInitializationWrapper
     {
-        public Func<Endpoint, Task<IEnumerable<Type>>> Wrap(List<MethodInfo> initializerMethods)
+        public Func<Endpoint, Task<IEnumerable<Type>>> Wrap(List<Type> initializerMethods)
         {
             return null;
         }

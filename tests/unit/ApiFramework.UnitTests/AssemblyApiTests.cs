@@ -3,7 +3,6 @@ using System.Threading.Tasks;
 using HelloWorld;
 using Microsoft.Extensions.Logging.Abstractions;
 using Weikio.ApiFramework.ApiProviders.PluginFramework;
-using Weikio.PluginFramework.Abstractions;
 using Weikio.PluginFramework.Catalogs;
 using Xunit;
 
@@ -14,13 +13,13 @@ namespace ApiFramework.IntegrationTests
         [Fact]
         public async Task CanInitializeAssemblyBasedApi()
         {
-            var provider = new PluginFrameworkApiProvider(new AssemblyPluginCatalog(typeof(HelloWorldApi).Assembly), new PluginExporter(),
+            var provider = new PluginFrameworkApiProvider(new AssemblyPluginCatalog(typeof(HelloWorldApi).Assembly), 
                 new ApiInitializationWrapperForUnitTests(),
                 new ApiHealthCheckWrapperForUnitTests(), new NullLogger<PluginFrameworkApiProvider>());
 
             await provider.Initialize(new CancellationToken());
 
-            var all = await provider.List();
+            var all = provider.List();
             
             Assert.NotEmpty(all);
         }
