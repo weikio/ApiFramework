@@ -22,7 +22,6 @@
 
   <ItemGroup>
     <Folder Include="Areas\Admin" />
-    <Folder Include="Extensions\" />
   </ItemGroup>
 
   <ItemGroup>
@@ -30,12 +29,15 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Weikio.ApiFramework.AspNetCore" Version="1.0.0-alpha.*" />
     <PackageReference Include="MinVer" Version="2.0.0" />
   </ItemGroup>
 
   <ItemGroup>
     <None Include="../../docs/logo_256.png" Pack="true" Visible="false" PackagePath="" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Weikio.ApiFramework.AspNetCore\Weikio.ApiFramework.AspNetCore.csproj" />
   </ItemGroup>
   
 </Project>

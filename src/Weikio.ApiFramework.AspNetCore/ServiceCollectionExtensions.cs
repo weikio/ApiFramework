@@ -82,17 +82,9 @@ namespace Weikio.ApiFramework.AspNetCore
         {
             builder.Services.AddTransient<IPluginCatalog>(services =>
             {
-                var optionsMonitor = services.GetRequiredService<IOptionsMonitor<PluginNameAndVersionOptions>>();
-                var namingOptions = optionsMonitor.Get(typeof(AssemblyPluginCatalog).FullName);
-                
                 var assemblyPath = assembly.Location;
 
-                var assemblyPluginCatalogOptions = new AssemblyPluginCatalogOptions()
-                {
-                    PluginNameOptions = namingOptions.NameOptions
-                };
-                
-                var assemblyCatalog = new AssemblyPluginCatalog(assemblyPath, assemblyPluginCatalogOptions);
+                var assemblyCatalog = new AssemblyPluginCatalog(assemblyPath);
 
                 return assemblyCatalog;
             });

@@ -20,9 +20,9 @@ namespace Weikio.ApiFramework.Admin.Areas.Admin.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<ApiDefinition>>> GetApis()
+        public ActionResult<IEnumerable<ApiDefinition>> GetApis()
         {    
-            var result = await _apiProvider.List();
+            var result = _apiProvider.List();
 
             return Ok(result);
         }

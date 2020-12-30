@@ -43,9 +43,4 @@ namespace Weikio.ApiFramework.ApiProviders.PluginFramework
             },
         };
     }
-
-    public class PluginNameAndVersionOptions
-    {
-        public PluginNameOptions NameOptions { get; set; } = new PluginNameOptions();
-    }
 }

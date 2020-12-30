@@ -10,14 +10,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\ApiFramework.Plugins.MySql\src\Weikio.ApiFramework.Plugins.MySql\Weikio.ApiFramework.Plugins.MySQL.csproj" />
-    <ProjectReference Include="..\..\..\ApiFramework.Plugins.OpenApi\src\Weikio.ApiFramework.Plugins.OpenApi\Weikio.ApiFramework.Plugins.OpenApi.csproj" />
-    <ProjectReference Include="..\..\..\ApiFramework.Plugins.Procountor\src\Weikio.ApiFramework.Plugins.Procountor\Weikio.ApiFramework.Plugins.Procountor.csproj" />
     <ProjectReference Include="..\..\src\Weikio.ApiFramework.AspNetCore.StarterKit\Weikio.ApiFramework.AspNetCore.StarterKit.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <PackageReference Include="Microsoft.CodeAnalysis.Common" Version="3.3.1" />
   </ItemGroup>
 
   <ItemGroup>

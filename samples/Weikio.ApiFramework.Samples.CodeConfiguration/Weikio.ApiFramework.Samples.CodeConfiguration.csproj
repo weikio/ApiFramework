@@ -19,6 +19,5 @@
     <PackageReference Include="System.ServiceModel.Http" Version="4.4.*" />
     <PackageReference Include="System.ServiceModel.NetTcp" Version="4.4.*" />
     <PackageReference Include="System.ServiceModel.Security" Version="4.4.*" />
-    <PackageReference Include="Microsoft.CodeAnalysis.Common" Version="3.3.1"/>
   </ItemGroup>
 </Project>

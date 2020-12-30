@@ -25,13 +25,11 @@ namespace Weikio.ApiFramework.ApiProviders.PluginFramework
         {
             PluginLoadContextOptions.Defaults.UseHostApplicationAssemblies = UseHostApplicationAssembliesEnum.Always;
 
-            builder.Services.Configure<PluginNameAndVersionOptions>(typeof(AssemblyPluginCatalog).FullName, options =>
+            AssemblyPluginCatalogOptions.Defaults.PluginNameOptions = new PluginNameOptions()
             {
-                options.NameOptions.PluginNameGenerator = (nameOptions, type) =>
+                PluginNameGenerator = (nameOptions, type) =>
                 {
-                    var displayNameAttribute = type.GetCustomAttribute(typeof(DisplayNameAttribute), true) as DisplayNameAttribute;
-
-                    if (displayNameAttribute != null)
+                    if (type.GetCustomAttribute(typeof(DisplayNameAttribute), true) is DisplayNameAttribute displayNameAttribute)
                     {
                         return displayNameAttribute.DisplayName;
                     }
@@ -39,8 +37,8 @@ namespace Weikio.ApiFramework.ApiProviders.PluginFramework
                     var assemblyName = type.Assembly.GetName();
 
                     return assemblyName.Name;
-                };
-            });
+                }
+            };
 
             builder.Services.Replace(ServiceDescriptor.Singleton<IApiProvider>(services =>
             {
