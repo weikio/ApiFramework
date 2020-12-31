@@ -13,6 +13,7 @@
     <ProjectReference Include="..\..\src\Weikio.ApiFramework.AspNetCore.NSwag\Weikio.ApiFramework.AspNetCore.NSwag.csproj" />
     <ProjectReference Include="..\..\src\Weikio.ApiFramework.AspNetCore\Weikio.ApiFramework.AspNetCore.csproj" />
     <ProjectReference Include="..\..\src\Weikio.ApiFramework.Core\Weikio.ApiFramework.Core.csproj" />
+    <ProjectReference Include="..\Weikio.ApiFramework.Samples.PluginLibrary\Weikio.ApiFramework.Samples.PluginLibrary.csproj" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="System.ServiceModel.Duplex" Version="4.4.*" />

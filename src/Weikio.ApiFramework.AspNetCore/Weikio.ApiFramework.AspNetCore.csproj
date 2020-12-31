@@ -36,6 +36,7 @@
   <ItemGroup>
     <FrameworkReference Include="Microsoft.AspNetCore.App" />
   </ItemGroup>
+  
   <ItemGroup>
     <None Include="../../docs/logo_256.png" Pack="true" Visible="false" PackagePath="" />
   </ItemGroup>

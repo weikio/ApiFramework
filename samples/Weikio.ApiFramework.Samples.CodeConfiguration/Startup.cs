@@ -6,7 +6,10 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using NSwag.Generation.Processors;
+using Weikio.ApiFramework.AspNetCore;
 using Weikio.ApiFramework.AspNetCore.NSwag;
+using Weikio.ApiFramework.Core.Extensions;
+using Weikio.ApiFramework.Samples.PluginLibrary;
 
 namespace Weikio.ApiFramework.Samples.CodeConfiguration
 {
@@ -28,6 +31,10 @@ namespace Weikio.ApiFramework.Samples.CodeConfiguration
             var mvcBuilder = services.AddMvc(options => { })
                 .SetCompatibilityVersion(CompatibilityVersion.Latest);
 
+            var builder = services.AddApiFramework();
+            // builder.AddApi(typeof(SampleController));
+            // builder.AddEndpoint("/mytest", "Weikio.ApiFramework.Samples.PluginLibrary.SampleController");
+                
 //            services.AddFunctionFramework(Configuration, mvcBuilder, options =>
 //            {
 //                options.AutoResolveFunctions = false;
