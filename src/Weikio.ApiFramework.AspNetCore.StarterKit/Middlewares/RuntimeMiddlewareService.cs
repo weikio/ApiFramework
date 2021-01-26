@@ -72,8 +72,11 @@ namespace Weikio.ApiFramework.AspNetCore.StarterKit.Middlewares
             }
             
             var app = _appBuilder.New();
-            
-            options.Configure(app);
+
+            if (options.Configure != null)
+            {
+                options.Configure(app);
+            }
             
             Func<RequestDelegate, RequestDelegate> result = next =>
             {

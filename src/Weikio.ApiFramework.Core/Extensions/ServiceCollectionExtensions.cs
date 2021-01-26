@@ -95,6 +95,7 @@ namespace Weikio.ApiFramework.Core.Extensions
             builder.Services.TryAddTransient<IAsyncStreamJsonHelperFactory, DefaultAsyncStreamJsonHelperFactory>();
             builder.Services.AddTransient<SystemTextAsyncStreamJsonHelper>();
             builder.Services.AddTransient<NewtonsoftAsyncStreamJsonHelper>();
+            builder.Services.AddTransient<AsyncJsonActionFilter>();
             
             services.Configure<MvcOptions>(options =>
             {

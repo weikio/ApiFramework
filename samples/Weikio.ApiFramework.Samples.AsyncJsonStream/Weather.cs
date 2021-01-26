@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Weikio.ApiFramework.Samples.AsyncStream
+namespace Weikio.ApiFramework.Samples.AsyncJsonStream
 {
     public class Weather
     {

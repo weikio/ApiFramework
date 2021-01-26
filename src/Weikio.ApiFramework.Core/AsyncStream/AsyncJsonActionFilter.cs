@@ -82,7 +82,12 @@ namespace Weikio.ApiFramework.Core.AsyncStream
             if (method is { })
             {
                 var generic = method.MakeGenericMethod(returnType.GetGenericArguments().First());
-                generic.Invoke(this, new[] { context.HttpContext.Response, result, context.HttpContext });
+                var task = (Task) generic.Invoke(this, new[] { context.HttpContext.Response, result, context.HttpContext });
+
+                if (task != null && task.IsCompleted == false)
+                {
+                    await task;
+                }
             }
             else
             {

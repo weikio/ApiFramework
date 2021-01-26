@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace Weikio.ApiFramework.Samples.AsyncStream
+namespace Weikio.ApiFramework.Samples.AsyncJsonStream
 {
     public class WeatherApi
     {
@@ -19,7 +19,7 @@ namespace Weikio.ApiFramework.Samples.AsyncStream
 
                 if ((double) i % 1000 == 0)
                 {
-                    await Task.Delay(TimeSpan.FromSeconds(1));
+                    await Task.Delay(TimeSpan.FromMilliseconds(300)).ConfigureAwait(false);
                 }
 
                 yield return w;
