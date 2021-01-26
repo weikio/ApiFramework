@@ -11,7 +11,7 @@ namespace Weikio.ApiFramework.AspNetCore.StarterKit.Middlewares
     {
         private readonly IOptionsMonitor<ConditionalMiddlewareOptions> _optionsSnapshot;
         private IApplicationBuilder _appBuilder;
-        private Dictionary<string, Func<RequestDelegate, RequestDelegate>> _middlewares = new Dictionary<string, Func<RequestDelegate, RequestDelegate>>();
+        private readonly Dictionary<string, Func<RequestDelegate, RequestDelegate>> _middlewares = new Dictionary<string, Func<RequestDelegate, RequestDelegate>>();
         private static string _buildLock = "lock";
         
         public RuntimeMiddlewareService(IOptionsMonitor<ConditionalMiddlewareOptions> optionsSnapshot)
@@ -72,8 +72,11 @@ namespace Weikio.ApiFramework.AspNetCore.StarterKit.Middlewares
             }
             
             var app = _appBuilder.New();
-            
-            options.Configure(app);
+
+            if (options.Configure != null)
+            {
+                options.Configure(app);
+            }
             
             Func<RequestDelegate, RequestDelegate> result = next =>
             {

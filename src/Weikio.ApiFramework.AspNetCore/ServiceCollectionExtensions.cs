@@ -20,7 +20,7 @@ namespace Weikio.ApiFramework.AspNetCore
         {
             return mvcBuilder.Services.AddApiFramework(setupAction);
         }
-        
+
         public static IApiFrameworkBuilder AddApiFramework(this IServiceCollection services,
             Action<ApiFrameworkAspNetCoreOptions> setupAction = null)
         {
@@ -31,7 +31,7 @@ namespace Weikio.ApiFramework.AspNetCore
             {
                 services.AddHealthChecks()
                     .AddCheck<EndpointHeathCheck>("api_framework_endpoint", HealthStatus.Degraded, new[] { "api_framework_endpoint" });
-            
+
                 return builder;
             }
 
@@ -43,7 +43,7 @@ namespace Weikio.ApiFramework.AspNetCore
                 services.AddHealthChecks()
                     .AddCheck<EndpointHeathCheck>("api_framework_endpoint", HealthStatus.Degraded, new[] { "api_framework_endpoint" });
             }
-            
+
             var setupApiFramework = new Action<ApiFrameworkOptions>(options =>
             {
                 options.ApiAddressBase = apiFrameworkAspNetCoreOptions.ApiAddressBase;
@@ -99,6 +99,32 @@ namespace Weikio.ApiFramework.AspNetCore
                 var typeCatalog = new TypePluginCatalog(apiType);
 
                 return typeCatalog;
+            });
+
+            return builder;
+        }
+
+        public static IApiFrameworkBuilder AddApi<T>(this IApiFrameworkBuilder builder, string route = null, object configuration = null,
+            IHealthCheck healthCheck = null, string groupName = null)
+        {
+            builder.Services.AddTransient<IPluginCatalog>(services =>
+            {
+                var apiType = typeof(T);
+                var typeCatalog = new TypePluginCatalog(apiType);
+
+                return typeCatalog;
+            });
+
+            if (string.IsNullOrWhiteSpace(route))
+            {
+                return builder;
+            }
+
+            builder.Services.AddTransient(services =>
+            {
+                var endpointConfiguration = new EndpointDefinition(route, typeof(T).FullName, configuration, healthCheck, groupName);
+
+                return endpointConfiguration;
             });
 
             return builder;

@@ -12,6 +12,7 @@ using Microsoft.Extensions.Options;
 using Weikio.ApiFramework.Abstractions;
 using Weikio.ApiFramework.Abstractions.DependencyInjection;
 using Weikio.ApiFramework.Core.Apis;
+using Weikio.ApiFramework.Core.AsyncStream;
 using Weikio.ApiFramework.Core.Configuration;
 using Weikio.ApiFramework.Core.Endpoints;
 using Weikio.ApiFramework.Core.HealthChecks;
@@ -90,6 +91,16 @@ namespace Weikio.ApiFramework.Core.Extensions
             builder.Services.TryAddEnumerable(ServiceDescriptor.Transient<IApiDescriptionProvider, ApiFileResponseTypeDescriptor>());
 
             builder.Services.TryAddEnumerable(ServiceDescriptor.Singleton<IHealthCheckPublisher, HealthPublisher>());
+            
+            builder.Services.TryAddTransient<IAsyncStreamJsonHelperFactory, DefaultAsyncStreamJsonHelperFactory>();
+            builder.Services.AddTransient<SystemTextAsyncStreamJsonHelper>();
+            builder.Services.AddTransient<NewtonsoftAsyncStreamJsonHelper>();
+            builder.Services.AddTransient<AsyncJsonActionFilter>();
+            
+            services.Configure<MvcOptions>(options =>
+            {
+                options.Filters.AddService<AsyncJsonActionFilter>();
+            });
 
             services.TryAddSingleton<IEndpointConfigurationProvider>(provider =>
             {
@@ -137,7 +148,7 @@ namespace Weikio.ApiFramework.Core.Extensions
             {
                 mvcOptions.Conventions.Add(convention);
             });
-
+            
             services.AddSingleton<IFileStreamResultConverter, FileInfoFileStreamResultConverter>();
             services.AddSingleton<IFileStreamResultConverter, FileResponseFileStreamResultConverter>();
             
