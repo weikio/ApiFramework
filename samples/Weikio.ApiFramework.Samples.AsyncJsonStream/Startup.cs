@@ -12,6 +12,9 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Weikio.ApiFramework.AspNetCore;
 using Weikio.ApiFramework.AspNetCore.StarterKit;
+using Weikio.ApiFramework.Core.AsyncStream;
+using Weikio.ApiFramework.Plugins.MySql;
+using Weikio.ApiFramework.Plugins.MySql.Configuration;
 
 namespace Weikio.ApiFramework.Samples.AsyncJsonStream
 {
@@ -28,10 +31,20 @@ namespace Weikio.ApiFramework.Samples.AsyncJsonStream
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
+
+            services.Configure<AsyncStreamJsonOptions>(options =>
+            {
+                options.IsEnabled = false;
+            });
+            
+            services.Configure<AsyncStreamJsonOptions>("/myweather", options =>
+            {
+                options.IsEnabled = true;
+                options.BufferSizeThresholdInKB = 1024;
+            });
             
             services.AddApiFrameworkWithAdmin()
                 .AddApi<WeatherApi>("/myweather", new WeatherConfiguration());
-
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

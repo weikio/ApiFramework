@@ -21,6 +21,11 @@ namespace Weikio.ApiFramework.Samples.AsyncJsonStream
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
                     webBuilder.UseStartup<Startup>();
+
+                    webBuilder.ConfigureLogging(builder =>
+                    {
+                        builder.SetMinimumLevel(LogLevel.Trace);
+                    });
                 });
     }
 }

@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Weikio.ApiFramework.AspNetCore;
 
 namespace Weikio.ApiFramework.Core.AsyncStream
 {
@@ -19,23 +20,52 @@ namespace Weikio.ApiFramework.Core.AsyncStream
     // From GitHub issue' comments: https://github.com/dotnet/runtime/issues/1570#issuecomment-676594141
     internal class AsyncJsonActionFilter : IAsyncActionFilter, IOrderedFilter
     {
+        private readonly IOptionsMonitor<AsyncStreamJsonOptions> _optionsMonitor;
         private readonly IAsyncStreamJsonHelperFactory _jsonHelperFactory;
         private readonly ILogger<AsyncJsonActionFilter> _logger;
-        private readonly AsyncStreamJsonOptions _options;
 
-        public AsyncJsonActionFilter(IOptions<AsyncStreamJsonOptions> options, IAsyncStreamJsonHelperFactory jsonHelperFactory,
+        public AsyncJsonActionFilter(IOptionsMonitor<AsyncStreamJsonOptions> optionsMonitor, IAsyncStreamJsonHelperFactory jsonHelperFactory,
             ILogger<AsyncJsonActionFilter> logger)
         {
+            _optionsMonitor = optionsMonitor;
             _jsonHelperFactory = jsonHelperFactory;
             _logger = logger;
-            _options = options.Value;
         }
 
         public async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
         {
-            if (_options.IsEnabled == false)
+            var endpointRoute = string.Empty;
+            var endpoint = context.HttpContext.GetEndpointMetadata();
+
+            if (endpoint != null)
             {
-                _logger.LogTrace("Async Json Stream handling is not enabled, skipping.");
+                endpointRoute = endpoint.Route;
+            }
+
+            var options = _optionsMonitor.Get(endpointRoute);
+            var routeOptionsFound = true;
+            
+            if (options.IsConfigured == false)
+            {
+                routeOptionsFound = false;
+                options = _optionsMonitor.Get(Options.DefaultName);
+            }
+            
+            if (options.IsEnabled == false)
+            {
+                if (endpoint == null)
+                {
+                    _logger.LogTrace("Not Api Framework Endpoint and Async Stream handling is disabled on global level, skipping.");
+                }
+                else if (routeOptionsFound)
+                {
+                    _logger.LogTrace("Async Stream handling is disabled for endpoint {Endpoint}, skipping.", endpoint);
+                }
+                else
+                {
+                    _logger.LogTrace("Async Stream handling is disabled on global level, skipping.");
+                }
+                
                 await next();
 
                 return;
@@ -48,14 +78,14 @@ namespace Weikio.ApiFramework.Core.AsyncStream
 
             if (returnType is null || !returnType.IsGenericType || returnType.GetGenericTypeDefinition() != typeof(IAsyncEnumerable<>))
             {
-                _logger.LogTrace("Return type is {ReturnType}, only 'IAsyncEnumerable<>' is supported, skipping.", returnType);
+                _logger.LogTrace("Return type is {ReturnType}, only 'IAsyncEnumerable<>' is supported as Async Stream, skipping.", returnType);
 
                 await next();
 
                 return;
             }
 
-            _logger.LogTrace("Action's {Action} return type is {ReturnType}, automatically convert it to async json stream.", action.DisplayName, returnType);
+            _logger.LogTrace("Action's {Action} return type is {ReturnType}, automatically convert it to Async Stream.", action.DisplayName, returnType);
 
             var parameters = action.MethodInfo.GetParameters()
                 .Select(x =>
@@ -82,7 +112,7 @@ namespace Weikio.ApiFramework.Core.AsyncStream
             if (method is { })
             {
                 var generic = method.MakeGenericMethod(returnType.GetGenericArguments().First());
-                var task = (Task) generic.Invoke(this, new[] { context.HttpContext.Response, result, context.HttpContext });
+                var task = (Task) generic.Invoke(this, new[] { context.HttpContext.Response, result, context.HttpContext, options });
 
                 if (task != null && task.IsCompleted == false)
                 {
@@ -95,8 +125,10 @@ namespace Weikio.ApiFramework.Core.AsyncStream
             }
         }
 
-        private async Task WriteAsyncStream<T>(HttpResponse response, IAsyncEnumerable<T> stream, HttpContext context)
+        private async Task WriteAsyncStream<T>(HttpResponse response, IAsyncEnumerable<T> stream, HttpContext context, AsyncStreamJsonOptions options)
         {
+            var bufferSizeInBytes = options.BufferSizeThresholdInKB * 1000;
+            
             response.StatusCode = (int) HttpStatusCode.OK;
             response.ContentType = $"{MediaTypeNames.Application.Json};charset={Encoding.UTF8.WebName}";
 
@@ -114,14 +146,26 @@ namespace Weikio.ApiFramework.Core.AsyncStream
                 {
                     writer.Serialize(item);
 
-                    if (buffer.Length < _options.BufferSizeThreshold)
+                    if (buffer.Length < bufferSizeInBytes)
                     {
                         continue;
                     }
 
+                    if (context.RequestAborted.IsCancellationRequested)
+                    {
+                        _logger.LogDebug("Async Stream request was cancelled. Stop processing.");
+
+                        if (response.HasStarted == false)
+                        {
+                            response.StatusCode = 499; // Client Closed Request
+                        }
+
+                        return;
+                    }
+
                     // Write to response stream
                     _logger.LogTrace("Buffer size {BufferSize} exceeded buffer threshold {BufferThreshold}, write to response body and continue.",
-                        buffer.Length, _options.BufferSizeThreshold);
+                        buffer.Length, bufferSizeInBytes);
                     buffer.Position = 0;
                     await buffer.CopyToAsync(response.Body, context.RequestAborted);
 
@@ -133,18 +177,25 @@ namespace Weikio.ApiFramework.Core.AsyncStream
             }
             catch (Exception e)
             {
-                _logger.LogError(e, "Failed to write async stream to response stream.");
-                response.StatusCode = (int) HttpStatusCode.InternalServerError;
+                _logger.LogError(e, "Failed to write Async Stream to response stream.");
+
+                if (response.HasStarted == false)
+                {
+                    response.StatusCode = (int) HttpStatusCode.InternalServerError;
+                }
             }
             finally
             {
                 await writer.DisposeAsync().ConfigureAwait(false);
                 buffer.Position = 0;
-                await buffer.CopyToAsync(response.Body, context.RequestAborted);
 
-                _logger.LogTrace("Async stream completed, closing the response body.");
+                _logger.LogTrace("Async Stream completed, closing the response body.");
 
-                response.Body.Close(); 
+                if (context.RequestAborted.IsCancellationRequested == false)
+                {
+                    await buffer.CopyToAsync(response.Body, context.RequestAborted);
+                    response.Body.Close();
+                }
             }
         }
 
