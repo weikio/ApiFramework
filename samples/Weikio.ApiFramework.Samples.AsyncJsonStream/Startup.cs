@@ -30,7 +30,7 @@ namespace Weikio.ApiFramework.Samples.AsyncJsonStream
             services.AddControllers();
             
             services.AddApiFrameworkWithAdmin()
-                .AddApi<WeatherApi>("/myweather");
+                .AddApi<WeatherApi>("/myweather", new WeatherConfiguration());
 
         }
 

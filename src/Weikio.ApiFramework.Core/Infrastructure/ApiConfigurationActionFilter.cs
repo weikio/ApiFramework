@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc.Filters;
 
 namespace Weikio.ApiFramework.Core.Infrastructure
 {
-    public sealed class ApiConfigurationActionFilter : IActionFilter
+    public sealed class ApiConfigurationActionFilter : IActionFilter, IOrderedFilter
     {
         public void OnActionExecuting(ActionExecutingContext context)
         {
@@ -22,5 +22,7 @@ namespace Weikio.ApiFramework.Core.Infrastructure
         public void OnActionExecuted(ActionExecutedContext context)
         {
         }
+
+        public int Order { get; } = -1;
     }
 }

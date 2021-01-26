@@ -17,7 +17,7 @@ namespace Weikio.ApiFramework.Core.AsyncStream
 {
     // Functionality for handling large amounts of json. Sends response in parts, using memory based buffering
     // From GitHub issue' comments: https://github.com/dotnet/runtime/issues/1570#issuecomment-676594141
-    internal class AsyncJsonActionFilter : IAsyncActionFilter
+    internal class AsyncJsonActionFilter : IAsyncActionFilter, IOrderedFilter
     {
         private readonly IAsyncStreamJsonHelperFactory _jsonHelperFactory;
         private readonly ILogger<AsyncJsonActionFilter> _logger;
@@ -134,6 +134,7 @@ namespace Weikio.ApiFramework.Core.AsyncStream
             catch (Exception e)
             {
                 _logger.LogError(e, "Failed to write async stream to response stream.");
+                response.StatusCode = (int) HttpStatusCode.InternalServerError;
             }
             finally
             {
@@ -146,5 +147,7 @@ namespace Weikio.ApiFramework.Core.AsyncStream
                 response.Body.Close(); 
             }
         }
+
+        public int Order { get; } = int.MaxValue;
     }
 }
