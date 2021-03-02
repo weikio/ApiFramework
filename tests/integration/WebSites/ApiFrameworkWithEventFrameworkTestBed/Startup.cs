@@ -1,13 +1,23 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using CloudNative.CloudEvents;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.HttpsPolicy;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using Weikio.ApiFramework.AspNetCore;
 using Weikio.ApiFramework.AspNetCore.StarterKit;
-using Weikio.ApiFramework.Core.AsyncStream;
+using Weikio.EventFramework.AspNetCore.Extensions;
+using Weikio.EventFramework.EventGateway.Http;
+using Weikio.EventFramework.Extensions.EventAggregator;
 
-namespace Weikio.ApiFramework.Samples.AsyncJsonStream
+namespace ApiFrameworkWithEventFrameworkTestBed
 {
     public class Startup
     {
@@ -22,20 +32,13 @@ namespace Weikio.ApiFramework.Samples.AsyncJsonStream
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
-
-            services.Configure<AsyncStreamJsonOptions>(options =>
-            {
-                options.IsEnabled = false;
-            });
-            
-            services.Configure<AsyncStreamJsonOptions>("/myweather", options =>
-            {
-                options.IsEnabled = true;
-                options.BufferSizeThresholdInKB = 1024;
-            });
-            
+                        
             services.AddApiFrameworkWithAdmin()
-                .AddApi<WeatherApi>("/myweather", new WeatherConfiguration());
+                .AddApi<TestApi>("/hello");
+                
+            services.AddEventFramework()
+                .AddHttpGateway()
+                .AddHandler<TestHandler>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -56,6 +59,30 @@ namespace Weikio.ApiFramework.Samples.AsyncJsonStream
             {
                 endpoints.MapControllers();
             });
+        }
+    }
+    
+    public class TestEvent
+    {
+        public string Test { get; set; } = "For the handler";
+    }
+
+    public class TestHandler
+    {
+        public static bool Handled { get; set; }
+        
+        public Task Handle(CloudEvent cloudEvent)
+        {
+            Handled = true;
+            return Task.CompletedTask;
+        }
+    }
+
+    public class TestApi
+    {
+        public string GetHello()
+        {
+            return "world";
         }
     }
 }

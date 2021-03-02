@@ -1,4 +1,5 @@
-﻿using System.Threading;
+﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -6,7 +7,6 @@ using Weikio.ApiFramework.Abstractions;
 using Weikio.ApiFramework.Core.Configuration;
 using Weikio.ApiFramework.Core.Infrastructure;
 using Weikio.AspNetCore.Common;
-using Weikio.AspNetCore.StartupTasks;
 
 namespace Weikio.ApiFramework.Core.StartupTasks
 {
@@ -20,7 +20,7 @@ namespace Weikio.ApiFramework.Core.StartupTasks
         private readonly ILogger<ApiProviderInitializer> _logger;
         private readonly IBackgroundTaskQueue _backgroundTaskQueue;
         private readonly IEndpointStartupHandler _endpointStartupHandler;
-        private ApiFrameworkOptions _options;
+        private readonly ApiFrameworkOptions _options;
 
         public ApiProviderInitializer(IApiProvider apiProvider,
             ILogger<ApiProviderInitializer> logger, IBackgroundTaskQueue backgroundTaskQueue, IOptions<ApiFrameworkOptions> options, IEndpointStartupHandler endpointStartupHandler)
@@ -32,41 +32,39 @@ namespace Weikio.ApiFramework.Core.StartupTasks
             _options = options.Value;
         }
 
-        public void Initialize()
+        public Task Initialize()
         {
             _backgroundTaskQueue.QueueBackgroundWorkItem(async cancellationToken =>
             {
+                await Task.Delay(TimeSpan.FromSeconds(5));
                 await Run(cancellationToken);
             });
+
+            return Task.CompletedTask;
         }
         
-        private Task Run(CancellationToken cancellationToken)
+        private async Task Run(CancellationToken cancellationToken)
         {
             _logger.LogInformation("Initializing the Api provider");
+            await _apiProvider.Initialize(cancellationToken).ConfigureAwait(false);
+
+            var allApis = _apiProvider.List();
+            _logger.LogDebug($"There's {allApis.Count} apis available:");
+
+            foreach (var apiDefinition in allApis)
+            {
+                _logger.LogDebug($"{apiDefinition}");
+            }
+            
+            _logger.LogInformation("Api provider initialized");
 
             _backgroundTaskQueue.QueueBackgroundWorkItem(async ct =>
             {
-                await _apiProvider.Initialize(cancellationToken).ConfigureAwait(false);
-
-                var allApis = _apiProvider.List();
-
-                _logger.LogDebug($"There's {allApis.Count} apis available:");
-
-                foreach (var apiDefinition in allApis)
-                {
-                    _logger.LogDebug($"{apiDefinition}");
-                }
-
-                _logger.LogInformation("Api provider initialized");
-
                 if (_options.AutoInitializeConfiguredEndpoints)
                 {
                     _endpointStartupHandler.Start(cancellationToken);
                 }
             });
-
-            return Task.CompletedTask;
-
         }
     }
 }

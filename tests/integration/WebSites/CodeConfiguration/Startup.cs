@@ -12,15 +12,11 @@ using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Weikio.ApiFramework.Abstractions;
-using Weikio.ApiFramework.AspNetCore;
 using Weikio.ApiFramework.Core.Configuration;
 using Weikio.ApiFramework.Core.Endpoints;
-using Weikio.ApiFramework.Core.Extensions;
 using Weikio.ApiFramework.Core.HealthChecks;
 using Weikio.ApiFramework.Core.Infrastructure;
 using Weikio.ApiFramework.Core.StartupTasks;
-using Weikio.ApiFramework.SDK;
-using Weikio.AspNetCore.Common;
 
 namespace CodeConfiguration
 {
@@ -96,9 +92,9 @@ namespace CodeConfiguration
             _endpointStartupHandler = endpointStartupHandler;
         }
 
-        public void Initialize()
+        public async Task Initialize()
         {
-            _apiProvider.Initialize(new CancellationToken()).Wait();
+            await _apiProvider.Initialize(new CancellationToken());
 
             var allApis = _apiProvider.List();
 

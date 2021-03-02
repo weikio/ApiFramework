@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\ApiFramework.Plugins.MySql\src\Weikio.ApiFramework.Plugins.MySql\Weikio.ApiFramework.Plugins.MySQL.csproj"/>
+    <ProjectReference Include="..\..\..\ApiFramework.Plugins.OpenApi\src\Weikio.ApiFramework.Plugins.OpenApi\Weikio.ApiFramework.Plugins.OpenApi.csproj"/>
+    <ProjectReference Include="..\..\..\ApiFramework.Plugins.SqlServer\src\Weikio.ApiFramework.Plugins.SqlServer\Weikio.ApiFramework.Plugins.SqlServer.csproj"/>
+    <ProjectReference Include="..\Weikio.ApiFramework.AspNetCore.StarterKit\Weikio.ApiFramework.AspNetCore.StarterKit.csproj"/>
+  </ItemGroup>
+
+  <ItemGroup>
+    
+  </ItemGroup>
+
+</Project>
