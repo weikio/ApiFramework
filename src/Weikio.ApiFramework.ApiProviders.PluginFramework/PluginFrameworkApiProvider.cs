@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -120,7 +120,7 @@ namespace Weikio.ApiFramework.ApiProviders.PluginFramework
             {
                 // In Plugin Framework each type is a plugin. In Api Framework each Api can contain multiple types. So we combine the plugins at this point.
                 var pluginsForApi = allPlugins.Where(x =>
-                    string.Equals(x.Name, apiDefinition.Name, StringComparison.InvariantCultureIgnoreCase) && apiDefinition.Version == x.Version).ToList();
+                    string.Equals(x.Assembly.GetName().Name, apiDefinition.Name, StringComparison.InvariantCultureIgnoreCase) && apiDefinition.Version == x.Version).ToList();
 
                 if (pluginsForApi.Any() != true)
                 {
