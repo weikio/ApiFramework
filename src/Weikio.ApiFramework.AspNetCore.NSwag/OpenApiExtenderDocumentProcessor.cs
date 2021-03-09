@@ -27,22 +27,29 @@ namespace Weikio.ApiFramework.AspNetCore.NSwag
 
                 foreach (var extendedMetadata in endpoint.Metadata)
                 {
-                    if (extendedMetadata is OpenApiDocumentExtensions openApiContent)
+                    if (!(extendedMetadata is OpenApiDocumentExtensions openApiContent))
                     {
-                        if (openApiContent.AdditionalOperationPaths?.Any() == true)
+                        continue;
+                    }
+
+                    if (openApiContent.AdditionalOperationPaths?.Any() == true)
+                    {
+                        foreach (var path in openApiContent.AdditionalOperationPaths)
                         {
-                            foreach (var path in openApiContent.AdditionalOperationPaths)
-                            {
-                                context.Document.Paths.Add(path.Key, path.Value);
-                            }
+                            context.Document.Paths.Add(path.Key, path.Value);
                         }
+                    }
                         
-                        if (openApiContent.AdditionalSchemas?.Any() == true)
+                    if (openApiContent.AdditionalSchemas?.Any() == true)
+                    {
+                        foreach (var schema in openApiContent.AdditionalSchemas)
                         {
-                            foreach (var schema in openApiContent.AdditionalSchemas)
+                            if (context.Document.Components.Schemas.ContainsKey(schema.Key))
                             {
-                                context.Document.Components.Schemas.Add(schema);
+                                continue;
                             }
+                            
+                            context.Document.Components.Schemas.Add(schema);
                         }
                     }
                 }

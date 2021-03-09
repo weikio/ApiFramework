@@ -3,5 +3,6 @@
     public interface IEndpointRouteTemplateProvider
     {
         string GetRouteTemplate(Endpoint endpoint);
+        string GetApiAddressBase();
     }
 }

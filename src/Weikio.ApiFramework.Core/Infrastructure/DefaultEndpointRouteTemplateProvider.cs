@@ -28,17 +28,28 @@ namespace Weikio.ApiFramework.Core.Infrastructure
                 throw new ArgumentNullException(nameof(endpointRoute));
             }
 
-            if (string.IsNullOrWhiteSpace(_options.ApiAddressBase))
+            var apiAddressBase = GetApiAddressBase();
+            if (string.IsNullOrWhiteSpace(apiAddressBase))
             {
                 return endpointRoute;
             }
 
+            return apiAddressBase + endpointRoute.TrimStart('/').TrimEnd('/').Trim();
+        }
+
+        public string GetApiAddressBase()
+        {
+            if (string.IsNullOrWhiteSpace(_options.ApiAddressBase))
+            {
+                return string.Empty;
+            }
+            
             if (_options.ApiAddressBase.EndsWith('/'))
             {
-                return _options.ApiAddressBase + endpointRoute.TrimStart('/').TrimEnd('/').Trim();
+                return _options.ApiAddressBase;
             }
 
-            return _options.ApiAddressBase + '/' + endpointRoute.TrimStart('/').TrimEnd('/').Trim();
+            return _options.ApiAddressBase + '/';
         }
     }
 }
