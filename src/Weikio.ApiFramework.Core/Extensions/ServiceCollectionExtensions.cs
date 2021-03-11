@@ -31,19 +31,26 @@ namespace Weikio.ApiFramework.Core.Extensions
         {
             var builder = new ApiFrameworkBuilder(services);
 
-            services.TryAddSingleton(provider =>
+            services.TryAddSingleton<IApiCatalog>(provider =>
             {
                 var configurationOptions = provider.GetService<IOptions<ApiFrameworkOptions>>();
                 var options = configurationOptions != null ? configurationOptions.Value : new ApiFrameworkOptions();
 
-                if (options.ApiProvider == null)
+                if (options.ApiCatalogs?.Any() != true)
                 {
-                    return new EmptyApiProvider();
+                    return new EmptyApiCatalog();
                 }
 
-                return options.ApiProvider;
-            });
+                var compositeCatalog = new CompositeApiCatalog();
 
+                foreach (var apiCatalog in options.ApiCatalogs)
+                {
+                    compositeCatalog.Add(apiCatalog);
+                }
+
+                return compositeCatalog;
+            });
+            
             services.TryAddSingleton(provider =>
             {
                 var configurationOptions = provider.GetService<IOptions<ApiFrameworkOptions>>();
@@ -85,6 +92,8 @@ namespace Weikio.ApiFramework.Core.Extensions
             services.TryAddSingleton<IApiProviderInitializer, ApiProviderInitializer>();
             services.TryAddSingleton<IEndpointInitializer, EndpointInitializer>();
             services.TryAddSingleton<IEndpointRouteTemplateProvider, DefaultEndpointRouteTemplateProvider>();
+            
+            services.TryAddSingleton<IApiProvider, DefaultApiProvider>();
             
             // Services which alter the group names of the API Descriptions. These are used for Open Api / Swagger generation. Each endpoint by default belongs to an unique api group.
             services.TryAddSingleton<IEndpointGroupNameProvider, EndpointGroupNameProvider>();
@@ -194,117 +203,5 @@ namespace Weikio.ApiFramework.Core.Extensions
 
             return builder;
         }
-
-        //public static (FunctionCatalog, EndpointCollection) AddFunctionFrameworkPlugins(
-        //    this IServiceCollection services, IConfiguration configuration, FunctionFrameworkOptions options)
-        //{
-        //    //var functionFrameworkSection = configuration.GetSection("ApiFramework");
-        //    //var hasConfig = functionFrameworkSection?.GetChildren()?.Any() == true;
-
-        //    //if (hasConfig == false)
-        //    //{
-        //    //    if (options.RequireConfiguration)
-        //    //    {
-        //    //        throw new InvalidOperationException($"ApiFramework section is not defined.");
-        //    //    }
-
-        //    //    options.UseConfiguration = false;
-        //    //}
-        //    //else
-        //    //{
-        //    //    options.UseConfiguration = true;
-        //    //}
-
-        //    //var endpointsSection = functionFrameworkSection?.GetSection("Endpoints");
-        //    //if (endpointsSection?.GetChildren()?.Any() != true && options.UseConfiguration)
-        //    //{
-        //    //    throw new InvalidOperationException($"Endpoints section is not defined.");
-        //    //}
-
-        //    //var pluginManager = new PluginManager();
-        //    //if (options.AutoResolveFunctions)
-        //    //{
-        //    //    var binDirectory = Path.GetDirectoryName(Assembly.GetEntryAssembly().Location);
-        //    //    pluginManager.InstallPlugins(binDirectory);
-        //    //}
-
-        //    //if (options.FunctionAssemblies?.Any() == true)
-        //    //{
-        //    //    pluginManager.InstallPlugins(options.FunctionAssemblies);
-        //    //}
-
-        //    //services.AddSingleton(pluginManager);
-        //    //services.AddTransient(serviceProvider => pluginManager.Functions);
-
-        //    //var changeNotifier = new FunctionChangeNotifier();
-        //    //services.AddSingleton(changeNotifier);
-
-        //    //var endpointManager = new EndpointManager(services, pluginManager.Functions, changeNotifier);
-        //    //services.AddSingleton(endpointManager);
-        //    //services.AddTransient(serviceProvider => endpointManager.Endpoints);
-
-        //    //var configurationMonitor = new ConfigurationMonitor(functionFrameworkSection, endpointManager);
-        //    //services.AddSingleton(configurationMonitor);
-
-        //    //var functionChangeProvider = new FunctionChangeProvider(() => configurationMonitor.GetReloadToken());
-        //    //services.AddSingleton<IActionDescriptorChangeProvider>(functionChangeProvider);
-        //    //services.AddSingleton<IActionDescriptorChangeProvider>(FunctionDescriptorChangeProvider.Instance);
-
-        //    //if (options.UseConfiguration)
-        //    //{
-        //    //    foreach (var endpointSection in endpointsSection.GetChildren())
-        //    //    {
-        //    //        endpointManager.AddEndpoint(endpointSection);
-        //    //        configurationMonitor.SetEndpointConfigHashCode(endpointSection);
-        //    //    }
-        //    //}
-        //    //else if (options.AutoResolveEndpoints)
-        //    //{
-        //    //    foreach (var plugin in pluginManager.Functions)
-        //    //    {
-        //    //        var customEndpoint = new Endpoint(options.FunctionAddressBase, plugin);
-        //    //        customEndpoint.Initialize(null);
-
-        //    //        endpointManager.AddEndpoint(customEndpoint);
-        //    //    }
-        //    //}
-
-        //    //if (options.Endpoints?.Any() == true)
-        //    //{
-        //    //    foreach (var endpoint in options.Endpoints)
-        //    //    {
-        //    //        var plugin = pluginManager.Functions.FirstOrDefault(x => string.Equals(x.Name, endpoint.ApiAssemblyName));
-        //    //        if (plugin == null)
-        //    //        {
-        //    //            throw new InvalidOperationException($"Couldn't locate function assembly {endpoint.ApiAssemblyName} for endpoint {endpoint.Route}");
-        //    //        }
-
-        //    //        var route = endpoint.Route;
-        //    //        if (route.EndsWith("/"))
-        //    //        {
-        //    //            route = route.Remove(route.Length - 1);
-        //    //        }
-
-        //    //        if (!route.StartsWith("/"))
-        //    //        {
-        //    //            route = route.Insert(0, "/");
-        //    //        }
-
-        //    //        var baseRoute = options.FunctionAddressBase;
-        //    //        if (baseRoute.EndsWith("/"))
-        //    //        {
-        //    //            baseRoute = baseRoute.Remove(baseRoute.Length - 1);
-        //    //        }
-
-        //    //        var customEndpoint = new Endpoint(baseRoute + route, plugin);
-        //    //        customEndpoint.Initialize(null);
-
-        //    //        endpointManager.AddEndpoint(customEndpoint);
-        //    //    }
-        //    //}
-
-        //    //return null;
-        //    //return (pluginManager.Functions, endpointManager.Endpoints);
-        //}
     }
 }

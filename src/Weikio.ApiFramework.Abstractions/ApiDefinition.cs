@@ -51,5 +51,20 @@ namespace Weikio.ApiFramework.Abstractions
 
             return result.ToString();
         }
+        
+        public static implicit operator ApiDefinition(string name)
+        {
+            return new ApiDefinition(name, Version.Parse("1.0.0.0"));
+        }
+        
+        public static implicit operator ApiDefinition((string Name, Version Version) nameAndVersion)
+        {
+            return new ApiDefinition(nameAndVersion.Name, nameAndVersion.Version);
+        }
+
+        public static implicit operator ApiDefinition((string Name, string Version) nameAndVersion)
+        {
+            return new ApiDefinition(nameAndVersion.Name, Version.Parse(nameAndVersion.Version));
+        }
     }
 }

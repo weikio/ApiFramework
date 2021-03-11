@@ -27,9 +27,9 @@ namespace ApiFramework.IntegrationTests
         [Fact]
         public async Task CanInitializeTypeBasedApi()
         {
-            var provider = new PluginFrameworkApiProvider(new TypePluginCatalog(typeof(HelloWorldApi)), 
+            var provider = new PluginFrameworkApiCatalog(new TypePluginCatalog(typeof(HelloWorldApi)), 
                 new ApiInitializationWrapperForUnitTests(),
-                new ApiHealthCheckWrapperForUnitTests(), new NullLogger<PluginFrameworkApiProvider>());
+                new ApiHealthCheckWrapperForUnitTests(), new NullLogger<PluginFrameworkApiCatalog>());
 
             await provider.Initialize(new CancellationToken());
 
@@ -42,9 +42,9 @@ namespace ApiFramework.IntegrationTests
         [Fact]
         public async Task CanGetTypeBasedApi()
         {
-            var provider = new PluginFrameworkApiProvider(new TypePluginCatalog(typeof(HelloWorld.HelloWorldApi)),
+            var provider = new PluginFrameworkApiCatalog(new TypePluginCatalog(typeof(HelloWorld.HelloWorldApi)),
                 new ApiInitializationWrapperForUnitTests(),
-                new ApiHealthCheckWrapperForUnitTests(), new NullLogger<PluginFrameworkApiProvider>());
+                new ApiHealthCheckWrapperForUnitTests(), new NullLogger<PluginFrameworkApiCatalog>());
 
             await provider.Initialize(new CancellationToken());
 
@@ -55,9 +55,9 @@ namespace ApiFramework.IntegrationTests
         [Fact]
         public async Task TypeBasedApiShouldHaveOnlyOneApi()
         {
-            var provider = new PluginFrameworkApiProvider(new TypePluginCatalog(typeof(HelloWorldApi)), 
+            var provider = new PluginFrameworkApiCatalog(new TypePluginCatalog(typeof(HelloWorldApi)), 
                 new ApiInitializationWrapperForUnitTests(),
-                new ApiHealthCheckWrapperForUnitTests(), new NullLogger<PluginFrameworkApiProvider>());
+                new ApiHealthCheckWrapperForUnitTests(), new NullLogger<PluginFrameworkApiCatalog>());
 
             await provider.Initialize(new CancellationToken());
 

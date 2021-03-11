@@ -1,13 +1,11 @@
-using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Weikio.ApiFramework.Abstractions;
-using Weikio.ApiFramework.SDK;
 
 namespace Weikio.ApiFramework.Core.Apis
 {
-    public class EmptyApiProvider : IApiProvider
+    public class EmptyApiCatalog : IApiCatalog
     {
         public Task Initialize(CancellationToken cancellationToken)
         {
@@ -26,17 +24,7 @@ namespace Weikio.ApiFramework.Core.Apis
 
         public Api Get(ApiDefinition definition)
         {
-            throw new ApiNotFoundException(definition.Name, definition.Version);
-        }
-
-        public Api Get(string name, Version version)
-        {
-            return Get(new ApiDefinition(name, version));
-        }
-
-        public Api Get(string name)
-        {
-            return Get(name, new Version(1, 0, 0, 0));
+            return null;
         }
     }
 }

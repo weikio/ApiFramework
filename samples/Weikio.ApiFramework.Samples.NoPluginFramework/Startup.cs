@@ -24,21 +24,18 @@ namespace Weikio.ApiFramework.Samples.NoPluginFramework
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddRouting();
-
-            services.AddMvc()
-                .SetCompatibilityVersion(CompatibilityVersion.Latest);
-
+            services.AddControllers();
+            
             services.AddApiFrameworkCore(options =>
                 {
-                    options.ApiProvider = new TypeApiProvider(typeof(HelloWorldWithoutPlugins));
+                    options.ApiCatalogs.Add(new TypeApiCatalog(typeof(HelloWorldWithoutPlugins)));
                     options.AutoResolveEndpoints = false;
                     options.ApiAddressBase = "/myapi";
                     options.EndpointHttpVerbResolver = new CustomHttpVerbResolver();
                 })
                 .AddEndpoint("/test", typeof(HelloWorldWithoutPlugins).FullName);
 
-            services.AddSwaggerDocument(document => { document.Title = "Api Framework"; });
+            services.AddOpenApiDocument(document => { document.Title = "Api Framework"; });
         }
         
         public class CustomHttpVerbResolver :IEndpointHttpVerbResolver

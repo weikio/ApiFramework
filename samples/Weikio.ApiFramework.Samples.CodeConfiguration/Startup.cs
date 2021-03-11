@@ -8,6 +8,8 @@ using Microsoft.Extensions.Hosting;
 using NSwag.Generation.Processors;
 using Weikio.ApiFramework.AspNetCore;
 using Weikio.ApiFramework.AspNetCore.NSwag;
+using Weikio.ApiFramework.Core.Configuration;
+using Weikio.ApiFramework.Core.Endpoints;
 using Weikio.ApiFramework.Core.Extensions;
 using Weikio.ApiFramework.Samples.PluginLibrary;
 
@@ -32,6 +34,11 @@ namespace Weikio.ApiFramework.Samples.CodeConfiguration
                 .SetCompatibilityVersion(CompatibilityVersion.Latest);
 
             var builder = services.AddApiFramework();
+            
+            builder.AddApi(typeof(HelloWorldApi));
+            builder.AddEndpoint("/first", "Weikio.ApiFramework.Samples.PluginLibrary.HelloWorldApi");
+            builder.AddEndpoint("/second", "Weikio.ApiFramework.Samples.PluginLibrary.HelloWorldApi");
+            
             // builder.AddApi(typeof(SampleController));
             // builder.AddEndpoint("/mytest", "Weikio.ApiFramework.Samples.PluginLibrary.SampleController");
                 

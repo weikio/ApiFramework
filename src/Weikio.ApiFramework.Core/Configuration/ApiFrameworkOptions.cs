@@ -23,7 +23,7 @@ namespace Weikio.ApiFramework.Core.Configuration
         public List<(string Route, string ApiAssemblyName, object Configuration, IHealthCheck HealthCheck, string GroupName)> Endpoints { get; set; } =
             new List<(string Route, string ApiAssemblyName, object Configuration, IHealthCheck HealthCheck, string groupName)>();
 
-        public IApiProvider ApiProvider { get; set; }
+        public List<IApiCatalog> ApiCatalogs { get; set; } = new List<IApiCatalog>();
 
         /// <summary>
         /// Gets or sets how endpoint changes are notified to the system. 
@@ -33,5 +33,10 @@ namespace Weikio.ApiFramework.Core.Configuration
         public bool AutoInitializeApiProvider { get; set; } = true;
         public bool AutoInitializeConfiguredEndpoints { get; set; } = true;
         public bool AutoConvertFileToStream { get; set; } = true;
+        
+        /// <summary>
+        /// Gets or sets if urls should be automatically tidied. Default = Automatic
+        /// </summary>
+        public AutoTidyUrlModeEnum AutoTidyUrls { get; set; } = AutoTidyUrlModeEnum.Automatic;
     }
 }

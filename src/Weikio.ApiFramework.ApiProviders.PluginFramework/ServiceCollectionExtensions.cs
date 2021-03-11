@@ -40,12 +40,12 @@ namespace Weikio.ApiFramework.ApiProviders.PluginFramework
                 }
             };
 
-            builder.Services.Replace(ServiceDescriptor.Singleton<IApiProvider>(services =>
+            builder.Services.Replace(ServiceDescriptor.Singleton<IApiCatalog>(services =>
             {
                 var configurationOptions = services.GetService<IOptions<PluginFrameworkApiProviderOptions>>();
                 var initializationWrapper = services.GetService<IApiInitializationWrapper>();
                 var healthCheckWrapper = services.GetService<IApiHealthCheckWrapper>();
-                var logger = services.GetService<ILogger<PluginFrameworkApiProvider>>();
+                var logger = services.GetService<ILogger<PluginFrameworkApiCatalog>>();
                 var apiPlugins = services.GetServices<ApiPlugin>();
                 var apiPluginOptions = services.GetService<IOptions<ApiPluginOptions>>().Value;
 
@@ -98,7 +98,7 @@ namespace Weikio.ApiFramework.ApiProviders.PluginFramework
                     }
 
                     var compositeCatalog = new CompositePluginCatalog(assemblyCatalogs.ToArray());
-                    var apiProvider = new PluginFrameworkApiProvider(compositeCatalog, initializationWrapper, healthCheckWrapper, logger);
+                    var apiProvider = new PluginFrameworkApiCatalog(compositeCatalog, initializationWrapper, healthCheckWrapper, logger);
 
                     return apiProvider;
                 }
@@ -112,7 +112,7 @@ namespace Weikio.ApiFramework.ApiProviders.PluginFramework
 
                     if (!registeredCatalogs.Any())
                     {
-                        var apiProvider = new PluginFrameworkApiProvider(pluginCatalog, initializationWrapper, healthCheckWrapper, logger);
+                        var apiProvider = new PluginFrameworkApiCatalog(pluginCatalog, initializationWrapper, healthCheckWrapper, logger);
 
                         return apiProvider;
                     }
@@ -125,7 +125,7 @@ namespace Weikio.ApiFramework.ApiProviders.PluginFramework
                             compositeCatalog.AddCatalog(catalog);
                         }
 
-                        var apiProvider = new PluginFrameworkApiProvider(compositeCatalog, initializationWrapper, healthCheckWrapper, logger);
+                        var apiProvider = new PluginFrameworkApiCatalog(compositeCatalog, initializationWrapper, healthCheckWrapper, logger);
 
                         return apiProvider;
                     }
@@ -135,10 +135,10 @@ namespace Weikio.ApiFramework.ApiProviders.PluginFramework
                 {
                     var compositeCatalog = new CompositePluginCatalog(registeredCatalogs.ToArray());
 
-                    return new PluginFrameworkApiProvider(compositeCatalog, initializationWrapper, healthCheckWrapper, logger);
+                    return new PluginFrameworkApiCatalog(compositeCatalog, initializationWrapper, healthCheckWrapper, logger);
                 }
 
-                return new PluginFrameworkApiProvider(new EmptyPluginCatalog(), initializationWrapper, healthCheckWrapper, logger);
+                return new PluginFrameworkApiCatalog(new EmptyPluginCatalog(), initializationWrapper, healthCheckWrapper, logger);
             }));
 
             builder.Services.TryAddSingleton<IApiInitializationWrapper, ApiInitializationWrapper>();

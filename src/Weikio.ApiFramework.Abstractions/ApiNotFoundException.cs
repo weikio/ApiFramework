@@ -4,25 +4,13 @@ namespace Weikio.ApiFramework.Abstractions
 {
     public class ApiNotFoundException : Exception
     {
-        private readonly string _name;
-        private readonly Version _version;
+        public string Name { get; }
+        public Version Version { get; }
 
-        public ApiNotFoundException(string name, Version version)
+        public ApiNotFoundException(string name, Version version, string message) : base(message)
         {
-            _name = name;
-            _version = version;
-        }
-    }
-    
-    public class PluginForApiNotFoundException : Exception
-    {
-        private readonly string _name;
-        private readonly Version _version;
-
-        public PluginForApiNotFoundException(string name, Version version)
-        {
-            _name = name;
-            _version = version;
+            Name = name;
+            Version = version;
         }
     }
 }

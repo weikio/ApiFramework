@@ -3,6 +3,7 @@ using CodeConfiguration;
 using HelloWorld;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Weikio.ApiFramework.AspNetCore;
+using Weikio.ApiFramework.Core.Configuration;
 using Weikio.ApiFramework.Core.Extensions;
 using Xunit;
 using Xunit.Abstractions;

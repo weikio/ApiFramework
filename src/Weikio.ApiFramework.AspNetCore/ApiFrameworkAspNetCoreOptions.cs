@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
+using Weikio.ApiFramework.Core.Configuration;
 
 namespace Weikio.ApiFramework.AspNetCore
 {
@@ -16,5 +17,10 @@ namespace Weikio.ApiFramework.AspNetCore
         public bool AutoInitializeConfiguredEndpoints { get; set; } = true;
         public bool AutoConvertFileToStream { get; set; } = true;
         public bool AddHealthCheck { get; set; } = true;
+        
+        /// <summary>
+        /// Gets or sets if urls should be automatically tidied. Default = Automatic
+        /// </summary>
+        public AutoTidyUrlModeEnum AutoTidyUrls { get; set; } = AutoTidyUrlModeEnum.Automatic;
     }
 }

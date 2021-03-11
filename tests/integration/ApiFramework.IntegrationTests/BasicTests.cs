@@ -4,6 +4,7 @@ using CodeConfiguration;
 using HelloWorld;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Weikio.ApiFramework.AspNetCore;
+using Weikio.ApiFramework.Core.Configuration;
 using Weikio.ApiFramework.Core.Extensions;
 using Xunit;
 using Xunit.Abstractions;
@@ -134,5 +135,41 @@ namespace ApiFramework.IntegrationTests
             // Assert
             Assert.Equal(HttpStatusCode.NotFound, result.StatusCode);
         }
+        
+        [Fact]
+        public async Task MethodNamesAreRemovedByDefault()
+        {
+            var server = Init(builder =>
+            {
+                builder.AddApi(typeof(HelloWorldApi));
+                builder.AddEndpoint("/mytest", "HelloWorld.HelloWorldApi");
+            });
+
+            // Act 
+            var result = await server.GetStringAsync("/api/mytest");
+
+            // Assert
+            Assert.Equal("Hello Api Framework!", result);
+        }
+        
+        [Fact]
+        public async Task CanConfigureMethodNameRemoval()
+        {
+            var server = Init(builder =>
+            {
+                builder.AddApi(typeof(HelloWorldApi));
+                builder.AddEndpoint("/mytest", "HelloWorld.HelloWorldApi");
+            }, options =>
+            {
+                options.AutoTidyUrls = AutoTidyUrlModeEnum.Disabled;
+            });
+
+            // Act 
+            var result = await server.GetStringAsync("/api/mytest/SayHello");
+
+            // Assert
+            Assert.Equal("Hello Api Framework!", result);
+        }
+
     }
 }

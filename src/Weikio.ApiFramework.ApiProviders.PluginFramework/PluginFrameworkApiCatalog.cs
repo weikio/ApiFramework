@@ -7,7 +7,6 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Logging;
 using Weikio.ApiFramework.Abstractions;
-using Weikio.ApiFramework.SDK;
 using Weikio.PluginFramework.Abstractions;
 
 namespace Weikio.ApiFramework.ApiProviders.PluginFramework
@@ -15,15 +14,15 @@ namespace Weikio.ApiFramework.ApiProviders.PluginFramework
     /// <summary>
     /// Api provider which uses Plugin Framework for providing apis
     /// </summary>
-    public class PluginFrameworkApiProvider : IApiProvider
+    public class PluginFrameworkApiCatalog : IApiCatalog
     {
         private readonly IPluginCatalog _pluginCatalog;
         private readonly IApiInitializationWrapper _factoryWrapper;
         private readonly IApiHealthCheckWrapper _healthCheckWrapper;
-        private readonly ILogger<PluginFrameworkApiProvider> _logger;
+        private readonly ILogger<PluginFrameworkApiCatalog> _logger;
 
-        public PluginFrameworkApiProvider(IPluginCatalog pluginCatalog, IApiInitializationWrapper factoryWrapper,
-            IApiHealthCheckWrapper healthCheckWrapper, ILogger<PluginFrameworkApiProvider> logger)
+        public PluginFrameworkApiCatalog(IPluginCatalog pluginCatalog, IApiInitializationWrapper factoryWrapper,
+            IApiHealthCheckWrapper healthCheckWrapper, ILogger<PluginFrameworkApiCatalog> logger)
         {
             _pluginCatalog = pluginCatalog;
             _factoryWrapper = factoryWrapper;
@@ -80,7 +79,7 @@ namespace Weikio.ApiFramework.ApiProviders.PluginFramework
 
                 if (result == null)
                 {
-                    throw new ApiNotFoundException(definition.Name, definition.Version);
+                    return null;
                 }
 
                 return result;
@@ -124,7 +123,7 @@ namespace Weikio.ApiFramework.ApiProviders.PluginFramework
 
                 if (pluginsForApi.Any() != true)
                 {
-                    throw new PluginForApiNotFoundException(apiDefinition.Name, apiDefinition.Version);
+                    return null;
                 }
 
                 var factoryTypes = pluginsForApi.Where(x => x.Tags?.Contains("Factory") == true).ToList();
@@ -156,17 +155,11 @@ namespace Weikio.ApiFramework.ApiProviders.PluginFramework
 
                 return result;
             }
-            catch (ApiNotFoundException e)
+            catch (Exception e)
             {
-                _logger.LogError(e, "No plugins were found for Api with ApiDefintion {ApiDefinition}.", apiDefinition);
-                _logger.LogDebug("Available plugins:");
+                _logger.LogError(e, "Failed to get API by definition {ApiDefinition}.", apiDefinition);
 
-                foreach (var plugin in allPlugins)
-                {
-                    _logger.LogDebug(plugin.ToString());
-                }
-
-                return null;
+                throw;
             }
         }
     }

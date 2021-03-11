@@ -13,9 +13,9 @@ namespace ApiFramework.IntegrationTests
         [Fact]
         public async Task CanInitializeAssemblyBasedApi()
         {
-            var provider = new PluginFrameworkApiProvider(new AssemblyPluginCatalog(typeof(HelloWorldApi).Assembly), 
+            var provider = new PluginFrameworkApiCatalog(new AssemblyPluginCatalog(typeof(HelloWorldApi).Assembly), 
                 new ApiInitializationWrapperForUnitTests(),
-                new ApiHealthCheckWrapperForUnitTests(), new NullLogger<PluginFrameworkApiProvider>());
+                new ApiHealthCheckWrapperForUnitTests(), new NullLogger<PluginFrameworkApiCatalog>());
 
             await provider.Initialize(new CancellationToken());
 

@@ -81,11 +81,11 @@ namespace CodeConfiguration
 
     public class SyncApiProviderInitializer : IApiProviderInitializer
     {
-        private readonly ILogger<ApiProviderInitializer> _logger;
+        private readonly ILogger<SyncApiProviderInitializer> _logger;
         private readonly IApiProvider _apiProvider;
         private readonly IEndpointStartupHandler _endpointStartupHandler;
 
-        public SyncApiProviderInitializer(ILogger<ApiProviderInitializer> logger, IApiProvider apiProvider, IEndpointStartupHandler endpointStartupHandler)
+        public SyncApiProviderInitializer(ILogger<SyncApiProviderInitializer> logger, IApiProvider apiProvider, IEndpointStartupHandler endpointStartupHandler)
         {
             _logger = logger;
             _apiProvider = apiProvider;

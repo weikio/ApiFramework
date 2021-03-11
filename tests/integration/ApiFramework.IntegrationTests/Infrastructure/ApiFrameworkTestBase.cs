@@ -3,6 +3,7 @@ using System.Net.Http;
 using CodeConfiguration;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Weikio.ApiFramework.Abstractions;
 using Weikio.ApiFramework.Abstractions.DependencyInjection;
@@ -25,7 +26,7 @@ namespace ApiFramework.IntegrationTests
             _factory = factory;
         }
         
-        protected HttpClient Init(Action<IApiFrameworkBuilder> action, Action<ApiFrameworkAspNetCoreOptions> setupAction = null)
+        protected HttpClient Init(Action<IApiFrameworkBuilder> action, Action<ApiFrameworkAspNetCoreOptions> setupAction = null, Action<IServiceCollection> configureServices = null)
         {
             var result = _factory.WithWebHostBuilder(builder =>
             {
@@ -38,7 +39,10 @@ namespace ApiFramework.IntegrationTests
 
                         setupAction?.Invoke(options);
                     });
+                    
                     action(apiFrameworkBuilder);
+                    
+                    configureServices?.Invoke(services);
                 });
                 
                 builder.ConfigureLogging(logging =>

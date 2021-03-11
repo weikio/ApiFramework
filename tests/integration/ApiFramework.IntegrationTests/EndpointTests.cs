@@ -3,7 +3,10 @@ using System.Threading.Tasks;
 using CodeConfiguration;
 using HelloWorld;
 using Microsoft.AspNetCore.Mvc.Testing;
+using Microsoft.Extensions.DependencyInjection;
 using Weikio.ApiFramework.AspNetCore;
+using Weikio.ApiFramework.Core.Configuration;
+using Weikio.ApiFramework.Core.Endpoints;
 using Weikio.ApiFramework.Core.Extensions;
 using Xunit;
 using Xunit.Abstractions;
@@ -49,7 +52,7 @@ namespace ApiFramework.IntegrationTests
 
             var thirdResult = await server.GetAsync("/api/third");
             Assert.True(thirdResult.IsSuccessStatusCode);
-            
+
             var missing = await server.GetAsync("/api/notexists");
             Assert.Equal(HttpStatusCode.NotFound, missing.StatusCode);
         }

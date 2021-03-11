@@ -11,7 +11,7 @@ using Weikio.AspNetCore.Common;
 namespace Weikio.ApiFramework.Core.StartupTasks
 {
     /// <summary>
-    /// Startup task which initializes the api definitions. This task takes a <see cref="IApiProvider"/> and then makes sure that the provider is initialized.
+    /// Startup task which initializes the api definitions. This task takes a <see cref="IApiCatalog"/> and then makes sure that the provider is initialized.
     /// This task is automatically run only once when the Api Framework starts.
     /// </summary>
     public class ApiProviderInitializer : IApiProviderInitializer
