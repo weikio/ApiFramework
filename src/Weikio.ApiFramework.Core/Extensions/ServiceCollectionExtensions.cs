@@ -31,7 +31,7 @@ namespace Weikio.ApiFramework.Core.Extensions
         {
             var builder = new ApiFrameworkBuilder(services);
 
-            services.TryAddSingleton<IApiCatalog>(provider =>
+            services.AddSingleton<IApiCatalog>(provider =>
             {
                 var configurationOptions = provider.GetService<IOptions<ApiFrameworkOptions>>();
                 var options = configurationOptions != null ? configurationOptions.Value : new ApiFrameworkOptions();

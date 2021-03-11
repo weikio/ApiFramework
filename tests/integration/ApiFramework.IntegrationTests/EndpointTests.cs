@@ -1,10 +1,14 @@
+using System.Linq;
 using System.Net;
+using System.Threading;
 using System.Threading.Tasks;
 using CodeConfiguration;
 using HelloWorld;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.DependencyInjection;
+using Weikio.ApiFramework.Abstractions;
 using Weikio.ApiFramework.AspNetCore;
+using Weikio.ApiFramework.Core.Apis;
 using Weikio.ApiFramework.Core.Configuration;
 using Weikio.ApiFramework.Core.Endpoints;
 using Weikio.ApiFramework.Core.Extensions;
@@ -55,6 +59,35 @@ namespace ApiFramework.IntegrationTests
 
             var missing = await server.GetAsync("/api/notexists");
             Assert.Equal(HttpStatusCode.NotFound, missing.StatusCode);
+        }
+
+        [Fact]
+        public async Task CanAddCatalogApiEndpointRuntime()
+        {
+            var server = Init(builder =>
+            {
+            });
+
+            var apiProvider = Provider.GetRequiredService<IApiProvider>();
+
+            var typeCatalog = new TypeApiCatalog(typeof(HelloWorldApi));
+            await typeCatalog.Initialize(new CancellationToken());
+            apiProvider.Add(typeCatalog);
+
+            var endpointManager = Provider.GetRequiredService<EndpointManager>();
+            var api = apiProvider.Get(apiProvider.List().Single());
+
+            endpointManager.AddEndpoint(new Endpoint(new EndpointDefinition("/first", "HelloWorld.HelloWorldApi", null, null, null), api));
+            endpointManager.Update();
+
+            await ContinueWhen(() =>
+            {
+                var singleEndpoint = endpointManager.Endpoints.Single();
+                return singleEndpoint.Status.Status == EndpointStatusEnum.Ready;
+            });
+            
+            var firstResult = await server.GetAsync("/api/first");
+            Assert.True(firstResult.IsSuccessStatusCode);
         }
     }
 }

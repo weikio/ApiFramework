@@ -9,7 +9,7 @@
     <Description>Sample Plugin Library for Api Framework for ASP.NET Core. Api Framework gives you powerful and dynamic tools for easily building Open Api based endpoints.</Description>
     <PackageDescription>Sample Plugin Library for Api Framework for ASP.NET Core. Api Framework for ASP.NET Core. Api Framework gives you powerful and dynamic tools for easily building Open Api based endpoints.</PackageDescription>
     <PackageProjectUrl>https://www.weik.io</PackageProjectUrl>
-    <Copyright>©2020 Weik.io</Copyright>
+    <Copyright>©2021 Weik.io</Copyright>
     <PackageId>Weikio.ApiFramework.Samples.PluginLibrary</PackageId>
     <Product>Weikio.ApiFramework.Samples.PluginLibrary</Product>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>

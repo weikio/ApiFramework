@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
+using Weikio.ApiFramework.Abstractions;
 using Weikio.ApiFramework.Core.Configuration;
 
 namespace Weikio.ApiFramework.AspNetCore
@@ -22,5 +23,7 @@ namespace Weikio.ApiFramework.AspNetCore
         /// Gets or sets if urls should be automatically tidied. Default = Automatic
         /// </summary>
         public AutoTidyUrlModeEnum AutoTidyUrls { get; set; } = AutoTidyUrlModeEnum.Automatic;
+        
+        public List<IApiCatalog> ApiCatalogs { get; set; } = new List<IApiCatalog>();
     }
 }

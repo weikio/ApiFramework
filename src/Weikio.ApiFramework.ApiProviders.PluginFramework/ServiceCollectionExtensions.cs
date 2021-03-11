@@ -40,13 +40,12 @@ namespace Weikio.ApiFramework.ApiProviders.PluginFramework
                 }
             };
 
-            builder.Services.Replace(ServiceDescriptor.Singleton<IApiCatalog>(services =>
+            builder.Services.AddSingleton<IApiCatalog>(services =>
             {
                 var configurationOptions = services.GetService<IOptions<PluginFrameworkApiProviderOptions>>();
                 var initializationWrapper = services.GetService<IApiInitializationWrapper>();
                 var healthCheckWrapper = services.GetService<IApiHealthCheckWrapper>();
                 var logger = services.GetService<ILogger<PluginFrameworkApiCatalog>>();
-                var apiPlugins = services.GetServices<ApiPlugin>();
                 var apiPluginOptions = services.GetService<IOptions<ApiPluginOptions>>().Value;
 
                 PluginFrameworkApiProviderOptions options = null;
@@ -139,7 +138,7 @@ namespace Weikio.ApiFramework.ApiProviders.PluginFramework
                 }
 
                 return new PluginFrameworkApiCatalog(new EmptyPluginCatalog(), initializationWrapper, healthCheckWrapper, logger);
-            }));
+            });
 
             builder.Services.TryAddSingleton<IApiInitializationWrapper, ApiInitializationWrapper>();
             builder.Services.TryAddSingleton<IApiHealthCheckWrapper, ApiHealthCheckWrapper>();

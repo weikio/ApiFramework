@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Options;
 using NSwag.Generation.Processors;
 using Weikio.ApiFramework.AspNetCore;
 using Weikio.ApiFramework.AspNetCore.NSwag;
@@ -33,7 +34,10 @@ namespace Weikio.ApiFramework.Samples.CodeConfiguration
             var mvcBuilder = services.AddMvc(options => { })
                 .SetCompatibilityVersion(CompatibilityVersion.Latest);
 
-            var builder = services.AddApiFramework();
+            var builder = services.AddApiFramework(options =>
+            {
+                options.AutoTidyUrls = AutoTidyUrlModeEnum.Disabled;
+            });
             
             builder.AddApi(typeof(HelloWorldApi));
             builder.AddEndpoint("/first", "Weikio.ApiFramework.Samples.PluginLibrary.HelloWorldApi");

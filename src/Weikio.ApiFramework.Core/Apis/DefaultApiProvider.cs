@@ -40,6 +40,11 @@ namespace Weikio.ApiFramework.Core.Apis
             return result;
         }
 
+        public List<IApiCatalog> ListCatalogs()
+        {
+            return this;
+        }
+
         public Api Get(ApiDefinition definition)
         {
             foreach (var catalog in this)
@@ -58,6 +63,20 @@ namespace Weikio.ApiFramework.Core.Apis
 
             throw new ApiNotFoundException(definition.Name, definition.Version,
                 $"No API found with definition {definition}. Available APIs:{Environment.NewLine}{string.Join(Environment.NewLine, allDefinitions)}");
+        }
+
+        public new void Add(IApiCatalog catalog)
+        {
+            if (catalog.IsInitialized == false)
+            {
+                throw new ApiCatalogNotInitializedException();
+            }
+            
+            base.Add(catalog);
+        }
+        public new void Remove(IApiCatalog catalog)
+        {
+            base.Remove(catalog);
         }
     }
 }

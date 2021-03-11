@@ -1,5 +1,7 @@
 using System;
 using System.Net.Http;
+using System.Threading;
+using System.Threading.Tasks;
 using CodeConfiguration;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
@@ -19,6 +21,7 @@ namespace ApiFramework.IntegrationTests
         
         // Must be set in each test
         public ITestOutputHelper Output { get; set; }
+        public IServiceProvider Provider { get; set; }
         
         protected ApiFrameworkTestBase(WebApplicationFactory<Startup> factory, ITestOutputHelper output)
         {
@@ -37,7 +40,7 @@ namespace ApiFramework.IntegrationTests
                         options.AutoResolveApis = false;
                         options.AutoResolveEndpoints = false;
 
-                        setupAction?.Invoke(options);
+                        setupAction?.Invoke(options);   
                     });
                     
                     action(apiFrameworkBuilder);
@@ -50,9 +53,40 @@ namespace ApiFramework.IntegrationTests
                     logging.ClearProviders(); // Remove other loggers
                     logging.AddXUnit(Output); // Use the ITestOutputHelper instance
                 });
-            }).CreateClient();
+            });
 
-            return result;
+            Provider = result.Services;
+            return result.CreateClient();
+        }
+        
+        protected async Task ContinueWhen(Func<bool> probe, string assertErrorMessage = null, TimeSpan? timeout = null)
+        {
+            if (timeout == null)
+            {
+                timeout = TimeSpan.FromSeconds(3);
+            }
+
+            var cts = new CancellationTokenSource();
+            cts.CancelAfter(timeout.GetValueOrDefault());
+
+            var success = false;
+
+            while (cts.IsCancellationRequested == false)
+            {
+                success = probe();
+
+                if (success)
+                {
+                    break;
+                }
+
+                if (cts.IsCancellationRequested)
+                {
+                    break;
+                }
+
+                await Task.Delay(TimeSpan.FromMilliseconds(50));
+            }
         }
     }
 }
