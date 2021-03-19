@@ -16,15 +16,13 @@ namespace Weikio.ApiFramework.Admin.Areas.Admin.Controllers
     [ResponseCache(NoStore = true)]
     public class EndpointsController : ControllerBase
     {
-        private readonly EndpointCollection _endpoints;
         private readonly EndpointInitializer _endpointInitializer;
         private readonly IApiProvider _apiProvider;
-        private readonly EndpointManager _endpointManager;
+        private readonly IEndpointManager _endpointManager;
 
-        public EndpointsController(EndpointCollection endpoints, EndpointInitializer endpointInitializer, IApiProvider apiProvider,
-            EndpointManager endpointManager)
+        public EndpointsController(EndpointInitializer endpointInitializer, IApiProvider apiProvider,
+            IEndpointManager endpointManager)
         {
-            _endpoints = endpoints;
             _endpointInitializer = endpointInitializer;
             _apiProvider = apiProvider;
             _endpointManager = endpointManager;
@@ -33,7 +31,7 @@ namespace Weikio.ApiFramework.Admin.Areas.Admin.Controllers
         [HttpGet]
         public ActionResult<IEnumerable<EndpointDto>> GetEndpoints()
         {
-            return Ok(_endpoints.Select(x => new EndpointDto(x)));
+            return Ok(_endpointManager.Endpoints.Select(x => new EndpointDto(x)));
         }
 
         [HttpPost("{route}/initialize")]
@@ -41,7 +39,7 @@ namespace Weikio.ApiFramework.Admin.Areas.Admin.Controllers
         {
             route = HttpUtility.UrlDecode(route);
 
-            var endpoint = _endpoints.FirstOrDefault(x => string.Equals(x.Route, route, StringComparison.InvariantCultureIgnoreCase));
+            var endpoint = _endpointManager.Endpoints.FirstOrDefault(x => string.Equals(x.Route, route, StringComparison.InvariantCultureIgnoreCase));
 
             if (endpoint == null)
             {
@@ -59,19 +57,7 @@ namespace Weikio.ApiFramework.Admin.Areas.Admin.Controllers
             var apiDefinition = new ApiDefinition(endpointDto.Api.Name, Version.Parse(endpointDto.Api.Version));
             var api = _apiProvider.Get(apiDefinition);
 
-//            var configuration = System.Text.Json.JsonSerializer.Deserialize<Dictionary<string, object>>(endpointDto.JsonConfiguration);
-//            
-            // if (endpointDto.JsonConfiguration != null)
-            // {
-            //     foreach (var o in endpointDto.JsonConfiguration)
-            //     {
-            //         var key = o.Key;
-            //         var val = ((JsonElement)o.Value).
-            //     }
-            // }
-            var endpoint = new Endpoint(endpointDto.Route, api, endpointDto.JsonConfiguration);
-
-            _endpointManager.AddEndpoint(endpoint);
+            _endpointManager.CreateAndAdd(endpointDto.Route, api, endpointDto.JsonConfiguration);
 
             return Ok();
         }

@@ -9,9 +9,9 @@ namespace Weikio.ApiFramework.Core.Infrastructure
 {
     public class ApiFeatureProvider : IApplicationFeatureProvider<ControllerFeature>
     {
-        private readonly EndpointManager _endpointManager;
+        private readonly IEndpointManager _endpointManager;
 
-        public ApiFeatureProvider(EndpointManager endpointManager)
+        public ApiFeatureProvider(IEndpointManager endpointManager)
         {
             _endpointManager = endpointManager;
         }

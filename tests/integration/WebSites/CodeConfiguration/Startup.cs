@@ -107,11 +107,11 @@ namespace CodeConfiguration
     public class SyncEndpointStartupHandler : IEndpointStartupHandler
     {
         private readonly EndpointConfigurationManager _endpointConfigurationManager;
-        private readonly EndpointManager _endpointManager;
+        private readonly IEndpointManager _endpointManager;
         private readonly IApiProvider _apiProvider;
         private readonly ApiFrameworkOptions _options;
 
-        public SyncEndpointStartupHandler(EndpointManager endpointManager,
+        public SyncEndpointStartupHandler(IEndpointManager endpointManager,
             EndpointConfigurationManager endpointConfigurationManager, IApiProvider apiProvider, IOptions<ApiFrameworkOptions> options)
         {
             _endpointManager = endpointManager;
@@ -128,25 +128,18 @@ namespace CodeConfiguration
 
             foreach (var endpointDefinition in initialEndpoints)
             {
-                var api = _apiProvider.Get(endpointDefinition.Api);
-
-                var endpoint = new Endpoint(endpointDefinition.Route, api, endpointDefinition.Configuration,
-                    GetHealthCheckFactory(api, endpointDefinition));
-
-                _endpointManager.AddEndpoint(endpoint);
+                _endpointManager.CreateAndAdd(endpointDefinition);
                 endpointsAdded = true;
             }
 
             if (initialEndpoints.Any() == false && _options.AutoResolveEndpoints)
             {
-                var functions = _apiProvider.List();
+                var apis = _apiProvider.List();
 
-                foreach (var functionDefinition in functions)
+                foreach (var apiDefinition in apis)
                 {
-                    var function = _apiProvider.Get(functionDefinition);
-                    var endpoint = new Endpoint(_options.ApiAddressBase, function, null, GetHealthCheckFactory(function));
-
-                    _endpointManager.AddEndpoint(endpoint);
+                    var def = new EndpointDefinition(_options.ApiAddressBase, apiDefinition);
+                    _endpointManager.CreateAndAdd(def);
 
                     endpointsAdded = true;
                 }

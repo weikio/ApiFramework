@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Weikio.ApiFramework.AspNetCore.StarterKit;
 
 namespace Weikio.ApiFramework.Samples.Admin
 {
@@ -19,7 +20,10 @@ namespace Weikio.ApiFramework.Samples.Admin
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
-            //
+
+            services.AddApiFrameworkWithAdmin();
+            
+
             // services.AddApiFramework()
             //     .AddMySql("/data",
             //         new MySqlOptions()

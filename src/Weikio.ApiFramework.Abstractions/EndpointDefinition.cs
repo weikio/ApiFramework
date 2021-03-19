@@ -4,7 +4,7 @@ namespace Weikio.ApiFramework.Abstractions
 {
     public class EndpointDefinition
     {
-        public EndpointDefinition(string route, string api, object configuration, IHealthCheck healthCheck, string groupName)
+        public EndpointDefinition(string route, ApiDefinition api, object configuration = null, IHealthCheck healthCheck = null, string groupName = null)
         {
             Route = route;
             Api = api;
@@ -14,7 +14,7 @@ namespace Weikio.ApiFramework.Abstractions
         }
 
         public string Route { get; }
-        public string Api { get; }
+        public ApiDefinition Api { get; }
         public object Configuration { get; }
         public IHealthCheck HealthCheck { get; }
         public string GroupName { get; }

@@ -22,12 +22,12 @@ namespace Weikio.ApiFramework.Core.Infrastructure
     public class EndpointStartupHandler : IEndpointStartupHandler
     {
         private readonly EndpointConfigurationManager _endpointConfigurationManager;
-        private readonly EndpointManager _endpointManager;
+        private readonly IEndpointManager _endpointManager;
         private readonly IApiProvider _apiProvider;
         private readonly IBackgroundTaskQueue _backgroundTaskQueue;
         private readonly ApiFrameworkOptions _options;
 
-        public EndpointStartupHandler(EndpointManager endpointManager,
+        public EndpointStartupHandler(IEndpointManager endpointManager,
             EndpointConfigurationManager endpointConfigurationManager, IApiProvider apiProvider, IOptions<ApiFrameworkOptions> options,
             IBackgroundTaskQueue backgroundTaskQueue)
         {
@@ -48,25 +48,18 @@ namespace Weikio.ApiFramework.Core.Infrastructure
 
                 foreach (var endpointDefinition in initialEndpoints)
                 {
-                    var api = _apiProvider.Get(endpointDefinition.Api);
-
-                    var endpoint = new Endpoint(endpointDefinition, api,
-                        GetHealthCheckFactory(api, endpointDefinition));
-
-                    _endpointManager.AddEndpoint(endpoint);
+                    _endpointManager.CreateAndAdd(endpointDefinition);
                     endpointsAdded = true;
                 }
 
                 if (initialEndpoints.Any() == false && _options.AutoResolveEndpoints)
                 {
-                    var functions = _apiProvider.List();
+                    var apis = _apiProvider.List();
 
-                    foreach (var functionDefinition in functions)
+                    foreach (var apiDefinition in apis)
                     {
-                        var function = _apiProvider.Get(functionDefinition);
-                        var endpoint = new Endpoint(_options.ApiAddressBase, function, null, GetHealthCheckFactory(function));
-
-                        _endpointManager.AddEndpoint(endpoint);
+                        var endpointDefinition = new EndpointDefinition(_options.ApiAddressBase, apiDefinition);
+                        _endpointManager.CreateAndAdd(endpointDefinition);
 
                         endpointsAdded = true;
                     }

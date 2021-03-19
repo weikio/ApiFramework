@@ -14,11 +14,11 @@ namespace Weikio.ApiFramework.Core.Infrastructure
 {
     public class ApiActionConvention : IActionModelConvention
     {
-        private readonly EndpointManager _endpointManager;
+        private readonly IEndpointManager _endpointManager;
         private readonly IEndpointHttpVerbResolver _endpointHttpVerbResolver;
         private readonly IOptions<ApiFrameworkOptions> _optionsAccessor;
 
-        public ApiActionConvention(EndpointManager endpointManager, IEndpointHttpVerbResolver endpointHttpVerbResolver, IOptions<ApiFrameworkOptions> optionsAccessor)
+        public ApiActionConvention(IEndpointManager endpointManager, IEndpointHttpVerbResolver endpointHttpVerbResolver, IOptions<ApiFrameworkOptions> optionsAccessor)
         {
             _endpointManager = endpointManager;
             _endpointHttpVerbResolver = endpointHttpVerbResolver;

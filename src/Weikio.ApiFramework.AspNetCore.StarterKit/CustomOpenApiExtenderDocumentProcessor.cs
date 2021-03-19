@@ -9,9 +9,9 @@ namespace Weikio.ApiFramework.AspNetCore.StarterKit
 {
     public class CustomOpenApiExtenderDocumentProcessor : IDocumentProcessor
     {
-        private readonly EndpointManager _endpointManager;
+        private readonly IEndpointManager _endpointManager;
 
-        public CustomOpenApiExtenderDocumentProcessor(EndpointManager endpointManager)
+        public CustomOpenApiExtenderDocumentProcessor(IEndpointManager endpointManager)
         {
             _endpointManager = endpointManager;
         }

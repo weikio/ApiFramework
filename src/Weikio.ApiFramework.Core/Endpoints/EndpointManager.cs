@@ -1,54 +1,96 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Reflection.Metadata.Ecma335;
+using System.Threading.Tasks;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
+using Microsoft.Extensions.Logging;
 using Weikio.ApiFramework.Abstractions;
-using Weikio.AspNetCore.Common;
+using Weikio.ApiFramework.Core.HealthChecks;
 
 namespace Weikio.ApiFramework.Core.Endpoints
 {
-    public class EndpointManager
+    public static class IEndpointManagerExtensions
     {
-        private readonly IBackgroundTaskQueue _backgroundTaskQueue;
-        private readonly IEndpointInitializer _initializer;
-
-        private readonly List<Endpoint> _endpoints;
-        public EndpointCollection Endpoints { get; }
-
-        public EndpointManager(IBackgroundTaskQueue backgroundTaskQueue,
-            IEndpointInitializer initializer)
+        public static Endpoint Create(this IEndpointManager endpointManager, string route, Api api, object configuration)
         {
-            _backgroundTaskQueue = backgroundTaskQueue;
-            _initializer = initializer;
-            _endpoints = new List<Endpoint>();
+            var def = new EndpointDefinition(route, api.ApiDefinition, configuration);
+            var result = endpointManager.Create(def);
 
-            Endpoints = new EndpointCollection(_endpoints);
+            return result;
+        }
+        public static Endpoint CreateAndAdd(this IEndpointManager endpointManager, string route, Api api, object configuration)
+        {
+            var def = new EndpointDefinition(route, api.ApiDefinition, configuration);
+            var result = endpointManager.CreateAndAdd(def);
+
+            return result;
+        }
+    }
+
+    public interface IEndpointManager
+    {
+        EndpointManagerStatusEnum Status { get; }
+        List<Endpoint> Endpoints { get; }
+        Endpoint Create(EndpointDefinition endpointDefinition);
+        Endpoint CreateAndAdd(EndpointDefinition endpointDefinition);
+        void AddEndpoint(Endpoint endpoint);
+
+        /// <summary>
+        /// Updates the current runtime status to match the configuration. If new endpoints are added runtime, these are not applied automatically.
+        /// </summary>
+        void Update();
+
+        void RemoveEndpoint(Endpoint endpoint);
+    }
+
+    public class DefaultEndpointManager : List<Endpoint>, IEndpointManager
+    {
+        private readonly IEndpointInitializer _initializer;
+        private readonly IApiProvider _apiProvider;
+        private readonly ILogger<DefaultEndpointManager> _logger;
+
+        public List<Endpoint> Endpoints
+        {
+            get
+            {
+                return this;
+            }
+        }
+
+        public DefaultEndpointManager(IEndpointInitializer initializer, IApiProvider apiProvider, ILogger<DefaultEndpointManager> logger)
+        {
+            _initializer = initializer;
+            _apiProvider = apiProvider;
+            _logger = logger;
         }
 
         public EndpointManagerStatusEnum Status
         {
             get
             {
-                if (_endpoints?.Any() != true)
+                if (this.Any() != true)
                 {
                     return EndpointManagerStatusEnum.Empty;
                 }
 
-                if (_endpoints.Any(x => x.Status.Status == EndpointStatusEnum.Initializing))
+                if (this.Any(x => x.Status.Status == EndpointStatusEnum.Initializing))
                 {
                     return EndpointManagerStatusEnum.Initializing;
                 }
 
-                if (_endpoints.Any(x => x.Status.Status == EndpointStatusEnum.New))
+                if (this.Any(x => x.Status.Status == EndpointStatusEnum.New))
                 {
                     return EndpointManagerStatusEnum.Changed;
                 }
 
-                if (_endpoints.Any(x => x.Status.Status == EndpointStatusEnum.Failed || x.Status.Status == EndpointStatusEnum.Unhealthy) && _endpoints.Any(x =>
-                        x.Status.Status != EndpointStatusEnum.Failed || x.Status.Status != EndpointStatusEnum.Unhealthy))
+                if (this.Any(x => x.Status.Status == EndpointStatusEnum.Failed || x.Status.Status == EndpointStatusEnum.Unhealthy) && this.Any(x =>
+                    x.Status.Status != EndpointStatusEnum.Failed || x.Status.Status != EndpointStatusEnum.Unhealthy))
                 {
                     return EndpointManagerStatusEnum.PartiallyRunning;
                 }
 
-                if (_endpoints.Any(x => x.Status.Status == EndpointStatusEnum.Failed))
+                if (this.Any(x => x.Status.Status == EndpointStatusEnum.Failed))
                 {
                     return EndpointManagerStatusEnum.Failed;
                 }
@@ -57,32 +99,44 @@ namespace Weikio.ApiFramework.Core.Endpoints
             }
         }
 
-//        public async Task AddEndpoint(IConfigurationSection endpointConfiguration)
-//        {
-//            var route = endpointConfiguration.Key;
-//            var functionName = endpointConfiguration.GetValue<string>("Plugin");
-//
-//            if (string.IsNullOrEmpty(functionName))
-//            {
-//                throw new InvalidOperationException($"Plugin is not configured for endpoint '{route}'.");
-//            }
-//
-//            var functionDefinition = await _functionProvider.Get(functionName);
-//
-//            if (functionDefinition == null)
-//            {
-//                throw new InvalidOperationException($"Api '{functionName}' is not available.");
-//            }
-//
-//            var endpoint = new Endpoint(route, functionDefinition, null);
-//            await endpoint.Initialize();
-//
-//            AddEndpoint(endpoint);
-//        }
+        public Endpoint Create(EndpointDefinition endpointDefinition)
+        {
+            try
+            {
+                var api = _apiProvider.Get(endpointDefinition.Api);
+                var healthCheckFactory = GetHealthCheckFactory(api, endpointDefinition);
+                var endpoint = new Endpoint(endpointDefinition, api, healthCheckFactory);
+
+                return endpoint;
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e,"Failed to create endpoint from {EndpointDefinition}", endpointDefinition);
+
+                throw;
+            }
+        }
+        
+        public Endpoint CreateAndAdd(EndpointDefinition endpointDefinition)
+        {
+            try
+            {
+                var endpoint = Create(endpointDefinition);
+                AddEndpoint(endpoint);
+                
+                return endpoint;
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e,"Failed to create and add endpoint from {EndpointDefinition}", endpointDefinition);
+
+                throw;
+            }
+        }
 
         public void AddEndpoint(Endpoint endpoint)
         {
-            _endpoints.Add(endpoint);
+            Add(endpoint);
         }
 
         /// <summary>
@@ -90,29 +144,29 @@ namespace Weikio.ApiFramework.Core.Endpoints
         /// </summary>
         public void Update()
         {
-            _initializer.Initialize(_endpoints);
+            _initializer.Initialize(this);
         }
 
         public void RemoveEndpoint(Endpoint endpoint)
         {
-            _endpoints.Remove(endpoint);
+            Remove(endpoint);
         }
 
-//        public void ReplaceEndpoint(Endpoint endpoint, IConfigurationSection newPluginConfiguration)
-//        {
-//            RemoveEndpoint(endpoint);
-//
-//            try
-//            {
-//                AddEndpoint(newPluginConfiguration);
-//            }
-//            catch (Exception)
-//            {
-//                // add the old version back
-//                AddEndpoint(endpoint);
-//
-//                throw;
-//            }
-//        }
+        private Func<Endpoint, Task<IHealthCheck>> GetHealthCheckFactory(Api api, EndpointDefinition endpointDefinition = null)
+        {
+            if (endpointDefinition?.HealthCheck != null)
+            {
+                return endpoint => Task.FromResult(endpoint.HealthCheck);
+            }
+
+            if (api.HealthCheckFactory != null)
+            {
+                return endpoint => api.HealthCheckFactory(endpoint);
+            }
+
+            IHealthCheck result = new EmptyHealthCheck();
+
+            return endpoint => Task.FromResult(result);
+        }
     }
 }

@@ -65,14 +65,13 @@ namespace Weikio.ApiFramework.Core.Extensions
             });
 
             services.TryAddSingleton<IEndpointStartupHandler, EndpointStartupHandler>();
-            // builder.Services.TryAddEnumerable(ServiceDescriptor.Transient<IStartupFilter, ApiFrameworkStartupFilter>());
             services.AddHostedService<ApiFrameworkStartupFilter>();
             
             services.TryAddSingleton<ApiChangeNotifier>();
             services.TryAddSingleton<EndpointConfigurationManager>();
 
-            services.TryAddSingleton<EndpointManager>();
-            services.TryAddTransient(ctx => ctx.GetService<EndpointManager>().Endpoints);
+            services.TryAddSingleton<IEndpointManager, DefaultEndpointManager>();
+            // services.TryAddTransient(ctx => ctx.GetService<DefaultEndpointManager>().Endpoints);
             services.TryAddSingleton<EndpointInitializer>();
 
             services.TryAddSingleton<ApiChangeToken>();

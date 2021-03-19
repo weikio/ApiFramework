@@ -7,9 +7,9 @@ namespace Weikio.ApiFramework.AspNetCore.NSwag
 {
     public class OpenApiExtenderDocumentProcessor : IDocumentProcessor
     {
-        private readonly EndpointManager _endpointManager;
+        private readonly IEndpointManager _endpointManager;
 
-        public OpenApiExtenderDocumentProcessor(EndpointManager endpointManager)
+        public OpenApiExtenderDocumentProcessor(IEndpointManager endpointManager)
         {
             _endpointManager = endpointManager;
         }

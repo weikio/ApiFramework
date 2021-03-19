@@ -74,10 +74,10 @@ namespace ApiFramework.IntegrationTests
             await typeCatalog.Initialize(new CancellationToken());
             apiProvider.Add(typeCatalog);
 
-            var endpointManager = Provider.GetRequiredService<EndpointManager>();
+            var endpointManager = Provider.GetRequiredService<IEndpointManager>();
             var api = apiProvider.Get(apiProvider.List().Single());
 
-            endpointManager.AddEndpoint(new Endpoint(new EndpointDefinition("/first", "HelloWorld.HelloWorldApi", null, null, null), api));
+            endpointManager.CreateAndAdd(new EndpointDefinition("/first", "HelloWorld.HelloWorldApi", null, null, null));
             endpointManager.Update();
 
             await ContinueWhen(() =>

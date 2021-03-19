@@ -11,10 +11,10 @@ namespace Weikio.ApiFramework.Core
 {
     public class HealthProbe
     {
-        private readonly EndpointManager _endpointManager;
+        private readonly IEndpointManager _endpointManager;
         private readonly ILogger<HealthProbe> _logger;
 
-        public HealthProbe(EndpointManager endpointManager, ILogger<HealthProbe> logger)
+        public HealthProbe(IEndpointManager endpointManager, ILogger<HealthProbe> logger)
         {
             _endpointManager = endpointManager;
             _logger = logger;

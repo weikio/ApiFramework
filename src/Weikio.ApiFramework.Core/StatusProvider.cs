@@ -7,10 +7,10 @@ namespace Weikio.ApiFramework.Core
 {
     public class StatusProvider
     {
-        private readonly EndpointManager _endpointManager;
+        private readonly IEndpointManager _endpointManager;
         private readonly IApiProvider _apiProvider;
 
-        public StatusProvider(EndpointManager endpointManager, IApiProvider apiProvider)
+        public StatusProvider(IEndpointManager endpointManager, IApiProvider apiProvider)
         {
             _endpointManager = endpointManager;
             _apiProvider = apiProvider;

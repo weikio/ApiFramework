@@ -16,12 +16,12 @@ namespace Weikio.ApiFramework.Core.Infrastructure
 {
     public class ApiControllerConvention : IControllerModelConvention
     {
-        private readonly EndpointManager _endpointManager;
+        private readonly IEndpointManager _endpointManager;
         private readonly IEndpointRouteTemplateProvider _endpointRouteTemplateProvider;
         private readonly ILogger<ApiControllerConvention> _logger;
         private readonly ApiFrameworkOptions _options;
 
-        public ApiControllerConvention(EndpointManager endpointManager, IOptions<ApiFrameworkOptions> options, IEndpointRouteTemplateProvider endpointRouteTemplateProvider, ILogger<ApiControllerConvention> logger)
+        public ApiControllerConvention(IEndpointManager endpointManager, IOptions<ApiFrameworkOptions> options, IEndpointRouteTemplateProvider endpointRouteTemplateProvider, ILogger<ApiControllerConvention> logger)
         {
             _endpointManager = endpointManager;
             _endpointRouteTemplateProvider = endpointRouteTemplateProvider;
