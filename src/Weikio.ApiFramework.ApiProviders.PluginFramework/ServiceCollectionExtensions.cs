@@ -97,7 +97,7 @@ namespace Weikio.ApiFramework.ApiProviders.PluginFramework
                     }
 
                     var compositeCatalog = new CompositePluginCatalog(assemblyCatalogs.ToArray());
-                    var apiProvider = new PluginFrameworkApiCatalog(compositeCatalog, initializationWrapper, healthCheckWrapper, logger);
+                    var apiProvider = new PluginFrameworkApiCatalog(compositeCatalog, initializationWrapper, healthCheckWrapper, logger, options);
 
                     return apiProvider;
                 }
@@ -111,7 +111,7 @@ namespace Weikio.ApiFramework.ApiProviders.PluginFramework
 
                     if (!registeredCatalogs.Any())
                     {
-                        var apiProvider = new PluginFrameworkApiCatalog(pluginCatalog, initializationWrapper, healthCheckWrapper, logger);
+                        var apiProvider = new PluginFrameworkApiCatalog(pluginCatalog, initializationWrapper, healthCheckWrapper, logger, options);
 
                         return apiProvider;
                     }
@@ -124,7 +124,7 @@ namespace Weikio.ApiFramework.ApiProviders.PluginFramework
                             compositeCatalog.AddCatalog(catalog);
                         }
 
-                        var apiProvider = new PluginFrameworkApiCatalog(compositeCatalog, initializationWrapper, healthCheckWrapper, logger);
+                        var apiProvider = new PluginFrameworkApiCatalog(compositeCatalog, initializationWrapper, healthCheckWrapper, logger, options);
 
                         return apiProvider;
                     }
@@ -134,10 +134,10 @@ namespace Weikio.ApiFramework.ApiProviders.PluginFramework
                 {
                     var compositeCatalog = new CompositePluginCatalog(registeredCatalogs.ToArray());
 
-                    return new PluginFrameworkApiCatalog(compositeCatalog, initializationWrapper, healthCheckWrapper, logger);
+                    return new PluginFrameworkApiCatalog(compositeCatalog, initializationWrapper, healthCheckWrapper, logger, options);
                 }
 
-                return new PluginFrameworkApiCatalog(new EmptyPluginCatalog(), initializationWrapper, healthCheckWrapper, logger);
+                return new PluginFrameworkApiCatalog(new EmptyPluginCatalog(), initializationWrapper, healthCheckWrapper, logger, options);
             });
 
             builder.Services.TryAddSingleton<IApiInitializationWrapper, ApiInitializationWrapper>();

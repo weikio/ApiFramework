@@ -15,7 +15,7 @@ namespace ApiFramework.IntegrationTests
         {
             var provider = new PluginFrameworkApiCatalog(new AssemblyPluginCatalog(typeof(HelloWorldApi).Assembly), 
                 new ApiInitializationWrapperForUnitTests(),
-                new ApiHealthCheckWrapperForUnitTests(), new NullLogger<PluginFrameworkApiCatalog>());
+                new ApiHealthCheckWrapperForUnitTests(), new NullLogger<PluginFrameworkApiCatalog>(), new PluginFrameworkApiProviderOptions());
 
             await provider.Initialize(new CancellationToken());
 

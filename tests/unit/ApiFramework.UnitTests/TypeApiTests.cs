@@ -29,7 +29,7 @@ namespace ApiFramework.IntegrationTests
         {
             var provider = new PluginFrameworkApiCatalog(new TypePluginCatalog(typeof(HelloWorldApi)), 
                 new ApiInitializationWrapperForUnitTests(),
-                new ApiHealthCheckWrapperForUnitTests(), new NullLogger<PluginFrameworkApiCatalog>());
+                new ApiHealthCheckWrapperForUnitTests(), new NullLogger<PluginFrameworkApiCatalog>(), new PluginFrameworkApiProviderOptions());
 
             await provider.Initialize(new CancellationToken());
 
@@ -44,7 +44,7 @@ namespace ApiFramework.IntegrationTests
         {
             var provider = new PluginFrameworkApiCatalog(new TypePluginCatalog(typeof(HelloWorld.HelloWorldApi)),
                 new ApiInitializationWrapperForUnitTests(),
-                new ApiHealthCheckWrapperForUnitTests(), new NullLogger<PluginFrameworkApiCatalog>());
+                new ApiHealthCheckWrapperForUnitTests(), new NullLogger<PluginFrameworkApiCatalog>(), new PluginFrameworkApiProviderOptions());
 
             await provider.Initialize(new CancellationToken());
 
@@ -57,7 +57,7 @@ namespace ApiFramework.IntegrationTests
         {
             var provider = new PluginFrameworkApiCatalog(new TypePluginCatalog(typeof(HelloWorldApi)), 
                 new ApiInitializationWrapperForUnitTests(),
-                new ApiHealthCheckWrapperForUnitTests(), new NullLogger<PluginFrameworkApiCatalog>());
+                new ApiHealthCheckWrapperForUnitTests(), new NullLogger<PluginFrameworkApiCatalog>(), new PluginFrameworkApiProviderOptions());
 
             await provider.Initialize(new CancellationToken());
 

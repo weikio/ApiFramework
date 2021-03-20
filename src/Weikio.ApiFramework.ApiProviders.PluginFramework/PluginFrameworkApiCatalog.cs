@@ -6,6 +6,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using Weikio.ApiFramework.Abstractions;
 using Weikio.PluginFramework.Abstractions;
 
@@ -20,14 +21,16 @@ namespace Weikio.ApiFramework.ApiProviders.PluginFramework
         private readonly IApiInitializationWrapper _factoryWrapper;
         private readonly IApiHealthCheckWrapper _healthCheckWrapper;
         private readonly ILogger<PluginFrameworkApiCatalog> _logger;
+        private readonly PluginFrameworkApiProviderOptions _options;
 
         public PluginFrameworkApiCatalog(IPluginCatalog pluginCatalog, IApiInitializationWrapper factoryWrapper,
-            IApiHealthCheckWrapper healthCheckWrapper, ILogger<PluginFrameworkApiCatalog> logger)
+            IApiHealthCheckWrapper healthCheckWrapper, ILogger<PluginFrameworkApiCatalog> logger, PluginFrameworkApiProviderOptions options)
         {
             _pluginCatalog = pluginCatalog;
             _factoryWrapper = factoryWrapper;
             _healthCheckWrapper = healthCheckWrapper;
             _logger = logger;
+            _options = options;
         }
 
         public async Task Initialize(CancellationToken cancellationToken)
@@ -149,6 +152,12 @@ namespace Weikio.ApiFramework.ApiProviders.PluginFramework
                 var healthCheckRunner = _healthCheckWrapper.Wrap(healthCheckFactoryMethod);
 
                 var apiTypes = pluginsForApi.Where(x => x.Tags?.Contains("Api") == true).ToList();
+                _logger.LogDebug("Found {ApiTypeCount} api types for {ApiDefinition}", apiTypes.Count, apiDefinition);
+
+                if (factoryTypes?.Any() != true && apiTypes?.Any() != true)
+                {
+                    _logger.LogInformation("No api types or factory types found for api definition {ApiDefinition}. It's not possible to use this as an API.", apiDefinition);
+                }
 
                 var result = new Api(apiDefinition, apiTypes.Select(x => x.Type).ToList(),
                     factory, healthCheckRunner);

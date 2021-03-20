@@ -1,4 +1,6 @@
-﻿namespace Weikio.ApiFramework.Samples.PluginLibrary
+﻿using Microsoft.AspNetCore.Components.Forms;
+
+namespace Weikio.ApiFramework.Samples.PluginLibrary
 {
     public class Complex
     {

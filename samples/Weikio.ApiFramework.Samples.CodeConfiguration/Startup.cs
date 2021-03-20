@@ -7,6 +7,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
 using NSwag.Generation.Processors;
+using Weikio.ApiFramework.ApiProviders.PluginFramework;
 using Weikio.ApiFramework.AspNetCore;
 using Weikio.ApiFramework.AspNetCore.NSwag;
 using Weikio.ApiFramework.Core.Configuration;
@@ -37,11 +38,17 @@ namespace Weikio.ApiFramework.Samples.CodeConfiguration
             var builder = services.AddApiFramework(options =>
             {
                 options.AutoTidyUrls = AutoTidyUrlModeEnum.Disabled;
+                options.ApiAddressBase = "/custombase";
             });
             
             builder.AddApi(typeof(HelloWorldApi));
+            builder.AddApi<SampleController>();
+            builder.AddApi<Calculator>();
+            
             builder.AddEndpoint("/first", "Weikio.ApiFramework.Samples.PluginLibrary.HelloWorldApi");
             builder.AddEndpoint("/second", "Weikio.ApiFramework.Samples.PluginLibrary.HelloWorldApi");
+            builder.AddEndpoint("/testController", "Weikio.ApiFramework.Samples.PluginLibrary.SampleController");
+            builder.AddEndpoint("/myCalc", "Weikio.ApiFramework.Samples.PluginLibrary.Calculator");
             
             // builder.AddApi(typeof(SampleController));
             // builder.AddEndpoint("/mytest", "Weikio.ApiFramework.Samples.PluginLibrary.SampleController");

@@ -12,6 +12,7 @@ using Weikio.ApiFramework.ApiProviders.PluginFramework;
 using Weikio.ApiFramework.Core.HealthChecks;
 using Weikio.PluginFramework.Abstractions;
 using Weikio.PluginFramework.Catalogs;
+using Weikio.PluginFramework.TypeFinding;
 
 namespace Weikio.ApiFramework.AspNetCore
 {
@@ -95,25 +96,28 @@ namespace Weikio.ApiFramework.AspNetCore
             return builder;
         }
 
-        public static IApiFrameworkBuilder AddApi(this IApiFrameworkBuilder builder, Type apiType)
-        {
-            builder.Services.AddTransient<IPluginCatalog>(services =>
-            {
-                var typeCatalog = new TypePluginCatalog(apiType);
-
-                return typeCatalog;
-            });
-
-            return builder;
-        }
 
         public static IApiFrameworkBuilder AddApi<T>(this IApiFrameworkBuilder builder, string route = null, object configuration = null,
             IHealthCheck healthCheck = null, string groupName = null)
         {
+            return builder.AddApi(typeof(T), route, configuration, healthCheck, groupName);
+        }
+        
+        
+        public static IApiFrameworkBuilder AddApi(this IApiFrameworkBuilder builder, Type apiType, string route = null, object configuration = null,
+            IHealthCheck healthCheck = null, string groupName = null)
+        {
             builder.Services.AddTransient<IPluginCatalog>(services =>
             {
-                var apiType = typeof(T);
-                var typeCatalog = new TypePluginCatalog(apiType);
+                var options = services.GetRequiredService<IOptions<PluginFrameworkApiProviderOptions>>().Value;
+                var criteria = options.CreateTypeApiFinderCriteria(apiType);
+                
+                var catalogOptions = new TypePluginCatalogOptions()
+                {
+                    TypeFinderOptions = new TypeFinderOptions() { TypeFinderCriterias = criteria }
+                };
+                
+                var typeCatalog = new TypePluginCatalog(apiType, catalogOptions);
 
                 return typeCatalog;
             });
@@ -125,7 +129,7 @@ namespace Weikio.ApiFramework.AspNetCore
 
             builder.Services.AddTransient(services =>
             {
-                var endpointConfiguration = new EndpointDefinition(route, typeof(T).FullName, configuration, endpoint => Task.FromResult(healthCheck), groupName);
+                var endpointConfiguration = new EndpointDefinition(route, apiType.FullName, configuration, endpoint => Task.FromResult(healthCheck), groupName);
 
                 return endpointConfiguration;
             });
