@@ -73,22 +73,5 @@ namespace Weikio.ApiFramework.Core.Infrastructure
                 _endpointManager.Update();
             });
         }
-
-        private Func<Endpoint, Task<IHealthCheck>> GetHealthCheckFactory(Api api, EndpointDefinition endpointDefinition = null)
-        {
-            if (endpointDefinition?.HealthCheck != null)
-            {
-                return endpoint => Task.FromResult(endpoint.HealthCheck);
-            }
-
-            if (api.HealthCheckFactory != null)
-            {
-                return endpoint => api.HealthCheckFactory(endpoint);
-            }
-
-            IHealthCheck result = new EmptyHealthCheck();
-
-            return endpoint => Task.FromResult(result);
-        }
     }
 }

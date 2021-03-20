@@ -104,8 +104,13 @@ namespace Weikio.ApiFramework.Core.Endpoints
             try
             {
                 var api = _apiProvider.Get(endpointDefinition.Api);
-                var healthCheckFactory = GetHealthCheckFactory(api, endpointDefinition);
-                var endpoint = new Endpoint(endpointDefinition, api, healthCheckFactory);
+
+                if (endpointDefinition.HealthCheckFactory == null)
+                {
+                    endpointDefinition.HealthCheckFactory = GetHealthCheckFactory(api, endpointDefinition);
+                }
+                
+                var endpoint = new Endpoint(endpointDefinition, api);
 
                 return endpoint;
             }
@@ -154,9 +159,9 @@ namespace Weikio.ApiFramework.Core.Endpoints
 
         private Func<Endpoint, Task<IHealthCheck>> GetHealthCheckFactory(Api api, EndpointDefinition endpointDefinition = null)
         {
-            if (endpointDefinition?.HealthCheck != null)
+            if (endpointDefinition?.HealthCheckFactory != null)
             {
-                return endpoint => Task.FromResult(endpoint.HealthCheck);
+                return endpointDefinition.HealthCheckFactory;
             }
 
             if (api.HealthCheckFactory != null)

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Reflection;
+using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Options;
@@ -124,7 +125,7 @@ namespace Weikio.ApiFramework.AspNetCore
 
             builder.Services.AddTransient(services =>
             {
-                var endpointConfiguration = new EndpointDefinition(route, typeof(T).FullName, configuration, healthCheck, groupName);
+                var endpointConfiguration = new EndpointDefinition(route, typeof(T).FullName, configuration, endpoint => Task.FromResult(healthCheck), groupName);
 
                 return endpointConfiguration;
             });

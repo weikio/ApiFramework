@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
@@ -130,7 +131,7 @@ namespace Weikio.ApiFramework.Core.Extensions
                 foreach (var endpoint in options.Endpoints)
                 {
                     var endpointConfiguration = new EndpointDefinition(endpoint.Route, endpoint.ApiAssemblyName,
-                        endpoint.Configuration, endpoint.HealthCheck, endpoint.GroupName);
+                        endpoint.Configuration, endpoint1 => Task.FromResult(endpoint.HealthCheck), endpoint.GroupName);
 
                     result.Add(endpointConfiguration);
                 }
@@ -152,6 +153,7 @@ namespace Weikio.ApiFramework.Core.Extensions
             {
                 mvcOptions.Conventions.Add(convention);
                 mvcOptions.Filters.Add(new ApiConfigurationActionFilter());
+                mvcOptions.Filters.Add(typeof(ApiPolicyActionFilter));
             });
 
             services.ConfigureWithDependencies<MvcOptions, ApiActionConvention>((mvcOptions, convention) =>
@@ -193,12 +195,15 @@ namespace Weikio.ApiFramework.Core.Extensions
         public static IApiFrameworkBuilder AddEndpoint(this IApiFrameworkBuilder builder, string route, string api, object configuration = null,
             IHealthCheck healthCheck = null, string groupName = null)
         {
-            builder.Services.AddTransient(services =>
-            {
-                var endpointConfiguration = new EndpointDefinition(route, api, configuration, healthCheck, groupName);
+            var endpointDefinition = new EndpointDefinition(route, api, configuration, endpoint => Task.FromResult(healthCheck), groupName);
+            builder.AddEndpoint(endpointDefinition);
 
-                return endpointConfiguration;
-            });
+            return builder;
+        }
+        
+        public static IApiFrameworkBuilder AddEndpoint(this IApiFrameworkBuilder builder, EndpointDefinition endpointDefinition)
+        {
+            builder.Services.AddSingleton(endpointDefinition);
 
             return builder;
         }

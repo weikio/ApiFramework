@@ -44,9 +44,10 @@ namespace Weikio.ApiFramework.SDK
             return apiFrameworkBuilder;
         }
         
-        public static IServiceCollection RegisterEndpoint(this IServiceCollection services, string route, string pluginName, object configuration = null, IHealthCheck healthCheck = null, string group = null)
+        public static IServiceCollection RegisterEndpoint(this IServiceCollection services, string route, string pluginName, object configuration = null, 
+            IHealthCheck healthCheck = null, string group = null)
         {
-            var endpointDefinition = new EndpointDefinition(route, pluginName , configuration, healthCheck, group);
+            var endpointDefinition = new EndpointDefinition(route, pluginName , configuration, endpoint => Task.FromResult(healthCheck), group);
             services.AddSingleton<IEndpointConfigurationProvider>(provider => new PluginEndpointConfigurationProvider(endpointDefinition));
             
             return services;

@@ -19,6 +19,7 @@ namespace Weikio.ApiFramework.Abstractions
         public IHealthCheck HealthCheck { get; private set; }
         public EndpointStatus Status { get; }
         public List<object> Metadata { get; private set; } = new List<object>();
+        public EndpointDefinition Definition { get; }
 
         public override string ToString()
         {
@@ -38,32 +39,43 @@ namespace Weikio.ApiFramework.Abstractions
             }
         }
 
-        public Endpoint(EndpointDefinition definition, Api api, Func<Endpoint, Task<IHealthCheck>> healthCheckFactory = null) : this(definition.Route, api,
-            definition.Configuration, healthCheckFactory, definition.GroupName, definition.Name, definition.Description, definition.Tags)
+        public Endpoint(EndpointDefinition definition, Api api) 
         {
-        }
-
-        public Endpoint(string route, Api api, object configuration = null, Func<Endpoint, Task<IHealthCheck>> healthCheckFactory = null,
-            string groupName = null, string name = null, string description = null, string[] tags = null)
-        {
-            Route = route;
+            if (definition == null)
+            {
+                throw new ArgumentNullException(nameof(definition));
+            }
+            
+            if (api == null)
+            {
+                throw new ArgumentNullException(nameof(api));
+            }
+            
+            Route = definition.Route;
             Api = api;
-            Configuration = configuration;
-            HealthCheckFactory = healthCheckFactory;
+            Configuration = definition.Configuration;
+            HealthCheckFactory = definition.HealthCheckFactory;
 
             ApiTypes = new List<Type>();
             Status = new EndpointStatus();
 
-            GroupName = groupName;
-            Name = name;
+            GroupName = definition.GroupName;
+            Name = definition.Name;
 
             if (string.IsNullOrWhiteSpace(Name))
             {
-                Name = route.Trim('/');
+                Name = definition.Route.Trim('/');
             }
             
-            Description = description;
-            Tags = tags;
+            Description = definition.Description;
+            Tags = definition.Tags;
+            Definition = definition;
+        }
+
+        public Endpoint(string route, Api api, object configuration = null, Func<Endpoint, Task<IHealthCheck>> healthCheckFactory = null,
+            string groupName = null, string name = null, string description = null, string[] tags = null, string policyName=null) : this(
+            new EndpointDefinition(route, api.ApiDefinition, configuration, healthCheckFactory, groupName, name, description, tags, policyName), api)
+        {
         }
 
         public async Task Initialize()

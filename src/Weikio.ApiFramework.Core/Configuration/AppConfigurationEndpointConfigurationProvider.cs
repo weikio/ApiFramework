@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Weikio.ApiFramework.Abstractions;
 using Weikio.ApiFramework.Core.HealthChecks;
 using Weikio.ApiFramework.SDK;
@@ -49,11 +50,13 @@ namespace Weikio.ApiFramework.Core.Configuration
                 var description = endpointSection.GetValue<string>("Description");
                 var tags = endpointSection.GetSection("Tags")?.Get<string[]>();
 
-                var endpointDefinition = new EndpointDefinition(route, definition.Name, endpointConfiguration, new EmptyHealthCheck(), endpointGroupName);
-                endpointDefinition.Name = name;
-                endpointDefinition.Description = description;
-                endpointDefinition.Tags = tags;
-                
+                var healthCheck = new EmptyHealthCheck();
+
+                var endpointDefinition = new EndpointDefinition(route, definition.Name,
+                    endpointConfiguration,
+                    endpoint => Task.FromResult<IHealthCheck>(healthCheck),
+                    endpointGroupName, name, description, tags);
+
                 result.Add(endpointDefinition);
             }
 

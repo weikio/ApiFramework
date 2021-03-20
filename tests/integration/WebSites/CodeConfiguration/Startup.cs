@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
@@ -155,9 +157,9 @@ namespace CodeConfiguration
 
         private Func<Endpoint, Task<IHealthCheck>> GetHealthCheckFactory(Api api, EndpointDefinition endpointDefinition = null)
         {
-            if (endpointDefinition?.HealthCheck != null)
+            if (endpointDefinition?.HealthCheckFactory != null)
             {
-                return endpoint => Task.FromResult(endpoint.HealthCheck);
+                return endpointDefinition.HealthCheckFactory;
             }
 
             if (api.HealthCheckFactory != null)
@@ -185,14 +187,29 @@ namespace CodeConfiguration
         {
             services.AddRouting();
 
-            services.AddMvc()
-                .SetCompatibilityVersion(CompatibilityVersion.Latest);
+            services.AddControllers();
 
             services.AddSingleton<IApiProviderInitializer, SyncApiProviderInitializer>();
             services.AddSingleton<IEndpointStartupHandler, SyncEndpointStartupHandler>();
             services.AddSingleton<IEndpointInitializer, SyncEndpointInitializer>();
 
             services.AddSwaggerDocument();
+
+            services.AddAuthentication(options =>
+                {
+                    options.DefaultScheme = "BasicAuthentication";
+                    options.DefaultChallengeScheme = "BasicAuthentication";
+                })
+                .AddScheme<AuthenticationSchemeOptions, BasicAuthenticationHandler>("BasicAuthentication", null);
+            
+            var policy = new AuthorizationPolicyBuilder()
+                .RequireAuthenticatedUser()
+                .Build();
+                
+            services.AddAuthorization(options =>
+            {
+                options.AddPolicy("testPolicy", policy);
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -203,6 +220,9 @@ namespace CodeConfiguration
             app.UseOpenApi();
             app.UseSwaggerUi3();
 
+            app.UseAuthentication();
+            app.UseAuthorization();
+            
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapDefaultControllerRoute();
