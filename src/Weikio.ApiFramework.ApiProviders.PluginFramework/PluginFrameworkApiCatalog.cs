@@ -129,6 +129,9 @@ namespace Weikio.ApiFramework.ApiProviders.PluginFramework
                     return null;
                 }
 
+                // It could be possible that there is multiple assemblies in a single API but that is unlikely
+                var assembly = pluginsForApi.First().Assembly;
+                
                 var factoryTypes = pluginsForApi.Where(x => x.Tags?.Contains("Factory") == true).ToList();
                 _logger.LogDebug("Found {FactoryTypeCount} factories for {ApiDefinition}", factoryTypes.Count, apiDefinition);
 
@@ -156,10 +159,10 @@ namespace Weikio.ApiFramework.ApiProviders.PluginFramework
 
                 if (factoryTypes?.Any() != true && apiTypes?.Any() != true)
                 {
-                    _logger.LogInformation("No api types or factory types found for api definition {ApiDefinition}. It's not possible to use this as an API.", apiDefinition);
+                    _logger.LogWarning("No api types or factory types found for api definition {ApiDefinition}. It's not possible to use this as an API.", apiDefinition);
                 }
 
-                var result = new Api(apiDefinition, apiTypes.Select(x => x.Type).ToList(),
+                var result = new Api(apiDefinition, apiTypes.Select(x => x.Type).ToList(), assembly, 
                     factory, healthCheckRunner);
 
                 return result;

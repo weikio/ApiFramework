@@ -16,9 +16,4 @@ namespace Weikio.ApiFramework.SDK
         public List<Type> FactoryTypes { get; set; } 
         public IHealthCheck HealthCheckType { get; set; } 
     }
-
-    public class ApiPluginOptions
-    {
-        public List<Assembly> ApiPluginAssemblies { get; set; } = new List<Assembly>();
-    }
 }

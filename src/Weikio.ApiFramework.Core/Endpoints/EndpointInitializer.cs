@@ -16,14 +16,17 @@ namespace Weikio.ApiFramework.Core.Endpoints
         private readonly ILogger<EndpointInitializer> _logger;
         private readonly ApiChangeNotifier _changeNotifier;
         private readonly IBackgroundTaskQueue _backgroundTaskQueue;
+        private readonly IApiConfigurationTypeProvider _apiConfigurationTypeProvider;
         private readonly ApiFrameworkOptions _options;
         private static string _initializationLock = "lock";
 
-        public EndpointInitializer(ILogger<EndpointInitializer> logger, ApiChangeNotifier changeNotifier, IOptions<ApiFrameworkOptions> options, IBackgroundTaskQueue backgroundTaskQueue)
+        public EndpointInitializer(ILogger<EndpointInitializer> logger, ApiChangeNotifier changeNotifier, IOptions<ApiFrameworkOptions> options,
+            IBackgroundTaskQueue backgroundTaskQueue, IApiConfigurationTypeProvider apiConfigurationTypeProvider)
         {
             _logger = logger;
             _changeNotifier = changeNotifier;
             _backgroundTaskQueue = backgroundTaskQueue;
+            _apiConfigurationTypeProvider = apiConfigurationTypeProvider;
             _options = options.Value;
         }
 
@@ -77,11 +80,27 @@ namespace Weikio.ApiFramework.Core.Endpoints
             }
 
             await endpoint.Initialize();
-
+            
             if (_options.ChangeNotificationType == ChangeNotificationTypeEnum.Single)
             {
                 _changeNotifier.Notify();
             }
+
+            // Also update the known configuration types
+            if (endpoint.Configuration == null)
+            {
+                return;
+            }
+            
+            var currentConfigurationType = _apiConfigurationTypeProvider.GetByApi(endpoint.Api.ApiDefinition);
+
+            if (currentConfigurationType != null)
+            {
+                return;
+            }
+
+            var configurationType = new ApiConfiguration(endpoint.Api.ApiDefinition, endpoint.Configuration.GetType());
+            _apiConfigurationTypeProvider.Add(configurationType);
         }
     }
 }

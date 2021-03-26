@@ -14,10 +14,7 @@ namespace Weikio.ApiFramework.Core.AsyncStream
         /// </summary>
         public bool IsEnabled
         {
-            get
-            {
-                return _isEnabled;
-            }
+            get => _isEnabled;
             set
             {
                 _isEnabled = value;
@@ -30,10 +27,7 @@ namespace Weikio.ApiFramework.Core.AsyncStream
         /// </summary>
         public int BufferSizeThresholdInKB
         {
-            get
-            {
-                return _bufferSizeThresholdInKb;
-            }
+            get => _bufferSizeThresholdInKb;
             set
             {
                 _bufferSizeThresholdInKb = value;
@@ -41,5 +35,4 @@ namespace Weikio.ApiFramework.Core.AsyncStream
             }
         }
     }
-
 }

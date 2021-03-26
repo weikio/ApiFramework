@@ -6,6 +6,10 @@ namespace Weikio.ApiFramework.Abstractions
 {
     public class EndpointDefinition
     {
+        public EndpointDefinition()
+        {
+        }
+
         public EndpointDefinition(string route, ApiDefinition api, object configuration = null, Func<Endpoint, Task<IHealthCheck>> healthCheckFactory = null, 
             string groupName = null, string name = null, string description = null, string[] tags = null, string policyName = "")
         {
@@ -20,11 +24,11 @@ namespace Weikio.ApiFramework.Abstractions
             Policy = policyName;
         }
 
-        public string Route { get; }
-        public ApiDefinition Api { get; }
-        public object Configuration { get; }
+        public string Route { get; set; }
+        public ApiDefinition Api { get; set; }
+        public object Configuration { get; set; }
         public Func<Endpoint, Task<IHealthCheck>> HealthCheckFactory { get; set; }
-        public string GroupName { get; }
+        public string GroupName { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }
         public string[] Tags { get; set; }

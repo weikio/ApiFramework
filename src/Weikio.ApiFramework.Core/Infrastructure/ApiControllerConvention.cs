@@ -21,7 +21,8 @@ namespace Weikio.ApiFramework.Core.Infrastructure
         private readonly ILogger<ApiControllerConvention> _logger;
         private readonly ApiFrameworkOptions _options;
 
-        public ApiControllerConvention(IEndpointManager endpointManager, IOptions<ApiFrameworkOptions> options, IEndpointRouteTemplateProvider endpointRouteTemplateProvider, ILogger<ApiControllerConvention> logger)
+        public ApiControllerConvention(IEndpointManager endpointManager, IOptions<ApiFrameworkOptions> options,
+            IEndpointRouteTemplateProvider endpointRouteTemplateProvider, ILogger<ApiControllerConvention> logger)
         {
             _endpointManager = endpointManager;
             _endpointRouteTemplateProvider = endpointRouteTemplateProvider;
@@ -66,16 +67,17 @@ namespace Weikio.ApiFramework.Core.Infrastructure
 
                 if (hasDuplicateEndpoints)
                 {
-                    _logger.LogWarning("Api {ApiName} has duplicate routes in endpoints. Adding index number to duplicate routes. Endpoint routes:", apiController.ControllerType.FullName);
+                    _logger.LogWarning("Api {ApiName} has duplicate routes in endpoints. Adding index number to duplicate routes. Endpoint routes:",
+                        apiController.ControllerType.FullName);
 
                     foreach (var endpoint in apiController.Endpoints)
                     {
                         _logger.LogWarning(endpoint.Route);
-                    }                    
+                    }
                 }
 
                 var routeCounts = new Dictionary<string, int>();
-                
+
                 foreach (var endpoint in apiController.Endpoints)
                 {
                     var template = _endpointRouteTemplateProvider.GetRouteTemplate(endpoint);
@@ -124,11 +126,12 @@ namespace Weikio.ApiFramework.Core.Infrastructure
                             // var convertedConfigValue = JsonSerializer.Deserialize(JsonSerializer.Serialize(endpointConfiguration), configProperty.PropertyType);
 
                             var config = endpointConfiguration;
+
                             if (endpointConfiguration.GetType() != configProperty.PropertyType)
                             {
                                 config = JsonConvert.DeserializeObject(JsonConvert.SerializeObject(endpointConfiguration), configProperty.PropertyType);
                             }
-                            
+
                             item.EndpointMetadata.Add(config);
 
                             item.EndpointMetadata.Add(new Action<object>(obj =>

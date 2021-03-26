@@ -8,22 +8,20 @@ using NSwag.Generation.Processors;
 using Weikio.ApiFramework.Abstractions.DependencyInjection;
 using Weikio.ApiFramework.Admin;
 using Weikio.ApiFramework.AspNetCore.StarterKit.Middlewares;
-using Weikio.ApiFramework.Core.AsyncStream;
 
 namespace Weikio.ApiFramework.AspNetCore.StarterKit
 {
     public static class ServiceCollectionExtensions
     {
-        public static IApiFrameworkBuilder AddApiFrameworkWithAdmin(this IMvcBuilder mvcBuilder, Action<ApiFrameworkAspNetCoreOptions> setupAction = null)
+        public static IApiFrameworkBuilder AddApiFrameworkStarterKit(this IMvcBuilder mvcBuilder, Action<ApiFrameworkAspNetCoreOptions> setupAction = null)
         {
             return mvcBuilder.Services.AddApiFramework(setupAction);
         }
         
-        public static IApiFrameworkBuilder AddApiFrameworkWithAdmin(this IServiceCollection services,
+        public static IApiFrameworkBuilder AddApiFrameworkStarterKit(this IServiceCollection services,
             Action<ApiFrameworkAspNetCoreOptions> setupAction = null)
         {
             var builder = services.AddApiFramework();
-
             builder.AddAdmin();
             
             services.AddTransient<IDocumentProcessor, CustomOpenApiExtenderDocumentProcessor>();
@@ -69,45 +67,13 @@ namespace Weikio.ApiFramework.AspNetCore.StarterKit
             {
                 options.OutputFormatters.RemoveType<HttpNoContentOutputFormatter>();
             });
+
+            if (setupAction != null)
+            {
+                services.Configure(setupAction);
+            }
             
             return builder;
         }
-        
-        // public static IApiFrameworkBuilder AddApi(this IApiFrameworkBuilder builder, string nugetPackageName, string version)
-        // {
-        //     builder.Services.AddTransient<IPluginCatalog>(services =>
-        //     {
-        //         var typeCatalog = new NugetPackagePluginCatalog(nugetPackageName, version, true);
-        //
-        //         return typeCatalog;
-        //     });
-        //
-        //     return builder;
-        // }
-        //
-        // public static IApiFrameworkBuilder AddApi(this IApiFrameworkBuilder builder, string script, string apiName, string version)
-        // {
-        //     builder.Services.AddTransient<IPluginCatalog>(services =>
-        //     {
-        //         var roslynCatalog = new RoslynPluginCatalog(script,
-        //             new RoslynPluginCatalogOptions() { PluginName = apiName, PluginVersion = new Version(version) });
-        //
-        //         return roslynCatalog;
-        //     });
-        //
-        //     return builder;
-        // }
-        //
-        // public static IApiFrameworkBuilder AddApi(this IApiFrameworkBuilder builder, MulticastDelegate del, string apiName)
-        // {
-        //     builder.Services.AddTransient<IPluginCatalog>(services =>
-        //     {
-        //         var delCatalog = new DelegatePluginCatalog(del, apiName);
-        //
-        //         return delCatalog;
-        //     });
-        //
-        //     return builder;
-        // }
     }
 }

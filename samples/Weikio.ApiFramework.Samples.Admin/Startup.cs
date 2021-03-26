@@ -21,7 +21,7 @@ namespace Weikio.ApiFramework.Samples.Admin
         {
             services.AddControllers();
 
-            services.AddApiFrameworkWithAdmin();
+            services.AddApiFrameworkStarterKit();
             
 
             // services.AddApiFramework()

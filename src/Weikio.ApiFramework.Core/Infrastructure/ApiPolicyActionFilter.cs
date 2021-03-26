@@ -20,6 +20,7 @@ namespace Weikio.ApiFramework.Core.Infrastructure
         }
 
         public int Order { get; } = -1;
+
         public async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
         {
             if (!(context.ActionDescriptor is ControllerActionDescriptor controllerActionDescriptor))
@@ -32,6 +33,7 @@ namespace Weikio.ApiFramework.Core.Infrastructure
             if (endpointMetadata == null)
             {
                 await next();
+
                 return;
             }
 
@@ -40,22 +42,26 @@ namespace Weikio.ApiFramework.Core.Infrastructure
                 _logger.LogTrace("No authorization policy set for endpoint {Endpoint}", endpointMetadata);
 
                 await next();
+
                 return;
             }
-            
-            _logger.LogTrace("Authorizing user {User} to endpoint {Endpoint} using policy {Policy}", context.HttpContext.User, endpointMetadata, endpointMetadata.Definition.Policy);
+
+            _logger.LogTrace("Authorizing user {User} to endpoint {Endpoint} using policy {Policy}", context.HttpContext.User, endpointMetadata,
+                endpointMetadata.Definition.Policy);
 
             var result = await _authorizationService.AuthorizeAsync(context.HttpContext.User, endpointMetadata.Definition.Policy);
 
             if (result.Succeeded)
             {
-                _logger.LogTrace("Authorized user {User} to endpoint {Endpoint} using policy {Policy}", context.HttpContext.User, endpointMetadata, endpointMetadata.Definition.Policy);
+                _logger.LogTrace("Authorized user {User} to endpoint {Endpoint} using policy {Policy}", context.HttpContext.User, endpointMetadata,
+                    endpointMetadata.Definition.Policy);
                 await next();
 
                 return;
             }
 
-            _logger.LogTrace("Denied access for user {User} to endpoint {Endpoint} using policy {Policy}", context.HttpContext.User, endpointMetadata, endpointMetadata.Definition.Policy);
+            _logger.LogTrace("Denied access for user {User} to endpoint {Endpoint} using policy {Policy}", context.HttpContext.User, endpointMetadata,
+                endpointMetadata.Definition.Policy);
 
             await context.HttpContext.ForbidAsync();
         }

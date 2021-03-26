@@ -2,7 +2,6 @@
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.ApplicationParts;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
@@ -18,14 +17,15 @@ namespace Weikio.ApiFramework.Core.Infrastructure
         private readonly IApiProviderInitializer _apiProviderInitializer;
         private ApiFrameworkOptions _options;
 
-        public ApiFrameworkStartupFilter(ApiFeatureProvider apiFeatureProvider, ApplicationPartManager applicationPartManager, IOptions<ApiFrameworkOptions> options, IApiProviderInitializer apiProviderInitializer)
+        public ApiFrameworkStartupFilter(ApiFeatureProvider apiFeatureProvider, ApplicationPartManager applicationPartManager,
+            IOptions<ApiFrameworkOptions> options, IApiProviderInitializer apiProviderInitializer)
         {
             _apiFeatureProvider = apiFeatureProvider;
             _applicationPartManager = applicationPartManager;
             _apiProviderInitializer = apiProviderInitializer;
             _options = options.Value;
         }
-    
+
         public Action<IApplicationBuilder> Configure(Action<IApplicationBuilder> next)
         {
             _applicationPartManager.FeatureProviders.Add(_apiFeatureProvider);
@@ -34,7 +34,7 @@ namespace Weikio.ApiFramework.Core.Infrastructure
             {
                 _apiProviderInitializer.Initialize();
             }
-            
+
             return next;
         }
 
@@ -44,7 +44,7 @@ namespace Weikio.ApiFramework.Core.Infrastructure
 
             if (_options.AutoInitializeApiProvider)
             {
-               await _apiProviderInitializer.Initialize();
+                await _apiProviderInitializer.Initialize();
             }
         }
 

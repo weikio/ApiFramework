@@ -12,7 +12,8 @@ namespace Weikio.ApiFramework.Core.AsyncStream
         private readonly IServiceProvider _serviceProvider;
         private readonly ILogger<DefaultAsyncStreamJsonHelperFactory> _logger;
 
-        public DefaultAsyncStreamJsonHelperFactory(IActionResultExecutor<JsonResult> jsonResultSerializer, IServiceProvider serviceProvider, ILogger<DefaultAsyncStreamJsonHelperFactory> logger)
+        public DefaultAsyncStreamJsonHelperFactory(IActionResultExecutor<JsonResult> jsonResultSerializer, IServiceProvider serviceProvider,
+            ILogger<DefaultAsyncStreamJsonHelperFactory> logger)
         {
             _jsonResultSerializer = jsonResultSerializer;
             _serviceProvider = serviceProvider;
@@ -24,7 +25,7 @@ namespace Weikio.ApiFramework.Core.AsyncStream
             if (_jsonResultSerializer.GetType().Assembly == typeof(JsonResult).Assembly)
             {
                 _logger.LogTrace("Using System.Text.Json for handling streaming output.");
-                
+
                 // Use System.Text.Json
                 return _serviceProvider.GetRequiredService<SystemTextAsyncStreamJsonHelper>();
             }

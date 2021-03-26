@@ -45,13 +45,13 @@ namespace Weikio.ApiFramework.Core.AsyncStream
 
             var options = _optionsMonitor.Get(endpointRoute);
             var routeOptionsFound = true;
-            
+
             if (options.IsConfigured == false)
             {
                 routeOptionsFound = false;
                 options = _optionsMonitor.Get(Options.DefaultName);
             }
-            
+
             if (options.IsEnabled == false)
             {
                 if (endpoint == null)
@@ -66,7 +66,7 @@ namespace Weikio.ApiFramework.Core.AsyncStream
                 {
                     _logger.LogTrace("Async Stream handling is disabled on global level, skipping.");
                 }
-                
+
                 await next();
 
                 return;
@@ -129,7 +129,7 @@ namespace Weikio.ApiFramework.Core.AsyncStream
         private async Task WriteAsyncStream<T>(HttpResponse response, IAsyncEnumerable<T> stream, HttpContext context, AsyncStreamJsonOptions options)
         {
             var bufferSizeInBytes = options.BufferSizeThresholdInKB * 1000;
-            
+
             response.StatusCode = (int) HttpStatusCode.OK;
             response.ContentType = $"{MediaTypeNames.Application.Json};charset={Encoding.UTF8.WebName}";
 

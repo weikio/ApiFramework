@@ -12,12 +12,14 @@ namespace Weikio.ApiFramework.Core.Infrastructure
 {
     public class FileResultFilter : IAsyncResultFilter
     {
-        private static readonly ConcurrentDictionary<string, IFileStreamResultConverter> _memoryCache = new ConcurrentDictionary<string, IFileStreamResultConverter>();
+        private static readonly ConcurrentDictionary<string, IFileStreamResultConverter> _memoryCache =
+            new ConcurrentDictionary<string, IFileStreamResultConverter>();
+
         private readonly ILogger<FileResultFilter> _logger;
         private readonly IEnumerable<IFileStreamResultConverter> _fileResultConverters;
         private readonly ApiFrameworkOptions _options;
 
-        public FileResultFilter(ILogger<FileResultFilter> logger, IEnumerable<IFileStreamResultConverter> fileResultConverters, 
+        public FileResultFilter(ILogger<FileResultFilter> logger, IEnumerable<IFileStreamResultConverter> fileResultConverters,
             IOptions<ApiFrameworkOptions> options)
         {
             _logger = logger;
@@ -32,6 +34,7 @@ namespace Weikio.ApiFramework.Core.Infrastructure
                 if (_options.AutoConvertFileToStream == false)
                 {
                     _logger.LogTrace("Auto conversion from file to stream disabled. Skip filter.");
+
                     return;
                 }
 
@@ -40,6 +43,7 @@ namespace Weikio.ApiFramework.Core.Infrastructure
                     if (_fileResultConverters?.Any() != true)
                     {
                         _logger.LogDebug("No IFileResultConverter implementations found from DI. Skip filter.");
+
                         return;
                     }
 
@@ -59,7 +63,8 @@ namespace Weikio.ApiFramework.Core.Infrastructure
                                 return availableConverter;
                             }
 
-                            _logger.LogTrace("{FileResultConverter} can not handle {Type}. Trying the next IFileResultConverter.", availableConverter.GetType().Name, objResult.DeclaredType.Name);
+                            _logger.LogTrace("{FileResultConverter} can not handle {Type}. Trying the next IFileResultConverter.",
+                                availableConverter.GetType().Name, objResult.DeclaredType.Name);
                         }
 
                         return null;
@@ -68,11 +73,12 @@ namespace Weikio.ApiFramework.Core.Infrastructure
                     if (converter == null)
                     {
                         _logger.LogDebug("IFileResultConverter not available for converting {Type}", objResult.DeclaredType.FullName);
-                
-                        return;  
+
+                        return;
                     }
-                    
-                    _logger.LogDebug("Handling file result conversion of {Type} with {FileResultConverter}.", objResult.DeclaredType.Name, converter.GetType().Name );
+
+                    _logger.LogDebug("Handling file result conversion of {Type} with {FileResultConverter}.", objResult.DeclaredType.Name,
+                        converter.GetType().Name);
                     context.Result = await converter.Convert(objResult.Value);
                 }
             }

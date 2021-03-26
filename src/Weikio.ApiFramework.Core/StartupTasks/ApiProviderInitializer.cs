@@ -23,7 +23,8 @@ namespace Weikio.ApiFramework.Core.StartupTasks
         private readonly ApiFrameworkOptions _options;
 
         public ApiProviderInitializer(IApiProvider apiProvider,
-            ILogger<ApiProviderInitializer> logger, IBackgroundTaskQueue backgroundTaskQueue, IOptions<ApiFrameworkOptions> options, IEndpointStartupHandler endpointStartupHandler)
+            ILogger<ApiProviderInitializer> logger, IBackgroundTaskQueue backgroundTaskQueue, IOptions<ApiFrameworkOptions> options,
+            IEndpointStartupHandler endpointStartupHandler)
         {
             _apiProvider = apiProvider;
             _logger = logger;
@@ -42,7 +43,7 @@ namespace Weikio.ApiFramework.Core.StartupTasks
 
             return Task.CompletedTask;
         }
-        
+
         private async Task Run(CancellationToken cancellationToken)
         {
             _logger.LogInformation("Initializing the Api provider");
@@ -55,7 +56,7 @@ namespace Weikio.ApiFramework.Core.StartupTasks
             {
                 _logger.LogDebug($"{apiDefinition}");
             }
-            
+
             _logger.LogInformation("Api provider initialized");
 
             _backgroundTaskQueue.QueueBackgroundWorkItem(async ct =>

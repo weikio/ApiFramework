@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc.ApplicationModels;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Weikio.ApiFramework.Abstractions;
@@ -33,7 +32,7 @@ namespace Weikio.ApiFramework.Core.Configuration
         public bool AutoInitializeApiProvider { get; set; } = true;
         public bool AutoInitializeConfiguredEndpoints { get; set; } = true;
         public bool AutoConvertFileToStream { get; set; } = true;
-        
+
         /// <summary>
         /// Gets or sets if urls should be automatically tidied. Default = Automatic
         /// </summary>

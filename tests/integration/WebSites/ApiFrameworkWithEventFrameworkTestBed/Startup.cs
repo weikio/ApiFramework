@@ -33,7 +33,7 @@ namespace ApiFrameworkWithEventFrameworkTestBed
         {
             services.AddControllers();
                         
-            services.AddApiFrameworkWithAdmin()
+            services.AddApiFrameworkStarterKit()
                 .AddApi<TestApi>("/hello");
                 
             services.AddEventFramework()

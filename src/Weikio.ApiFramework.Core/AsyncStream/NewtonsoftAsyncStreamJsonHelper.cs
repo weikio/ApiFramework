@@ -11,7 +11,7 @@ namespace Weikio.ApiFramework.Core.AsyncStream
         private readonly MvcNewtonsoftJsonOptions _newtonsoftOptions;
         private JsonTextWriter _writer;
         private StreamWriter _streamWriter;
-        private Newtonsoft.Json.JsonSerializer _serializer;
+        private JsonSerializer _serializer;
 
         public NewtonsoftAsyncStreamJsonHelper(IOptions<MvcNewtonsoftJsonOptions> newtonsoftOptions)
         {
@@ -22,7 +22,7 @@ namespace Weikio.ApiFramework.Core.AsyncStream
         {
             _streamWriter = new StreamWriter(buffer);
             _writer = new JsonTextWriter(_streamWriter);
-            _serializer = Newtonsoft.Json.JsonSerializer.Create(_newtonsoftOptions.SerializerSettings);
+            _serializer = JsonSerializer.Create(_newtonsoftOptions.SerializerSettings);
         }
 
         public void WriteStartArray()

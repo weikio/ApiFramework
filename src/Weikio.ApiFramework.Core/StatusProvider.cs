@@ -20,9 +20,7 @@ namespace Weikio.ApiFramework.Core
         {
             var result = new Status
             {
-                Endpoints = _endpointManager.Endpoints.ToList(),
-                EndpointManagerStatusEnum = _endpointManager.Status,
-                AvailableApis = _apiProvider.List()
+                Endpoints = _endpointManager.Endpoints.ToList(), EndpointManagerStatusEnum = _endpointManager.Status, AvailableApis = _apiProvider.List()
             };
 
             return Task.FromResult(result);

@@ -15,7 +15,7 @@ namespace Weikio.ApiFramework.AspNetCore
 
             return result;
         }
-        
+
         public static Endpoint GetEndpointMetadata(this ControllerActionDescriptor controllerActionDescriptor)
         {
             var result = controllerActionDescriptor.EndpointMetadata?.OfType<Endpoint>().FirstOrDefault();

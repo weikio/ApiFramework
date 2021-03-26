@@ -13,6 +13,7 @@ using Weikio.ApiFramework.AspNetCore.NSwag;
 using Weikio.ApiFramework.Core.Configuration;
 using Weikio.ApiFramework.Core.Endpoints;
 using Weikio.ApiFramework.Core.Extensions;
+// using Weikio.ApiFramework.Plugins.Email;
 using Weikio.ApiFramework.Samples.PluginLibrary;
 
 namespace Weikio.ApiFramework.Samples.CodeConfiguration
@@ -44,6 +45,11 @@ namespace Weikio.ApiFramework.Samples.CodeConfiguration
             builder.AddApi(typeof(HelloWorldApi));
             builder.AddApi<SampleController>();
             builder.AddApi<Calculator>();
+            // builder.AddEmailApi("/email", new EmailOptions()
+            // {
+            //     Host = "smtp.office365.com",
+            //     Port = 587,
+            // });
             
             builder.AddEndpoint("/first", "Weikio.ApiFramework.Samples.PluginLibrary.HelloWorldApi");
             builder.AddEndpoint("/second", "Weikio.ApiFramework.Samples.PluginLibrary.HelloWorldApi");

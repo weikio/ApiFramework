@@ -15,6 +15,7 @@ namespace Weikio.ApiFramework.Core.Apis
         }
 
         public bool IsInitialized { get; private set; }
+
         public List<ApiDefinition> List()
         {
             var result = new List<ApiDefinition>();

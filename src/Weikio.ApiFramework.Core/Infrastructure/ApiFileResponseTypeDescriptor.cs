@@ -16,7 +16,8 @@ namespace Weikio.ApiFramework.Core.Infrastructure
         private readonly IEnumerable<IFileStreamResultConverter> _fileResultConverters;
         private readonly ApiFrameworkOptions _options;
 
-        public ApiFileResponseTypeDescriptor(IOptions<ApiFrameworkOptions> options, ILogger<ApiFileResponseTypeDescriptor> logger, IEnumerable<IFileStreamResultConverter> fileResultConverters)
+        public ApiFileResponseTypeDescriptor(IOptions<ApiFrameworkOptions> options, ILogger<ApiFileResponseTypeDescriptor> logger,
+            IEnumerable<IFileStreamResultConverter> fileResultConverters)
         {
             _logger = logger;
             _fileResultConverters = fileResultConverters;
@@ -30,15 +31,17 @@ namespace Weikio.ApiFramework.Core.Infrastructure
             if (_options.AutoConvertFileToStream == false)
             {
                 _logger.LogTrace("Auto conversion from file to stream disabled. Skip Api Description change.");
+
                 return;
             }
-            
+
             if (_fileResultConverters?.Any() != true)
             {
                 _logger.LogDebug("No IFileResultConverter implementations found from DI. Skip Api Description change.");
+
                 return;
             }
-            
+
             foreach (var apiDescription in context.Results)
             {
                 var endpointMetadata = apiDescription.ActionDescriptor.EndpointMetadata?.OfType<Endpoint>().FirstOrDefault();
@@ -52,21 +55,24 @@ namespace Weikio.ApiFramework.Core.Infrastructure
                 foreach (var responseType in apiDescription?.SupportedResponseTypes)
                 {
                     // No need to cache these as the logic is only run once when the API description is generated
-                    
+
                     foreach (var converter in _fileResultConverters)
                     {
                         var canConvert = converter.CanConvertType(responseType.Type);
 
                         if (canConvert)
                         {
-                            _logger.LogDebug("{FileResultConverter} can handle file result conversion of {Type}. Modify the Api Description to reflect the runtime conversion.", converter.GetType().Name, responseType.Type.Name);
+                            _logger.LogDebug(
+                                "{FileResultConverter} can handle file result conversion of {Type}. Modify the Api Description to reflect the runtime conversion.",
+                                converter.GetType().Name, responseType.Type.Name);
 
                             responseType.Type = typeof(FileStreamResult);
 
                             break;
                         }
-                        
-                        _logger.LogTrace("{FileResultConverter} can not handle {Type}. Trying the next IFileResultConverter.", converter.GetType().Name, responseType.Type.Name);
+
+                        _logger.LogTrace("{FileResultConverter} can not handle {Type}. Trying the next IFileResultConverter.", converter.GetType().Name,
+                            responseType.Type.Name);
                     }
                 }
             }

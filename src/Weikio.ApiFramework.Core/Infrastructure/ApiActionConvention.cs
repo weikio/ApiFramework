@@ -18,7 +18,8 @@ namespace Weikio.ApiFramework.Core.Infrastructure
         private readonly IEndpointHttpVerbResolver _endpointHttpVerbResolver;
         private readonly IOptions<ApiFrameworkOptions> _optionsAccessor;
 
-        public ApiActionConvention(IEndpointManager endpointManager, IEndpointHttpVerbResolver endpointHttpVerbResolver, IOptions<ApiFrameworkOptions> optionsAccessor)
+        public ApiActionConvention(IEndpointManager endpointManager, IEndpointHttpVerbResolver endpointHttpVerbResolver,
+            IOptions<ApiFrameworkOptions> optionsAccessor)
         {
             _endpointManager = endpointManager;
             _endpointHttpVerbResolver = endpointHttpVerbResolver;
@@ -114,7 +115,7 @@ namespace Weikio.ApiFramework.Core.Infrastructure
 
                 return;
             }
-            
+
             var hasMultipleActions = action.Controller.Actions.Count > 1;
 
             if (hasMultipleActions)

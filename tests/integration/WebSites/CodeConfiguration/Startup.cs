@@ -26,12 +26,14 @@ namespace CodeConfiguration
     {
         private readonly ILogger<EndpointInitializer> _logger;
         private readonly ApiChangeNotifier _changeNotifier;
+        private readonly IApiConfigurationTypeProvider _apiConfigurationTypeProvider;
         private readonly ApiFrameworkOptions _options;
 
-        public SyncEndpointInitializer(ILogger<EndpointInitializer> logger, ApiChangeNotifier changeNotifier, IOptions<ApiFrameworkOptions> options)
+        public SyncEndpointInitializer(ILogger<EndpointInitializer> logger, ApiChangeNotifier changeNotifier, IOptions<ApiFrameworkOptions> options, IApiConfigurationTypeProvider apiConfigurationTypeProvider)
         {
             _logger = logger;
             _changeNotifier = changeNotifier;
+            _apiConfigurationTypeProvider = apiConfigurationTypeProvider;
             _options = options.Value;
         }
 
@@ -78,6 +80,22 @@ namespace CodeConfiguration
             {
                 _changeNotifier.Notify();
             }
+            
+            // Also update the known configuration types
+            if (endpoint.Configuration == null)
+            {
+                return;
+            }
+            
+            var currentConfigurationType = _apiConfigurationTypeProvider.GetByApi(endpoint.Api.ApiDefinition);
+
+            if (currentConfigurationType != null)
+            {
+                return;
+            }
+
+            var configurationType = new ApiConfiguration(endpoint.Api.ApiDefinition, endpoint.Configuration.GetType());
+            _apiConfigurationTypeProvider.Add(configurationType);
         }
     }
 

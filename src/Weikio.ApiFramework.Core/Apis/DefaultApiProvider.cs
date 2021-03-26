@@ -71,9 +71,10 @@ namespace Weikio.ApiFramework.Core.Apis
             {
                 throw new ApiCatalogNotInitializedException();
             }
-            
+
             base.Add(catalog);
         }
+
         public new void Remove(IApiCatalog catalog)
         {
             base.Remove(catalog);

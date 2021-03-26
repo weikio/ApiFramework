@@ -34,7 +34,7 @@ namespace Weikio.ApiFramework.Samples.AsyncJsonStream
                 options.BufferSizeThresholdInKB = 1024;
             });
             
-            services.AddApiFrameworkWithAdmin()
+            services.AddApiFrameworkStarterKit()
                 .AddApi<WeatherApi>("/myweather", new WeatherConfiguration());
         }
 

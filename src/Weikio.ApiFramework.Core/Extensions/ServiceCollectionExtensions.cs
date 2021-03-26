@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
@@ -51,7 +52,7 @@ namespace Weikio.ApiFramework.Core.Extensions
 
                 return compositeCatalog;
             });
-            
+
             services.TryAddSingleton(provider =>
             {
                 var configurationOptions = provider.GetService<IOptions<ApiFrameworkOptions>>();
@@ -67,11 +68,12 @@ namespace Weikio.ApiFramework.Core.Extensions
 
             services.TryAddSingleton<IEndpointStartupHandler, EndpointStartupHandler>();
             services.AddHostedService<ApiFrameworkStartupFilter>();
-            
+
             services.TryAddSingleton<ApiChangeNotifier>();
             services.TryAddSingleton<EndpointConfigurationManager>();
 
             services.TryAddSingleton<IEndpointManager, DefaultEndpointManager>();
+
             // services.TryAddTransient(ctx => ctx.GetService<DefaultEndpointManager>().Endpoints);
             services.TryAddSingleton<EndpointInitializer>();
 
@@ -92,9 +94,9 @@ namespace Weikio.ApiFramework.Core.Extensions
             services.TryAddSingleton<IApiProviderInitializer, ApiProviderInitializer>();
             services.TryAddSingleton<IEndpointInitializer, EndpointInitializer>();
             services.TryAddSingleton<IEndpointRouteTemplateProvider, DefaultEndpointRouteTemplateProvider>();
-            
+
             services.TryAddSingleton<IApiProvider, DefaultApiProvider>();
-            
+
             // Services which alter the group names of the API Descriptions. These are used for Open Api / Swagger generation. Each endpoint by default belongs to an unique api group.
             services.TryAddSingleton<IEndpointGroupNameProvider, EndpointGroupNameProvider>();
             services.TryAddSingleton<IDefaultEndpointGroupNameProvider, DefaultEndpointGroupNameProvider>();
@@ -102,12 +104,14 @@ namespace Weikio.ApiFramework.Core.Extensions
             builder.Services.TryAddEnumerable(ServiceDescriptor.Transient<IApiDescriptionProvider, ApiFileResponseTypeDescriptor>());
 
             builder.Services.TryAddEnumerable(ServiceDescriptor.Singleton<IHealthCheckPublisher, HealthPublisher>());
-            
+
             builder.Services.TryAddTransient<IAsyncStreamJsonHelperFactory, DefaultAsyncStreamJsonHelperFactory>();
             builder.Services.AddTransient<SystemTextAsyncStreamJsonHelper>();
             builder.Services.AddTransient<NewtonsoftAsyncStreamJsonHelper>();
             builder.Services.AddTransient<AsyncJsonActionFilter>();
-            
+            builder.Services.TryAddSingleton<IApiByAssemblyProvider, DefaultApiByAssemblyProvider>();
+            builder.Services.TryAddSingleton<IApiConfigurationTypeProvider, DefaultApiConfigurationTypeProvider>();
+
             services.Configure<MvcOptions>(options =>
             {
                 options.Filters.AddService<AsyncJsonActionFilter>();
@@ -146,6 +150,16 @@ namespace Weikio.ApiFramework.Core.Extensions
                     }
                 }
 
+                var registeredEndpointFactories = provider.GetServices(typeof(Func<EndpointDefinition>)).Cast<Func<EndpointDefinition>>().ToList();
+
+                if (registeredEndpointFactories?.Any() == true)
+                {
+                    foreach (var endpointFactory in registeredEndpointFactories)
+                    {
+                        result.Add(endpointFactory);
+                    }
+                }
+
                 return result;
             });
 
@@ -160,17 +174,17 @@ namespace Weikio.ApiFramework.Core.Extensions
             {
                 mvcOptions.Conventions.Add(convention);
             });
-            
+
             services.AddSingleton<IFileStreamResultConverter, FileInfoFileStreamResultConverter>();
             services.AddSingleton<IFileStreamResultConverter, FileResponseFileStreamResultConverter>();
-            
+
             services.AddSingleton<FileResultFilter>();
-            
+
             services.ConfigureWithDependencies<MvcOptions, FileResultFilter>((mvcOptions, filter) =>
             {
                 mvcOptions.Filters.Add(filter);
             });
-            
+
             TryAddStartupTasks(services);
 
             if (setupAction != null)
@@ -200,12 +214,39 @@ namespace Weikio.ApiFramework.Core.Extensions
 
             return builder;
         }
-        
+
         public static IApiFrameworkBuilder AddEndpoint(this IApiFrameworkBuilder builder, EndpointDefinition endpointDefinition)
         {
             builder.Services.AddSingleton(endpointDefinition);
 
             return builder;
+        }
+    }
+    
+    internal class DefaultApiByAssemblyProvider : IApiByAssemblyProvider
+    {
+        private readonly IApiProvider _apiProvider;
+
+        public DefaultApiByAssemblyProvider(IApiProvider apiProvider)
+        {
+            _apiProvider = apiProvider;
+        }
+
+        public ApiDefinition GetApiByAssembly(Assembly assembly)
+        {
+            var apis = _apiProvider.List();
+
+            foreach (var apiDefinition in apis)
+            {
+                var api = _apiProvider.Get(apiDefinition);
+
+                if (api.Assembly == assembly)
+                {
+                    return apiDefinition;
+                }
+            }
+
+            return null;
         }
     }
 }

@@ -22,13 +22,14 @@ namespace Weikio.ApiFramework.Core.Infrastructure
             }
 
             var endpointRoute = endpoint.Route;
-            
+
             if (string.IsNullOrWhiteSpace(endpointRoute))
             {
                 throw new ArgumentNullException(nameof(endpointRoute));
             }
 
             var apiAddressBase = GetApiAddressBase();
+
             if (string.IsNullOrWhiteSpace(apiAddressBase))
             {
                 return endpointRoute;
@@ -43,7 +44,7 @@ namespace Weikio.ApiFramework.Core.Infrastructure
             {
                 return string.Empty;
             }
-            
+
             if (_options.ApiAddressBase.EndsWith('/'))
             {
                 return _options.ApiAddressBase;

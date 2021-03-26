@@ -8,10 +8,12 @@ namespace Weikio.ApiFramework.Core.Configuration
     public class EndpointConfigurationManager
     {
         private readonly IEnumerable<IEndpointConfigurationProvider> _configurationProviders;
+        private readonly IApiByAssemblyProvider _apiByAssemblyProvider;
 
-        public EndpointConfigurationManager(IEnumerable<IEndpointConfigurationProvider> configurationProviders)
+        public EndpointConfigurationManager(IEnumerable<IEndpointConfigurationProvider> configurationProviders, IApiByAssemblyProvider apiByAssemblyProvider)
         {
             _configurationProviders = configurationProviders;
+            _apiByAssemblyProvider = apiByAssemblyProvider;
         }
 
         public async Task<List<EndpointDefinition>> GetEndpointDefinitions()
