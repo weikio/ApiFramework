@@ -200,7 +200,7 @@ namespace Weikio.ApiFramework.ApiProviders.PluginFramework
                                     var tOut = (IEnumerable<Type>) initializerMethod.Invoke(factoryInstance, arguments.ToArray());
                                     createdApis = new List<Type>(tOut);
                                 }
-                                else if (typeof(IEnumerable<Task<Type>>).IsAssignableFrom(methodReturnType))
+                                else if (typeof(Task<IEnumerable<Type>>).IsAssignableFrom(methodReturnType))
                                 {
                                     var tOut = (Task<IEnumerable<Type>>) initializerMethod.Invoke(factoryInstance, arguments.ToArray());
                                     createdApis = new List<Type>((await tOut));
