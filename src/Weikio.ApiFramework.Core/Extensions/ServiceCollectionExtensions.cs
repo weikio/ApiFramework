@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
@@ -206,7 +205,7 @@ namespace Weikio.ApiFramework.Core.Extensions
                 new StartupTasksHealthCheckParameters() { HealthCheckName = "Api Framework startup tasks" });
         }
 
-        public static IApiFrameworkBuilder AddEndpoint(this IApiFrameworkBuilder builder, string route, string api, object configuration = null,
+        public static IApiFrameworkBuilder AddEndpoint(this IApiFrameworkBuilder builder, string route, ApiDefinition api, object configuration = null,
             IHealthCheck healthCheck = null, string groupName = null)
         {
             var endpointDefinition = new EndpointDefinition(route, api, configuration, endpoint => Task.FromResult(healthCheck), groupName);
@@ -220,33 +219,6 @@ namespace Weikio.ApiFramework.Core.Extensions
             builder.Services.AddSingleton(endpointDefinition);
 
             return builder;
-        }
-    }
-    
-    internal class DefaultApiByAssemblyProvider : IApiByAssemblyProvider
-    {
-        private readonly IApiProvider _apiProvider;
-
-        public DefaultApiByAssemblyProvider(IApiProvider apiProvider)
-        {
-            _apiProvider = apiProvider;
-        }
-
-        public ApiDefinition GetApiByAssembly(Assembly assembly)
-        {
-            var apis = _apiProvider.List();
-
-            foreach (var apiDefinition in apis)
-            {
-                var api = _apiProvider.Get(apiDefinition);
-
-                if (api.Assembly == assembly)
-                {
-                    return apiDefinition;
-                }
-            }
-
-            return null;
         }
     }
 }
