@@ -135,6 +135,21 @@ namespace ApiFramework.IntegrationTests
             // Assert
             Assert.Equal("11", result);
         }
+        
+        [Fact]
+        public async Task CanCreateApiAndEndpointFromDelegate()
+        {
+            var server = Init(builder =>
+            {
+                builder.AddApi(new Func<string>(() => "Hello from Delegate Api"), route: "/mytest");
+            });
+
+            // Act 
+            var result = await server.GetStringAsync("/api/mytest");
+
+            // Assert
+            Assert.Equal("Hello from Delegate Api", result);
+        }
     }
     
     public class PrivateService

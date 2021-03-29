@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
+using Weikio.ApiFramework.Abstractions;
 using Weikio.ApiFramework.Abstractions.DependencyInjection;
 using Weikio.PluginFramework.Abstractions;
 using Weikio.PluginFramework.Catalogs;
@@ -64,17 +66,17 @@ namespace Weikio.ApiFramework.ApiProviders.PluginFramework
             return builder;
         }
 
-        public static IApiFrameworkBuilder AddApi(this IApiFrameworkBuilder builder, MulticastDelegate multicastDelegate, string apiName,
-            Version version = null, DelegatePluginCatalogOptions catalogOptions = null)
+        public static IApiFrameworkBuilder AddApi(this IApiFrameworkBuilder builder, MulticastDelegate multicastDelegate, ApiDefinition apiDefinition = null, 
+            DelegatePluginCatalogOptions catalogOptions = null, string route = null, object configuration = null)
         {
-            if (string.IsNullOrWhiteSpace(apiName))
-            {
-                throw new ArgumentNullException(apiName);
-            }
-
             if (multicastDelegate == null)
             {
                 throw new ArgumentNullException(nameof(multicastDelegate));
+            }
+            
+            if (apiDefinition == null)
+            {
+                apiDefinition = $"{multicastDelegate.GetHashCode()}";
             }
 
             if (catalogOptions == null)
@@ -89,8 +91,8 @@ namespace Weikio.ApiFramework.ApiProviders.PluginFramework
 
             catalogOptions.NameOptions = new PluginNameOptions()
             {
-                PluginNameGenerator = (options, type) => apiName,
-                PluginVersionGenerator = (options, type) => version == null ? new Version(1, 0, 0, 0) : version
+                PluginNameGenerator = (options, type) => apiDefinition.Name,
+                PluginVersionGenerator = (options, type) => apiDefinition.Version == null ? new Version(1, 0, 0, 0) : apiDefinition.Version
             };
 
             if (catalogOptions.ConversionRules?.Any() != true)
@@ -104,10 +106,23 @@ namespace Weikio.ApiFramework.ApiProviders.PluginFramework
             catalogOptions.ConversionRules.Add(new DelegateConversionRule(info => info.Name == "config",
                 nfo => new ParameterConversion() { ToPublicProperty = true }));
 
+            catalogOptions.NamespaceName = "DelegateApis";
+            catalogOptions.TypeName = $"type{apiDefinition.Name}";
+
             var catalog = new DelegatePluginCatalog(multicastDelegate, catalogOptions);
 
             builder.Services.AddSingleton<IPluginCatalog>(catalog);
 
+            if (!string.IsNullOrWhiteSpace(route))
+            {
+                builder.Services.AddTransient(services =>
+                {
+                    var endpointConfiguration = new EndpointDefinition(route, apiDefinition, configuration);
+
+                    return endpointConfiguration;
+                });
+            }
+            
             return builder;
         }
     }
