@@ -103,5 +103,19 @@ namespace ApiFramework.IntegrationTests
 
             Assert.True(result.IsSuccessStatusCode);
         }
+        
+        [Fact]
+        public async Task CanAddEndpointAndConfigurationWithApiType()
+        {
+            var server = Init(builder =>
+            {
+                builder.AddApi(typeof(HelloWorldConfigurationApi));
+                builder.AddEndpoint<HelloWorldConfigurationApi>("/HelloWorldConfigurationApi", "MyTestConfig");
+            });
+
+            var result = await server.GetStringAsync("/api/HelloWorldConfigurationApi");
+
+            Assert.Equal("MyTestConfig", result);
+        }
     }
 }

@@ -221,6 +221,13 @@ namespace Weikio.ApiFramework.Core.Extensions
             return builder;
         }
         
+        public static IApiFrameworkBuilder AddEndpoint<TApiType>(this IApiFrameworkBuilder builder, string route, object configuration)
+        {
+            var endpointDefinition = new EndpointDefinition(route, null, configuration);
+
+            return builder.AddEndpoint<TApiType>(endpointDefinition);
+        }
+        
         public static IApiFrameworkBuilder AddEndpoint<TApiType>(this IApiFrameworkBuilder builder, EndpointDefinition endpointDefinition)
         {
             builder.Services.AddSingleton(provider =>
