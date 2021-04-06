@@ -23,8 +23,8 @@ namespace ApiFramework.IntegrationTests
         {
             var server = Init(builder =>
             {
-                builder.AddApi(new Func<string>(() => "Hello from Delegate Api"), "HelloDelegate");
-                
+                builder.AddApi(new Func<string>(() => "Hello from Delegate Api"), apiDefinition: "HelloDelegate");
+
                 builder.AddEndpoint("/mytest", "HelloDelegate");
             });
 
@@ -34,14 +34,14 @@ namespace ApiFramework.IntegrationTests
             // Assert
             Assert.Equal("Hello from Delegate Api", result);
         }
-        
+
         [Fact]
         public async Task CanCreateApiWithParametersFromDelegate()
         {
             var server = Init(builder =>
             {
-                builder.AddApi(new Func<int, int, string>((x, y) => (x+y).ToString()), "HelloDelegate");
-                
+                builder.AddApi(new Func<int, int, string>((x, y) => (x + y).ToString()), apiDefinition: "HelloDelegate");
+
                 builder.AddEndpoint("/mytest", "HelloDelegate");
             });
 
@@ -51,15 +51,17 @@ namespace ApiFramework.IntegrationTests
             // Assert
             Assert.Equal("15", result);
         }
-        
+
         [Fact]
         public async Task CanAutoResolveServices()
         {
             var server = Init(builder =>
             {
                 builder.Services.AddSingleton<PrivateService>();
-                builder.AddApi(new Func<PrivateService, int, int, string>((service, x, y) => (service.Get() + x + y).ToString()), "HelloDelegate");
-                
+
+                builder.AddApi(new Func<PrivateService, int, int, string>((service, x, y) => (service.Get() + x + y).ToString()),
+                    apiDefinition: "HelloDelegate");
+
                 builder.AddEndpoint("/mytest", "HelloDelegate");
             });
 
@@ -69,16 +71,17 @@ namespace ApiFramework.IntegrationTests
             // Assert
             Assert.Equal("18", result);
         }
-        
+
         [Fact]
         public async Task CanInjectServicesByRules()
         {
             var server = Init(builder =>
             {
-                builder.AddApi(new Func<PrivateService, int, int, string>((service, x, y) => (service.Get() + x+y).ToString()), "HelloDelegate");
-                
+                builder.AddApi(new Func<PrivateService, int, int, string>((service, x, y) => (service.Get() + x + y).ToString()),
+                    apiDefinition: "HelloDelegate");
+
                 builder.AddEndpoint("/mytest", "HelloDelegate");
-                
+
                 builder.Services.AddSingleton<PrivateService>();
             });
 
@@ -88,16 +91,16 @@ namespace ApiFramework.IntegrationTests
             // Assert
             Assert.Equal("18", result);
         }
-        
+
         [Fact]
         public async Task CanCreateMultipleApi()
         {
             var server = Init(builder =>
             {
-                builder.AddApi(new Func<string>(() => "Hello from Delegate Api"), "HelloDelegate");
+                builder.AddApi(new Func<string>(() => "Hello from Delegate Api"), apiDefinition: "HelloDelegate");
                 builder.AddEndpoint("/mytest", "HelloDelegate");
 
-                builder.AddApi(new Func<string>(() => "Hello from Another Api"), "AnotherDelegate");
+                builder.AddApi(new Func<string>(() => "Hello from Another Api"), apiDefinition: "AnotherDelegate");
                 builder.AddEndpoint("/anothertest", "AnotherDelegate");
             });
 
@@ -109,24 +112,23 @@ namespace ApiFramework.IntegrationTests
             Assert.Equal("Hello from Delegate Api", result);
             Assert.Equal("Hello from Another Api", result2);
         }
-        
+
         [Fact]
         public async Task CanCreateApiWithConfiguration()
         {
             var server = Init(builder =>
             {
-                builder.AddApi(new Func<MyDelegateConfiguration, string>(configuration => configuration.Z.ToString()), "HelloDelegate", catalogOptions: new DelegatePluginCatalogOptions()
-                {
-                    ConversionRules = new List<DelegateConversionRule>()
+                builder.AddApi(new Func<MyDelegateConfiguration, string>(configuration => configuration.Z.ToString()), apiDefinition: "HelloDelegate",
+                    catalogOptions: new DelegatePluginCatalogOptions()
                     {
-                        new DelegateConversionRule(info => info.Name == "configuration", nfo => new ParameterConversion() { ToPublicProperty = true }),
-                    }
-                });
-                
-                builder.AddEndpoint("/mytest", "HelloDelegate", new MyDelegateConfiguration()
-                {
-                    Z = 11
-                });
+                        ConversionRules = new List<DelegateConversionRule>()
+                        {
+                            new DelegateConversionRule(info => info.Name == "configuration",
+                                nfo => new ParameterConversion() { ToPublicProperty = true }),
+                        }
+                    });
+
+                builder.AddEndpoint("/mytest", "HelloDelegate", new MyDelegateConfiguration() { Z = 11 });
             });
 
             // Act 
@@ -135,7 +137,7 @@ namespace ApiFramework.IntegrationTests
             // Assert
             Assert.Equal("11", result);
         }
-        
+
         [Fact]
         public async Task CanCreateApiAndEndpointFromDelegate()
         {
@@ -151,7 +153,7 @@ namespace ApiFramework.IntegrationTests
             Assert.Equal("Hello from Delegate Api", result);
         }
     }
-    
+
     public class PrivateService
     {
         public int Get()

@@ -66,8 +66,8 @@ namespace Weikio.ApiFramework.ApiProviders.PluginFramework
             return builder;
         }
 
-        public static IApiFrameworkBuilder AddApi(this IApiFrameworkBuilder builder, MulticastDelegate multicastDelegate, ApiDefinition apiDefinition = null, 
-            DelegatePluginCatalogOptions catalogOptions = null, string route = null, object configuration = null)
+        public static IApiFrameworkBuilder AddApi(this IApiFrameworkBuilder builder, MulticastDelegate multicastDelegate, string route = null, object configuration = null, ApiDefinition apiDefinition = null, 
+            DelegatePluginCatalogOptions catalogOptions = null)
         {
             if (multicastDelegate == null)
             {
