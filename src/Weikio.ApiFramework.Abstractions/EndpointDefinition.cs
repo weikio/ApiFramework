@@ -33,5 +33,15 @@ namespace Weikio.ApiFramework.Abstractions
         public string Description { get; set; }
         public string[] Tags { get; set; }
         public string Policy { get; set; }
+        
+        public static implicit operator EndpointDefinition((string route, ApiDefinition apiDefinition) routeAndApi)
+        {
+            return new EndpointDefinition(routeAndApi.route, routeAndApi.apiDefinition);
+        }
+
+        public static implicit operator EndpointDefinition((string route, ApiDefinition apiDefinition, object configuration) routeAndApiAndConfiguration)
+        {
+            return new EndpointDefinition(routeAndApiAndConfiguration.route, routeAndApiAndConfiguration.apiDefinition, routeAndApiAndConfiguration.configuration);
+        }
     }
 }
