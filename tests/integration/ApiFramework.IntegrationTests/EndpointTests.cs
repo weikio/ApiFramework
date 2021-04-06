@@ -89,5 +89,19 @@ namespace ApiFramework.IntegrationTests
             var firstResult = await server.GetAsync("/api/first");
             Assert.True(firstResult.IsSuccessStatusCode);
         }
+        
+        [Fact]
+        public async Task CanAddEndpointWithApiType()
+        {
+            var server = Init(builder =>
+            {
+                builder.AddApi(typeof(HelloWorldApi));
+                builder.AddEndpoint<HelloWorldApi>("/thisistheendpoint");
+            });
+
+            var result = await server.GetAsync("/api/thisistheendpoint");
+
+            Assert.True(result.IsSuccessStatusCode);
+        }
     }
 }

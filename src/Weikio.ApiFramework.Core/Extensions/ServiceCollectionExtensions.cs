@@ -220,5 +220,26 @@ namespace Weikio.ApiFramework.Core.Extensions
 
             return builder;
         }
+        
+        public static IApiFrameworkBuilder AddEndpoint<TApiType>(this IApiFrameworkBuilder builder, EndpointDefinition endpointDefinition)
+        {
+            builder.Services.AddSingleton(provider =>
+            {
+                return new Func<EndpointDefinition>(() =>
+                {
+                    if (endpointDefinition.Api == null)
+                    {
+                        var apiProvider = provider.GetRequiredService<IApiByAssemblyProvider>();
+                        var api = apiProvider.GetApiByType(typeof(TApiType));
+
+                        endpointDefinition.Api = api;
+                    }
+
+                    return endpointDefinition;
+                });
+            });
+
+            return builder;
+        }
     }
 }
