@@ -2,43 +2,24 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
-  </PropertyGroup>
-
-  <PropertyGroup>
     <IsPackable>true</IsPackable>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Authors>Weik.io</Authors>
-    <Company>Weik.io</Company>
     <Description>SDK for building plugins for Api Framework. Contains the most often needed extension points and interfaces.</Description>
     <PackageDescription>SDK for building plugins for Api Framework. Contains the most often needed extension points and interfaces.</PackageDescription>
-    <PackageProjectUrl>https://www.weik.io</PackageProjectUrl>
-    <Copyright>©2020 Weik.io</Copyright>
     <PackageId>Weikio.ApiFramework.SDK</PackageId>
     <Product>Weikio.ApiFramework.SDK</Product>
-    <PackageLicenseExpression>MIT</PackageLicenseExpression>
-    <RepositoryUrl>https://github.com/weikio/Weikio.ApiFramework</RepositoryUrl>
     <PackageTags>api;open api;SDK;aspnetcore</PackageTags>
-    <PackageIcon>logo_256.png</PackageIcon>
     <Title>SDK for Api Framework</Title>
-    <MinVerMinimumMajorMinor>1.0</MinVerMinimumMajorMinor>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="Microsoft.Extensions.Diagnostics.HealthChecks.Abstractions" Version="3.1.2" />
-    <PackageReference Include="MinVer" Version="2.0.0" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Include="../../docs/logo_256.png" Pack="true" Visible="false" PackagePath="" />
+    <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="3.1.2" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Weikio.ApiFramework.Abstractions.DependencyInjection\Weikio.ApiFramework.Abstractions.DependencyInjection.csproj" />
     <ProjectReference Include="..\Weikio.ApiFramework.Abstractions\Weikio.ApiFramework.Abstractions.csproj" />
-  </ItemGroup>
-  
-  <ItemGroup>
-    <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="3.1.2" />
   </ItemGroup>
   
 </Project>

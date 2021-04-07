@@ -1,9 +1,12 @@
-﻿using Microsoft.AspNetCore.Builder;
+﻿using System;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using NJsonSchema;
+using NJsonSchema.Generation;
 using Weikio.ApiFramework.AspNetCore;
 using Weikio.ApiFramework.Core.Extensions;
 
@@ -33,17 +36,39 @@ namespace Weikio.ApiFramework.Samples.ReferenceConflict
                     options.AutoResolveApis = false;
                 })
                 .AddApi(
-                    @"C:\dev\projects\Weikio\src\FunctionFramework\src\Plugins\Weikio.ApiFramework.Plugins.JsonNetOld\bin\Debug\netstandard2.0\Weikio.ApiFramework.Plugins.JsonNetOld.dll")
+                    @"C:\dev\projects\Weikio\ApiFramework\src\Plugins\Weikio.ApiFramework.Plugins.JsonNetOld\bin\Debug\netstandard2.0\Weikio.ApiFramework.Plugins.JsonNetOld.dll")
                 .AddApi(
-                    @"C:\dev\projects\Weikio\src\FunctionFramework\src\Plugins\Weikio.ApiFramework.Plugins.JsonNetNew\bin\Debug\netstandard2.0\Weikio.ApiFramework.Plugins.JsonNetNew.dll")
+                    @"C:\dev\projects\Weikio\ApiFramework\src\Plugins\Weikio.ApiFramework.Plugins.JsonNetNew\bin\Debug\netstandard2.0\Weikio.ApiFramework.Plugins.JsonNetNew.dll")
                 .AddEndpoint("/new", "Weikio.ApiFramework.Plugins.JsonNetNew",
                     new { HelloString = "Hey there from first configuration" })
                 .AddEndpoint("/old", "Weikio.ApiFramework.Plugins.JsonNetOld",
                     new { HelloString = "This is the second configuration" });
 
-            services.AddSwaggerDocument(document => { document.Title = "Api Framework"; });
+            services.AddOpenApiDocument(document =>
+            {
+                document.Title = "Api Framework";
+                document.TypeNameGenerator = new MyTypeNameGenerator();
+            });
         }
 
+        internal class CustomSchemaNameGenerator : ISchemaNameGenerator
+        {
+            public string Generate(Type type)
+            {
+                return type.FullName.Replace(".", "_");
+            }
+        }
+
+        public class MyTypeNameGenerator : DefaultTypeNameGenerator
+        {
+            protected override string Generate(JsonSchema schema, string typeNameHint)
+            {
+                var result =base.Generate(schema, typeNameHint);
+
+                return result;
+            }
+        }
+        
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {

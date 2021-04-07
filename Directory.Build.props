@@ -1,0 +1,23 @@
+<Project>
+  
+  <PropertyGroup>
+    <Authors>Weik.io</Authors>
+    <Company>Weik.io</Company>
+    <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
+    <RepositoryUrl>https://github.com/weikio/ApiFramework</RepositoryUrl>
+    <PackageProjectUrl>https://weik.io/ApiFramework</PackageProjectUrl>
+    <Copyright>©2021 Weik.io</Copyright>
+    <LangVersion>8.0</LangVersion>
+    <MinVerMinimumMajorMinor>1.0</MinVerMinimumMajorMinor>
+    <PackageIcon>logo_256.png</PackageIcon>
+  </PropertyGroup>
+  
+  <ItemGroup>
+    <PackageReference Include="MinVer" Version="2.0.0" PrivateAssets="All"/>
+  </ItemGroup>
+  
+  <ItemGroup>
+    <None Include="../../docs/logo_256.png" Pack="true" Visible="false" PackagePath="" />
+  </ItemGroup>
+  
+</Project>

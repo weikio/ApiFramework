@@ -4,20 +4,12 @@
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <IsPackable>true</IsPackable>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Authors>Weik.io</Authors>
-    <Company>Weik.io</Company>
     <Description>Api Framework Core Functionality. When hosting with ASP.NET Core, please start from Weikio.ApiFramework.AspNetCore. Api Framework gives you powerful and dynamic tools for easily building Open Api based endpoints.</Description>
     <PackageDescription>Api Framework Core Functionality. When hosting with ASP.NET Core, please start from Weikio.ApiFramework.AspNetCore. Api Framework gives you powerful and dynamic tools for easily building Open Api based endpoints.</PackageDescription>
-    <PackageProjectUrl>https://www.weik.io</PackageProjectUrl>
-    <Copyright>©2019 Weik.io</Copyright>
     <PackageId>Weikio.ApiFramework.Core</PackageId>
     <Product>Weikio.ApiFramework.Core</Product>
-    <PackageLicenseExpression>MIT</PackageLicenseExpression>
-    <RepositoryUrl>https://github.com/weikio/Weikio.ApiFramework</RepositoryUrl>
     <PackageTags>api;open api;functions</PackageTags>
-    <PackageIcon>logo_256.png</PackageIcon>
     <Title>Api Framework Core Functionality.</Title>
-    <MinVerMinimumMajorMinor>1.0</MinVerMinimumMajorMinor>    
   </PropertyGroup>
 
   <ItemGroup>
@@ -27,7 +19,6 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="3.1.2" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="3.1.2" />
-    <PackageReference Include="MinVer" Version="2.0.0" />
     <PackageReference Include="Weikio.AspNetCore.Common" Version="1.0.0-alpha.*" />
     <PackageReference Include="Weikio.AspNetCore.StartupTasks" Version="1.0.0-alpha.*" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="3.1.2" />
@@ -39,8 +30,4 @@
     <ProjectReference Include="..\Weikio.ApiFramework.SDK\Weikio.ApiFramework.SDK.csproj" />
   </ItemGroup>
   
-  <ItemGroup>
-    <None Include="../../docs/logo_256.png" Pack="true" Visible="false" PackagePath="" />
-  </ItemGroup>
-
 </Project>

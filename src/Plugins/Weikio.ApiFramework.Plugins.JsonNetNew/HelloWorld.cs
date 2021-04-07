@@ -11,5 +11,15 @@ namespace Weikio.ApiFramework.Plugins.JsonNetNew
 
             return result;
         }
+        
+        public DataStructure GetData()
+        {
+            return new DataStructure();
+        }
+    }
+
+    public class DataStructure
+    {
+        public string Name { get; set; } = "Hello from new schema";
     }
 }

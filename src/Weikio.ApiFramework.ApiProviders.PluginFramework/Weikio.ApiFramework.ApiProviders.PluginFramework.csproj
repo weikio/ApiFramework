@@ -4,20 +4,12 @@
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <IsPackable>true</IsPackable>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Authors>Weik.io</Authors>
-    <Company>Weik.io</Company>
     <Description>Plugin Framework based Api Provider for Api Framework.</Description>
     <PackageDescription>Plugin Framework based Api Provider for Api Framework.</PackageDescription>
-    <PackageProjectUrl>https://www.weik.io</PackageProjectUrl>
-    <Copyright>©2019 Weik.io</Copyright>
     <PackageId>Weikio.ApiFramework.ApiProviders.PluginFramework</PackageId>
     <Product>Weikio.ApiFramework.ApiProviders.PluginFramework</Product>
-    <PackageLicenseExpression>MIT</PackageLicenseExpression>
-    <RepositoryUrl>https://github.com/weikio/Weikio.ApiFramework</RepositoryUrl>
     <PackageTags>plugin;api;open api;functions</PackageTags>
-    <PackageIcon>logo_256.png</PackageIcon>
     <Title>Plugin Framework Api Provider for Api Framework</Title>
-    <MinVerMinimumMajorMinor>1.0</MinVerMinimumMajorMinor>
   </PropertyGroup>
   
   <ItemGroup>
@@ -32,7 +24,6 @@
     <PackageReference Include="Weikio.PluginFramework" Version="1.2.1" />
     <PackageReference Include="Weikio.PluginFramework.Catalogs.Roslyn" Version="1.2.1" />
     <PackageReference Include="Weikio.PluginFramework.Catalogs.Nuget" Version="1.2.1" />
-    <PackageReference Include="MinVer" Version="2.0.0" />
     <PackageReference Include="NewtonSoft.Json" Version="12.0.3" />
   </ItemGroup>
   
@@ -42,8 +33,4 @@
     <ProjectReference Include="..\Weikio.ApiFramework.SDK\Weikio.ApiFramework.SDK.csproj" />
   </ItemGroup>
   
-  <ItemGroup>
-    <None Include="../../docs/logo_256.png" Pack="true" Visible="false" PackagePath="" />
-  </ItemGroup>
-
 </Project>

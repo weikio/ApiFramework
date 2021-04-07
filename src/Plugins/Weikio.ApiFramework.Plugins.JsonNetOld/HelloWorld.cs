@@ -11,5 +11,16 @@ namespace Weikio.ApiFramework.Plugins.JsonNetOld
 
             return result;
         }
+        
+        public DataStructure GetData()
+        {
+            return new DataStructure();
+        }
+    }
+
+    public class DataStructure
+    {
+        public string Name { get; set; } = "Hello From old schema";
+        public int Age { get; set; } = 50;
     }
 }
