@@ -10,7 +10,9 @@ namespace Weikio.ApiFramework.Samples.AsyncJsonStream
 
         public WeatherConfiguration Configuration { get; set; }
 
+#pragma warning disable 1998
         public async IAsyncEnumerable<Weather> GetStream()
+#pragma warning restore 1998
         {
             for (var i = 1; i <= 100000; i++)
             {

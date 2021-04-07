@@ -137,19 +137,19 @@ namespace ApiFramework.IntegrationTests
         }
 
         [Fact]
-        public async Task CanCreateApiWithConfiguration()
+        public void CanCreateApiWithConfiguration()
         {
             throw new NotImplementedException();
         }
 
         [Fact]
-        public async Task CanUseEndpointConfiguration()
+        public void CanUseEndpointConfiguration()
         {
             throw new NotImplementedException();
         }
 
         [Fact]
-        public async Task CanUseRouteParameter()
+        public void CanUseRouteParameter()
         {
             throw new NotImplementedException();
         }

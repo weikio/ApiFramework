@@ -59,12 +59,14 @@ namespace Weikio.ApiFramework.Core.StartupTasks
 
             _logger.LogInformation("Api provider initialized");
 
-            _backgroundTaskQueue.QueueBackgroundWorkItem(async ct =>
+            _backgroundTaskQueue.QueueBackgroundWorkItem(ct =>
             {
                 if (_options.AutoInitializeConfiguredEndpoints)
                 {
                     _endpointStartupHandler.Start(cancellationToken);
                 }
+
+                return Task.CompletedTask;
             });
         }
     }

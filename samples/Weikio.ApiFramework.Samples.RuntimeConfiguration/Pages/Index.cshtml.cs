@@ -24,7 +24,7 @@ namespace RuntimeConfiguration.Pages
             get { return _endpointManager; }
         }
 
-        public async Task<ActionResult> OnGet()
+        public ActionResult OnGet()
         {
             Apis = _apiProvider.List();
 
