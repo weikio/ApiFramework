@@ -13,6 +13,7 @@ using Weikio.ApiFramework.Abstractions.DependencyInjection;
 using Weikio.ApiFramework.SDK;
 using Weikio.PluginFramework.Abstractions;
 using Weikio.PluginFramework.Catalogs;
+using Weikio.PluginFramework.Catalogs.NuGet;
 using Weikio.PluginFramework.Context;
 using Weikio.PluginFramework.TypeFinding;
 
@@ -40,6 +41,24 @@ namespace Weikio.ApiFramework.ApiProviders.PluginFramework
                 }
             };
 
+            NugetPluginCatalogOptions.Defaults.PluginNameOptions = new PluginNameOptions()
+            {
+                PluginNameGenerator = (nameOptions, type) =>
+                {
+                    if (type.GetCustomAttribute(typeof(DisplayNameAttribute), true) is DisplayNameAttribute displayNameAttribute)
+                    {
+                        return displayNameAttribute.DisplayName;
+                    }
+
+                    if (string.Equals(type.Name, "ApiFactory", StringComparison.InvariantCultureIgnoreCase))
+                    {
+                        return type.Assembly.GetName().Name;
+                    }
+
+                    return type.FullName;
+                },
+            };
+            
             builder.Services.AddSingleton<IApiCatalog>(services =>
             {
                 var configurationOptions = services.GetService<IOptions<PluginFrameworkApiProviderOptions>>();

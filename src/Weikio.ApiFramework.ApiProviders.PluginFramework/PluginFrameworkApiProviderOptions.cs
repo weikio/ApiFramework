@@ -51,8 +51,6 @@ namespace Weikio.ApiFramework.ApiProviders.PluginFramework
         /// <summary>
         /// Gets or sets the func which is used to create the criteria which is used when scanning a single type for APIs
         /// </summary>
-        ///
-        ///
         public Func<Type, List<TypeFinderCriteria>> CreateTypeApiFinderCriteria { get; set; } = type =>
         {
             var result = new List<TypeFinderCriteria>();

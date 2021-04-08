@@ -26,7 +26,7 @@ namespace ApiFramework.IntegrationTests
             });
 
             // Act 
-            var result = await server.GetStringAsync("/api/mycustom/single");
+            var result = await server.GetStringAsync("/api/mytest/Sample/single");
             var obj = JObject.Parse(result);
             
             // Assert

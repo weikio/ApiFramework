@@ -1,7 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Weikio.ApiFramework.Abstractions;
+using Weikio.ApiFramework.ApiProviders.PluginFramework;
 using Weikio.ApiFramework.SDK;
 
 namespace Weikio.ApiFramework.Admin.Areas.Admin.Controllers
@@ -13,10 +16,12 @@ namespace Weikio.ApiFramework.Admin.Areas.Admin.Controllers
     public class ApiController : ControllerBase
     {
         private readonly IApiProvider _apiProvider;
+        private readonly IServiceProvider _serviceProvider;
 
-        public ApiController(IApiProvider apiProvider)
+        public ApiController(IApiProvider apiProvider, IServiceProvider serviceProvider)
         {
             _apiProvider = apiProvider;
+            _serviceProvider = serviceProvider;
         }
 
         [HttpGet]
@@ -25,6 +30,17 @@ namespace Weikio.ApiFramework.Admin.Areas.Admin.Controllers
             var result = _apiProvider.List();
 
             return Ok(result);
+        }
+
+        [HttpPut]
+        public async Task<ActionResult> RegisterNuget(string packageName, string version)
+        {
+            var catalog = NugetPackageFactory.CreateApiCatalog(packageName, version, _serviceProvider);
+            await catalog.Initialize(CancellationToken.None);
+            
+            _apiProvider.Add(catalog);
+
+            return Ok();
         }
     }
 }

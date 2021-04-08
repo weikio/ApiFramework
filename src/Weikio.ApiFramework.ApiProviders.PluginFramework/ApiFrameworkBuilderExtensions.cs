@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using Weikio.ApiFramework.Abstractions;
 using Weikio.ApiFramework.Abstractions.DependencyInjection;
 using Weikio.PluginFramework.Abstractions;
@@ -14,6 +15,30 @@ namespace Weikio.ApiFramework.ApiProviders.PluginFramework
 {
     public static class ApiFrameworkBuilderExtensions
     {
+        public static IApiFrameworkBuilder AddNugetApi(this IApiFrameworkBuilder builder, string packageName, string version)
+        {
+            builder.Services.AddNugetApi(packageName, version);
+
+            return builder;
+        }
+        
+        public static IServiceCollection AddNugetApi(this IServiceCollection services, string packageName, string version)
+        {
+            if (string.IsNullOrWhiteSpace(packageName))
+            {
+                throw new ArgumentNullException(nameof(packageName));
+            }
+
+            services.AddSingleton<IPluginCatalog>(provider =>
+            {
+                var nugetCatalog = NugetPackageFactory.CreatePluginCatalog(packageName, version, provider);
+
+                return nugetCatalog;
+            });
+
+            return services;
+        }
+
         public static IApiFrameworkBuilder AddApiCatalog(this IApiFrameworkBuilder builder, IPluginCatalog catalog)
         {
             builder.Services.AddSingleton<IPluginCatalog>(catalog);

@@ -55,7 +55,8 @@ namespace Weikio.ApiFramework.ApiProviders.PluginFramework
             }
 
             // In Plugin Framework each type is a plugin. In Api Framework each Api can contain multiple types. So we combine the plugins at this point.
-            var pluginDefinitions = _pluginCatalog.GetPlugins().GroupBy(x => new { x.Name, x.Version });
+            var pluginsInCatalog = _pluginCatalog.GetPlugins();
+            var pluginDefinitions = pluginsInCatalog.GroupBy(x => new { x.Name, x.Version }).ToList();
 
             var result = new List<ApiDefinition>();
 
