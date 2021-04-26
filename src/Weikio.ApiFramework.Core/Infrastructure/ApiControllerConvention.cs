@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.Json.Serialization;
@@ -87,7 +87,7 @@ namespace Weikio.ApiFramework.Core.Infrastructure
                         template = $"{template}/{string.Join("/", controllerNameParts.Take(controllerNameParts.Length - 1))}";
                     }
 
-                    if (endpoint.ApiTypes.Count() > 1)
+                    if (endpoint.ApiTypes.Count() > 1 || _options.AutoTidyUrls == AutoTidyUrlModeEnum.Disabled)
                     {
                         template = $"{template}/{controllerNameParts.Last()}";
                     }
