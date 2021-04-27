@@ -24,7 +24,7 @@ namespace Weikio.ApiFramework.Samples.Admin
             services.AddControllers();
 
             services.AddApiFrameworkStarterKit()
-                .AddApi("Weikio.ApiFramework.Plugins.OpenApi", "1.0.0-alpha.0.23")
+                .AddNugetApi("Weikio.ApiFramework.Plugins.OpenApi", "1.0.0-alpha.0.23")
                 .AddSqlServer();
 
             // services.AddApiFramework()

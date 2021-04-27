@@ -33,9 +33,9 @@ namespace Weikio.ApiFramework.Admin.Areas.Admin.Controllers
         }
 
         [HttpPut]
-        public async Task<ActionResult> RegisterNuget(string packageName, string version)
+        public async Task<ActionResult> RegisterNuget(string packageName, string version, string feedUrl)
         {
-            var catalog = NugetPackageFactory.CreateApiCatalog(packageName, version, _serviceProvider);
+            var catalog = NugetPackageFactory.CreateApiCatalog(packageName, version, _serviceProvider, feedUrl);
             await catalog.Initialize(CancellationToken.None);
             
             _apiProvider.Add(catalog);
