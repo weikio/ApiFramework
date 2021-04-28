@@ -17,13 +17,15 @@ namespace Weikio.ApiFramework.Core.Infrastructure
         private readonly IEndpointManager _endpointManager;
         private readonly IEndpointHttpVerbResolver _endpointHttpVerbResolver;
         private readonly IOptions<ApiFrameworkOptions> _optionsAccessor;
+        private readonly IOptionsMonitor<AutoTidyUrlAPIOverrides> _autoTidyUrlOverridesAccessor;
 
         public ApiActionConvention(IEndpointManager endpointManager, IEndpointHttpVerbResolver endpointHttpVerbResolver,
-            IOptions<ApiFrameworkOptions> optionsAccessor)
+            IOptions<ApiFrameworkOptions> optionsAccessor, IOptionsMonitor<AutoTidyUrlAPIOverrides> autoTidyUrlOverridesAccessor)
         {
             _endpointManager = endpointManager;
             _endpointHttpVerbResolver = endpointHttpVerbResolver;
             _optionsAccessor = optionsAccessor;
+            _autoTidyUrlOverridesAccessor = autoTidyUrlOverridesAccessor;
         }
 
         public void Apply(ActionModel action)
@@ -101,15 +103,15 @@ namespace Weikio.ApiFramework.Core.Infrastructure
             // If there is multiple Get (or Post, or Delete..) methods in same Api, method name is automatically added to avoid ambiguous routes.
             // ApiFrameworkOptions.AutoTidyUrls can be used to control this functionality
 
-            var endpointOptions = _optionsAccessor.Value;
+            var autoTidyUrls = GetAutoTidyUrlMode(endpoint, _optionsAccessor, _autoTidyUrlOverridesAccessor);
 
             // Can cause ambiguous routes
-            if (endpointOptions.AutoTidyUrls == AutoTidyUrlModeEnum.Always)
+            if (autoTidyUrls == AutoTidyUrlModeEnum.Always)
             {
                 return;
             }
 
-            if (endpointOptions.AutoTidyUrls == AutoTidyUrlModeEnum.Disabled)
+            if (autoTidyUrls == AutoTidyUrlModeEnum.Disabled)
             {
                 selector.AttributeRouteModel = new AttributeRouteModel(new RouteAttribute(action.ActionName));
 
@@ -130,6 +132,24 @@ namespace Weikio.ApiFramework.Core.Infrastructure
                     selector.AttributeRouteModel = new AttributeRouteModel(new RouteAttribute(action.ActionName));
                 }
             }
+        }
+
+        internal static AutoTidyUrlModeEnum GetAutoTidyUrlMode(Endpoint endpoint, IOptions<ApiFrameworkOptions> optionsAccessor, IOptionsMonitor<AutoTidyUrlAPIOverrides> autoTidyUrlOverridesAccessor)
+        {
+            var endpointOptions = optionsAccessor.Value;
+            var autoTidyUrls = endpointOptions.AutoTidyUrls;
+
+            // First try to check if we have API specific override for the auto tidy. If not, use the global default.
+            // Endpoint specific AutoTidy configuration is not yet possible, see #24
+            var apiName = endpoint.Api.ApiDefinition.Name;
+            var apiOverride = autoTidyUrlOverridesAccessor.Get(apiName);
+
+            if (apiOverride.IsSet)
+            {
+                autoTidyUrls = apiOverride.AutoTidyUrls;
+            }
+
+            return autoTidyUrls;
         }
     }
 }

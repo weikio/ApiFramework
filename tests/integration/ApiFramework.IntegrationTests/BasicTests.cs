@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using CodeConfiguration;
 using HelloWorld;
 using Microsoft.AspNetCore.Mvc.Testing;
+using Microsoft.Extensions.DependencyInjection;
 using Weikio.ApiFramework.AspNetCore;
 using Weikio.ApiFramework.Core.Configuration;
 using Weikio.ApiFramework.Core.Extensions;
@@ -166,11 +167,35 @@ namespace ApiFramework.IntegrationTests
             });
 
             // Act 
-            var result = await server.GetStringAsync("/api/mytest/SayHello");
+            var result = await server.GetStringAsync("/api/mytest/HelloWorld/SayHello");
 
             // Assert
             Assert.Equal("Hello Api Framework!", result);
         }
 
+        [Fact]
+        public async Task CanConfigureAutoTidyUrlOnApiLevel()
+        {
+            var server = Init(builder =>
+            {
+                builder.AddApi(typeof(HelloWorldApi));
+                builder.AddApi(typeof(AnotherHelloWorldApi));
+                builder.AddEndpoint("/mytest", "HelloWorld.HelloWorldApi");
+                builder.AddEndpoint("/another", "HelloWorld.AnotherHelloWorldApi");
+
+                builder.Services.Configure<AutoTidyUrlAPIOverrides>("HelloWorld.HelloWorldApi", options =>
+                {
+                    options.AutoTidyUrls = AutoTidyUrlModeEnum.Disabled;
+                });
+            });
+
+            // Act 
+            var result = await server.GetStringAsync("/api/mytest/HelloWorld/SayHello");
+            var anotherResult = await server.GetStringAsync("/api/another");
+
+            // Assert
+            Assert.Equal("Hello Api Framework!", result);
+            Assert.Equal("Another Hello Api Framework!", anotherResult);
+        }
     }
 }

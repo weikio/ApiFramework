@@ -19,15 +19,17 @@ namespace Weikio.ApiFramework.Core.Infrastructure
         private readonly IEndpointManager _endpointManager;
         private readonly IEndpointRouteTemplateProvider _endpointRouteTemplateProvider;
         private readonly ILogger<ApiControllerConvention> _logger;
-        private readonly ApiFrameworkOptions _options;
+        private readonly IOptionsMonitor<AutoTidyUrlAPIOverrides> _autoTidyUrlOverridesAccessor;
+        private readonly IOptions<ApiFrameworkOptions> _optionsAccessor;
 
-        public ApiControllerConvention(IEndpointManager endpointManager, IOptions<ApiFrameworkOptions> options,
-            IEndpointRouteTemplateProvider endpointRouteTemplateProvider, ILogger<ApiControllerConvention> logger)
+        public ApiControllerConvention(IEndpointManager endpointManager, IOptions<ApiFrameworkOptions> optionsAccessor,
+            IEndpointRouteTemplateProvider endpointRouteTemplateProvider, ILogger<ApiControllerConvention> logger, IOptionsMonitor<AutoTidyUrlAPIOverrides> autoTidyUrlOverridesAccessor)
         {
             _endpointManager = endpointManager;
             _endpointRouteTemplateProvider = endpointRouteTemplateProvider;
             _logger = logger;
-            _options = options.Value;
+            _autoTidyUrlOverridesAccessor = autoTidyUrlOverridesAccessor;
+            _optionsAccessor = optionsAccessor;
         }
 
         public void Apply(ControllerModel controller)
@@ -87,7 +89,9 @@ namespace Weikio.ApiFramework.Core.Infrastructure
                         template = $"{template}/{string.Join("/", controllerNameParts.Take(controllerNameParts.Length - 1))}";
                     }
 
-                    if (endpoint.ApiTypes.Count() > 1 || _options.AutoTidyUrls == AutoTidyUrlModeEnum.Disabled)
+                    var autoTidyUrls = ApiActionConvention.GetAutoTidyUrlMode(endpoint, _optionsAccessor, _autoTidyUrlOverridesAccessor);
+                    
+                    if (endpoint.ApiTypes.Count() > 1 || autoTidyUrls == AutoTidyUrlModeEnum.Disabled)
                     {
                         template = $"{template}/{controllerNameParts.Last()}";
                     }
