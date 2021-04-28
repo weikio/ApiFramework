@@ -1,4 +1,6 @@
-﻿using System.Linq;
+using System;
+using System.Linq;
+using NSwag.Generation.AspNetCore;
 using NSwag.Generation.Processors;
 using NSwag.Generation.Processors.Contexts;
 using Weikio.ApiFramework.Core.Endpoints;
@@ -25,31 +27,73 @@ namespace Weikio.ApiFramework.AspNetCore.NSwag
                     continue;
                 }
 
-                foreach (var extendedMetadata in endpoint.Metadata)
-                {
-                    if (!(extendedMetadata is OpenApiDocumentExtensions openApiContent))
-                    {
-                        continue;
-                    }
+                var found = false;
 
-                    if (openApiContent.AdditionalOperationPaths?.Any() == true)
+                if (context.Settings is AspNetCoreOpenApiDocumentGeneratorSettings settings)
+                {
+                    if (endpoint != null && !string.IsNullOrWhiteSpace(endpoint.GroupName) && settings.ApiGroupNames?.Any() == true)
                     {
-                        foreach (var path in openApiContent.AdditionalOperationPaths)
+                        foreach (var apiGroupName in settings.ApiGroupNames)
                         {
-                            context.Document.Paths.Add(path.Key, path.Value);
+                            if (string.Equals(apiGroupName, endpoint.GroupName, StringComparison.InvariantCultureIgnoreCase))
+                            {
+                                found = true;
+
+                                break;
+                            }
+
+                            if (string.Equals(apiGroupName, "api_framework_endpoint", StringComparison.InvariantCultureIgnoreCase))
+                            {
+                                found = true;
+
+                                break;
+                            }
+                        }
+
+                        if (!found)
+                        {
+                            continue;
                         }
                     }
-                        
-                    if (openApiContent.AdditionalSchemas?.Any() == true)
+
+                    if (endpoint != null && settings.ApiGroupNames?.Any() == true && !found)
                     {
-                        foreach (var schema in openApiContent.AdditionalSchemas)
+                        foreach (var apiGroupName in settings.ApiGroupNames)
                         {
-                            if (context.Document.Components.Schemas.ContainsKey(schema.Key))
+                            if (string.Equals(apiGroupName, "api_framework_endpoint", StringComparison.InvariantCultureIgnoreCase))
                             {
-                                continue;
+                                found = true;
+
+                                break;
                             }
-                            
-                            context.Document.Components.Schemas.Add(schema);
+                        }
+
+                        if (!found)
+                        {
+                            continue;
+                        }
+                    }
+
+                }
+
+                foreach (var extendedMetadata in endpoint.Metadata)
+                {
+                    if (extendedMetadata is NSwag.OpenApiDocumentExtensions openApiContent)
+                    {
+                        if (openApiContent.AdditionalOperationPaths?.Any() == true)
+                        {
+                            foreach (var path in openApiContent.AdditionalOperationPaths)
+                            {
+                                context.Document.Paths.Add(path.Key, path.Value);
+                            }
+                        }
+
+                        if (openApiContent.AdditionalSchemas?.Any() == true)
+                        {
+                            foreach (var schema in openApiContent.AdditionalSchemas)
+                            {
+                                context.Document.Components.Schemas.Add(schema);
+                            }
                         }
                     }
                 }
