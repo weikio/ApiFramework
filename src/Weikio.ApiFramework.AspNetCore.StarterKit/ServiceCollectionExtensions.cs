@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Formatters;
@@ -7,6 +7,7 @@ using NJsonSchema.Generation;
 using NSwag.Generation.Processors;
 using Weikio.ApiFramework.Abstractions.DependencyInjection;
 using Weikio.ApiFramework.Admin;
+using Weikio.ApiFramework.AspNetCore.NSwag;
 using Weikio.ApiFramework.AspNetCore.StarterKit.Middlewares;
 
 namespace Weikio.ApiFramework.AspNetCore.StarterKit
@@ -24,7 +25,7 @@ namespace Weikio.ApiFramework.AspNetCore.StarterKit
             var builder = services.AddApiFramework();
             builder.AddAdmin();
             
-            services.AddTransient<IDocumentProcessor, CustomOpenApiExtenderDocumentProcessor>();
+            services.AddTransient<IDocumentProcessor, OpenApiExtenderDocumentProcessor>();
             
             services.AddOpenApiDocument(document =>
             {
