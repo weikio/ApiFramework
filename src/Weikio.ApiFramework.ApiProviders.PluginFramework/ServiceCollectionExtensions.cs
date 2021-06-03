@@ -25,6 +25,7 @@ namespace Weikio.ApiFramework.ApiProviders.PluginFramework
             Action<PluginFrameworkApiProviderOptions> setupAction = null)
         {
             PluginLoadContextOptions.Defaults.UseHostApplicationAssemblies = UseHostApplicationAssembliesEnum.Always;
+            NugetPluginCatalogOptions.Defaults.LoggerFactory = () => new NugetLogger(builder.Services);
 
             AssemblyPluginCatalogOptions.Defaults.PluginNameOptions = new PluginNameOptions()
             {

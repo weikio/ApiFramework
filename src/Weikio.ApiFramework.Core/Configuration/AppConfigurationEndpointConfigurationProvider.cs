@@ -39,7 +39,15 @@ namespace Weikio.ApiFramework.Core.Configuration
 
             foreach (var endpointSection in endpointsSection.GetChildren())
             {
-                var definition = new ApiDefinition(endpointSection.GetValue<string>("Api"), new Version(1, 0, 0, 0));
+                var apiName = endpointSection.GetValue<string>("Api");
+                var apiVersion = endpointSection.GetValue<string>("ApiVersion");
+
+                if (string.IsNullOrWhiteSpace(apiVersion))
+                {
+                    apiVersion = "1.0.0.0";
+                }
+
+                var definition = new ApiDefinition(apiName, new Version(apiVersion));
 
                 var route = endpointSection.Key;
 
@@ -52,7 +60,7 @@ namespace Weikio.ApiFramework.Core.Configuration
 
                 var healthCheck = new EmptyHealthCheck();
 
-                var endpointDefinition = new EndpointDefinition(route, definition.Name,
+                var endpointDefinition = new EndpointDefinition(route, definition,
                     endpointConfiguration,
                     endpoint => Task.FromResult<IHealthCheck>(healthCheck),
                     endpointGroupName, name, description, tags);

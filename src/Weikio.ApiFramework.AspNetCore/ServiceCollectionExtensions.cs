@@ -29,6 +29,8 @@ namespace Weikio.ApiFramework.AspNetCore
             var builder = services.AddApiFrameworkCore();
             builder.AddPluginFramework();
 
+            builder.Services.AddHostedService<AppConfigurationApiNugetStartupService>();
+            
             if (setupAction == null)
             {
                 services.AddHealthChecks()

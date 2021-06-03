@@ -8,17 +8,15 @@ namespace Weikio.ApiFramework.Core.Configuration
 {
     public class ApiFrameworkOptions
     {
-        public bool RequireConfiguration { get; set; } = false;
-        public bool UseConfiguration { get; set; } = true;
+        /// <summary>
+        /// Gets or sets the base path for API Framework endpoints
+        /// </summary>
         public string ApiAddressBase { get; set; } = "/api";
 
         public IEndpointHttpVerbResolver EndpointHttpVerbResolver { get; set; }
 
-//        public Func<MetadataReader, TypeDefinition, bool> FunctionResolver { get; set; } = FunctionLocator.IsFunction;
         public bool AutoResolveEndpoints { get; set; } = false;
 
-//        public bool AutoResolveFunctions { get; set; } = true;
-//        public List<string> FunctionAssemblies { get; set; } = new List<string>();
         public List<(string Route, string ApiAssemblyName, object Configuration, IHealthCheck HealthCheck, string GroupName)> Endpoints { get; set; } =
             new List<(string Route, string ApiAssemblyName, object Configuration, IHealthCheck HealthCheck, string groupName)>();
 

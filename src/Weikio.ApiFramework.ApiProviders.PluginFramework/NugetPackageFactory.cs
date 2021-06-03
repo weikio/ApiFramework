@@ -3,6 +3,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Weikio.ApiFramework.Abstractions;
+using Weikio.NugetDownloader;
 using Weikio.PluginFramework.Catalogs;
 using Weikio.PluginFramework.Catalogs.NuGet;
 using Weikio.PluginFramework.TypeFinding;
