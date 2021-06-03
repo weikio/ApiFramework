@@ -71,19 +71,6 @@ namespace Weikio.ApiFramework.ApiProviders.PluginFramework
 
             catalogOptions.PluginName = apiName;
             catalogOptions.PluginVersion = version == null ? new Version(1, 0, 0, 0) : version;
-            //
-            // if (catalogOptions.ConversionRules?.Any() != true)
-            // {
-            //     catalogOptions.ConversionRules = new List<DelegateConversionRule>();
-            // }
-            //
-            // catalogOptions.ConversionRules.Add(new DelegateConversionRule(info => info.Name == "configuration",
-            //     nfo => new ParameterConversion() { ToPublicProperty = true }));
-            //
-            // catalogOptions.ConversionRules.Add(new DelegateConversionRule(info => info.Name == "config",
-            //     nfo => new ParameterConversion() { ToPublicProperty = true }));
-            //
-            // var catalog = new DelegatePluginCatalog(multicastDelegate, catalogOptions);
 
             var catalog = new RoslynPluginCatalog(roslynCode, catalogOptions);
             builder.Services.AddSingleton<IPluginCatalog>(catalog);

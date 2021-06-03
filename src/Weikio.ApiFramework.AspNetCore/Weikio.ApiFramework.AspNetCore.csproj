@@ -21,7 +21,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Weikio.PluginFramework" Version="1.2.1" />
+    <PackageReference Include="Weikio.PluginFramework" Version="1.4.0" />
   </ItemGroup>
   
   <ItemGroup>

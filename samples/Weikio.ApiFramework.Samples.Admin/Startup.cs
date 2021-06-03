@@ -5,7 +5,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Weikio.ApiFramework.ApiProviders.PluginFramework;
 using Weikio.ApiFramework.AspNetCore.StarterKit;
-using Weikio.ApiFramework.Plugins.SqlServer;
 
 namespace Weikio.ApiFramework.Samples.Admin
 {
@@ -23,9 +22,7 @@ namespace Weikio.ApiFramework.Samples.Admin
         {
             services.AddControllers();
 
-            services.AddApiFrameworkStarterKit()
-                .AddNugetApi("Weikio.ApiFramework.Plugins.OpenApi", "1.0.0-alpha.0.23")
-                .AddSqlServer();
+            services.AddApiFrameworkStarterKit();
 
             // services.AddApiFramework()
             //     .AddMySql("/data",

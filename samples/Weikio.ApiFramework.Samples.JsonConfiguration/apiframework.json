@@ -1,26 +1,34 @@
 {
   "ApiFramework": {
+    "Apis": [
+      {
+        "Name": "Weikio.ApiFramework.Plugins.SqlServer",
+        "Version": "1.1.0-alpha.0.8"
+      },
+      {
+        "Name": "Weikio.ApiFramework.Plugins.OpenApi",
+        "Version": "1.0.0-alpha.0.23"
+      }
+    ],
     "Endpoints": {
-      "/hello": {
-        "Api": "Weikio.ApiFramework.Plugins.HelloWorld",
-        "Tags": ["one", "another"]
+      "/adventures": {
+        "Api": "Weikio.ApiFramework.Plugins.SqlServer",
+        "ApiVersion": "1.1.0.0",
+        "Configuration": {
+          "ConnectionString": "Server=tcp:adafydevtestdb001.database.windows.net,1433;User ID=docs;Password=3h1@*6PXrldU4F95;Integrated Security=false;Initial Catalog=adafyweikiodevtestdb001;",
+          "Tables": [
+            "Product*"
+          ]
+        }
       },
-      "/another": {
-        "Api": "Weikio.ApiFramework.Plugins.HelloWorld",
-        "Name": "Anothers",
-        "Group":"internal"
-      },
-      "/more": {
-        "Api": "Weikio.ApiFramework.Plugins.HelloWorld",
-        "Group": "external",
-        "Description": "All the customers",
-        "Tags": ["one", "another"]
-      },
-      "/mycustomer": {
-        "Api": "Weikio.ApiFramework.Samples.JsonConfiguration",
-        "Name": "Customers",
-        "Description": "All the customers",
-        "Tags": ["one", "another"]
+      "/petstore": {
+        "Api": "Weikio.ApiFramework.Plugins.OpenApi",
+        "Configuration": {
+          "SpecificationUrl": "https://petstore.swagger.io/v2/swagger.json",
+          "IncludeHttpMethods": [
+            "GET"
+          ]
+        }
       }
     }
   }

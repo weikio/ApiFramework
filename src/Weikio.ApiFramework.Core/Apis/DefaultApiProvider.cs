@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
@@ -7,21 +8,21 @@ using Weikio.ApiFramework.Abstractions;
 
 namespace Weikio.ApiFramework.Core.Apis
 {
-    public class DefaultApiProvider : List<IApiCatalog>, IApiProvider
+    internal class DefaultApiProvider : List<IApiCatalog>, IApiProvider
     {
         private readonly ILogger<DefaultApiProvider> _logger;
 
-        public DefaultApiProvider(ILogger<DefaultApiProvider> logger, IEnumerable<IApiCatalog> apiProviders)
+        public DefaultApiProvider(ILogger<DefaultApiProvider> logger, IEnumerable<IApiCatalog> apiCatalogs)
         {
             _logger = logger;
-            AddRange(apiProviders);
+            AddRange(apiCatalogs);
         }
 
         public async Task Initialize(CancellationToken cancellationToken)
         {
             _logger.LogInformation("Initializing Api Providers");
 
-            foreach (var provider in this)
+            foreach (var provider in this.Where(x => x.IsInitialized == false))
             {
                 await provider.Initialize(cancellationToken);
             }
@@ -31,7 +32,7 @@ namespace Weikio.ApiFramework.Core.Apis
         {
             var result = new List<ApiDefinition>();
 
-            foreach (var catalog in this)
+            foreach (var catalog in this.Where(x => x.IsInitialized))
             {
                 var definitionsInCatalog = catalog.List();
                 result.AddRange(definitionsInCatalog);
@@ -47,7 +48,7 @@ namespace Weikio.ApiFramework.Core.Apis
 
         public Api Get(ApiDefinition definition)
         {
-            foreach (var catalog in this)
+            foreach (var catalog in this.Where(x => x.IsInitialized))
             {
                 var api = catalog.Get(definition);
 
@@ -67,11 +68,6 @@ namespace Weikio.ApiFramework.Core.Apis
 
         public new void Add(IApiCatalog catalog)
         {
-            if (catalog.IsInitialized == false)
-            {
-                throw new ApiCatalogNotInitializedException();
-            }
-
             base.Add(catalog);
         }
 
