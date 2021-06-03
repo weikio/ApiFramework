@@ -21,9 +21,9 @@
     <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="3.1.2" />
     <PackageReference Include="System.Text.Json" Version="4.7.2" />
     <PackageReference Include="Polly" Version="7.2.0" />
-    <PackageReference Include="Weikio.PluginFramework" Version="1.4.0" />
-    <PackageReference Include="Weikio.PluginFramework.Catalogs.Roslyn" Version="1.4.0" />
-    <PackageReference Include="Weikio.PluginFramework.Catalogs.Nuget" Version="1.4.0" />
+    <PackageReference Include="Weikio.PluginFramework" Version="1.4.1" />
+    <PackageReference Include="Weikio.PluginFramework.Catalogs.Roslyn" Version="1.4.1" />
+    <PackageReference Include="Weikio.PluginFramework.Catalogs.Nuget" Version="1.4.1" />
     <PackageReference Include="NewtonSoft.Json" Version="12.0.3" />
   </ItemGroup>
   
