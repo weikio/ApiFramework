@@ -74,7 +74,7 @@ namespace Weikio.ApiFramework.ResponceCache
                         ResponseCacheConfiguration = new ResponseCacheConfiguration(defaultAge, vary)
                     };
 
-                    var configurations = GetResponseCacheConfigurations(endpointCacheSection.GetSection("routes"));
+                    var configurations = GetResponseCacheConfigurations(endpointCacheSection.GetSection("Routes"));
 
                     foreach (var responseCacheConfiguration in configurations)
                     {

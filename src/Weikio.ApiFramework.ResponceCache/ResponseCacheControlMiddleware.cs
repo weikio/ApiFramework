@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
@@ -92,7 +92,7 @@ namespace Weikio.ApiFramework.ResponceCache
                     {
                         var path = new PathString("/" + string.Join('/', requestPathPartsQueue));
 
-                        if (endpointCacheConfig.PathConfigurations.TryGetValue(path, out var cacheConfig))
+                        if (endpointCacheConfig.PathConfigurations.TryGetValue(path, out var cacheConfig) && cacheConfig.MaxAge > default(TimeSpan))
                         {
                             return new ResponseCacheCachedEntry(ResponseCacheConfigurationLevel.Route,
                                 new CacheControlHeaderValue() { Public = true, MaxAge = cacheConfig.MaxAge }, cacheConfig.Vary);
@@ -101,7 +101,7 @@ namespace Weikio.ApiFramework.ResponceCache
                         requestPathPartsQueue.Dequeue();
                     }
 
-                    if (endpointCacheConfig.ResponseCacheConfiguration?.MaxAge != default)
+                    if (endpointCacheConfig.ResponseCacheConfiguration != null && endpointCacheConfig.ResponseCacheConfiguration.MaxAge > default(TimeSpan))
                     {
                         return new ResponseCacheCachedEntry(ResponseCacheConfigurationLevel.Endpoint,
                             new CacheControlHeaderValue() { Public = true, MaxAge = endpointCacheConfig.ResponseCacheConfiguration.MaxAge },
@@ -109,7 +109,7 @@ namespace Weikio.ApiFramework.ResponceCache
                     }
                 }
 
-                if (_options.ResponseCacheConfiguration != null && _options.ResponseCacheConfiguration.MaxAge != default)
+                if (_options.ResponseCacheConfiguration != null && _options.ResponseCacheConfiguration.MaxAge > default(TimeSpan))
                 {
                     return new ResponseCacheCachedEntry(ResponseCacheConfigurationLevel.Global,
                         new CacheControlHeaderValue() { Public = true, MaxAge = _options.ResponseCacheConfiguration.MaxAge },
