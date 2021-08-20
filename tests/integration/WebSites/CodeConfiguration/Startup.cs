@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -19,6 +19,7 @@ using Weikio.ApiFramework.Core.Endpoints;
 using Weikio.ApiFramework.Core.HealthChecks;
 using Weikio.ApiFramework.Core.Infrastructure;
 using Weikio.ApiFramework.Core.StartupTasks;
+using Weikio.ApiFramework.ResponceCache;
 
 namespace CodeConfiguration
 {
@@ -237,6 +238,9 @@ namespace CodeConfiguration
             app.UseRouting();
             app.UseOpenApi();
             app.UseSwaggerUi3();
+
+            app.UseResponseCaching();
+            app.UseApiFrameworkResponseCaching();
 
             app.UseAuthentication();
             app.UseAuthorization();
