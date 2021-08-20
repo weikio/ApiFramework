@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Linq;
 
 namespace Weikio.ApiFramework.ResponceCache
@@ -9,15 +9,18 @@ namespace Weikio.ApiFramework.ResponceCache
 
         public string[] Vary { get; }
 
-        public ResponseCacheConfiguration(TimeSpan maxAge, string[] vary)
+        public string[] VaryByQueryKeys { get; }
+
+        public ResponseCacheConfiguration(TimeSpan maxAge, string[] vary, string[] varyByQueryKeys)
         {
             MaxAge = maxAge;
             Vary = vary;
+            VaryByQueryKeys = varyByQueryKeys;
         }
 
         public override string ToString()
         {
-            return $"MaxAge: {MaxAge}, Vary: {(Vary?.Any() == true ? string.Join(", ", Vary) : "")}";
+            return $"MaxAge: {MaxAge}, Vary: {(Vary?.Any() == true ? string.Join(", ", Vary) : "")}, VaryByQueryKeys: {(VaryByQueryKeys?.Any() == true ? string.Join(", ", VaryByQueryKeys) : "")}";
         }
     }
 }

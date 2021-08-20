@@ -41,12 +41,13 @@ namespace Weikio.ApiFramework.ResponceCache
                 {
                     var age = cacheSection.GetValue<TimeSpan>("MaxAge");
                     var vary = cacheSection.GetSection("Vary")?.Get<string[]>() ?? new string[] { };
+                    var varyByQueryKeys = cacheSection.GetSection("VaryByQueryKeys")?.Get<string[]>() ?? new string[] { };
 
-                    options.ResponseCacheConfiguration = new ResponseCacheConfiguration(age, vary);
+                    options.ResponseCacheConfiguration = new ResponseCacheConfiguration(age, vary, varyByQueryKeys);
                 }
                 else
                 {
-                    options.ResponseCacheConfiguration = new ResponseCacheConfiguration(default, Array.Empty<string>());
+                    options.ResponseCacheConfiguration = new ResponseCacheConfiguration(default, Array.Empty<string>(), Array.Empty<string>());
                 }
 
                 var endpointsSection = apiFrameworkConfigurationSection?.GetSection("Endpoints");
@@ -68,10 +69,11 @@ namespace Weikio.ApiFramework.ResponceCache
                     var endpointRoute = endpointSection.Key;
                     var defaultAge = endpointCacheSection.GetValue<TimeSpan>("MaxAge");
                     var vary = endpointCacheSection.GetSection("Vary")?.Get<string[]>() ?? new string[] { };
+                    var varyByQueryKeys = endpointCacheSection.GetSection("VaryByQueryKeys")?.Get<string[]>() ?? new string[] { };
 
                     var endpointResponceCacheConfiguration = new EndpointResponceCacheConfiguration(endpointRoute)
                     {
-                        ResponseCacheConfiguration = new ResponseCacheConfiguration(defaultAge, vary)
+                        ResponseCacheConfiguration = new ResponseCacheConfiguration(defaultAge, vary, varyByQueryKeys)
                     };
 
                     var configurations = GetResponseCacheConfigurations(endpointCacheSection.GetSection("Routes"));
@@ -152,8 +154,9 @@ namespace Weikio.ApiFramework.ResponceCache
                 var path = configSection.GetValue<string>("Route");
                 var maxAge = configSection.GetValue<TimeSpan>("MaxAge");
                 var vary = configSection.GetSection("Vary")?.Get<string[]>() ?? new string[] { };
+                var varyByQueryKeys = configSection.GetSection("VaryByQueryKeys")?.Get<string[]>() ?? new string[] { };
 
-                cacheConfigs.Add(path, new ResponseCacheConfiguration(maxAge, vary));
+                cacheConfigs.Add(path, new ResponseCacheConfiguration(maxAge, vary, varyByQueryKeys));
             }
 
             return cacheConfigs;

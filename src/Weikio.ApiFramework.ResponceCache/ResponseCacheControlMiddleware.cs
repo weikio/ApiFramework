@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.ResponseCaching;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -55,9 +56,19 @@ namespace Weikio.ApiFramework.ResponceCache
                         response.Headers[HeaderNames.Vary] = cacheEntry.Vary;
                     }
 
-                    _logger.LogDebug("Cache configuration found from level {ResponseCacheConfigurationLevel} for {Endpoint}. {CacheControl}, {Vary}.",
+                    if (cacheEntry.VaryByQueryKeys?.Any() == true)
+                    {
+                        var responseCachingFeature = context.Features.Get<IResponseCachingFeature>();
+
+                        if (responseCachingFeature != null)
+                        {
+                            responseCachingFeature.VaryByQueryKeys = cacheEntry.VaryByQueryKeys;
+                        }
+                    }
+
+                    _logger.LogDebug("Cache configuration found from level {ResponseCacheConfigurationLevel} for {Endpoint}. {CacheControl}, {Vary}, {VaryByQueryKeys}.",
                         cacheEntry.Level, endpoint,
-                        cacheEntry.CacheControlHeader?.ToString() ?? "", cacheEntry.Vary ?? Array.Empty<string>());
+                        cacheEntry.CacheControlHeader?.ToString() ?? "", cacheEntry.Vary ?? Array.Empty<string>(), cacheEntry.VaryByQueryKeys ?? Array.Empty<string>());
                 }
             }
 
@@ -95,7 +106,7 @@ namespace Weikio.ApiFramework.ResponceCache
                         if (endpointCacheConfig.PathConfigurations.TryGetValue(path, out var cacheConfig) && cacheConfig.MaxAge > default(TimeSpan))
                         {
                             return new ResponseCacheCachedEntry(ResponseCacheConfigurationLevel.Route,
-                                new CacheControlHeaderValue() { Public = true, MaxAge = cacheConfig.MaxAge }, cacheConfig.Vary);
+                                new CacheControlHeaderValue() { Public = true, MaxAge = cacheConfig.MaxAge }, cacheConfig.Vary, cacheConfig.VaryByQueryKeys);
                         }
 
                         requestPathPartsQueue.Dequeue();
@@ -105,7 +116,7 @@ namespace Weikio.ApiFramework.ResponceCache
                     {
                         return new ResponseCacheCachedEntry(ResponseCacheConfigurationLevel.Endpoint,
                             new CacheControlHeaderValue() { Public = true, MaxAge = endpointCacheConfig.ResponseCacheConfiguration.MaxAge },
-                            endpointCacheConfig.ResponseCacheConfiguration.Vary);
+                            endpointCacheConfig.ResponseCacheConfiguration.Vary, endpointCacheConfig.ResponseCacheConfiguration.VaryByQueryKeys);
                     }
                 }
 
@@ -113,10 +124,10 @@ namespace Weikio.ApiFramework.ResponceCache
                 {
                     return new ResponseCacheCachedEntry(ResponseCacheConfigurationLevel.Global,
                         new CacheControlHeaderValue() { Public = true, MaxAge = _options.ResponseCacheConfiguration.MaxAge },
-                        _options.ResponseCacheConfiguration.Vary);
+                        _options.ResponseCacheConfiguration.Vary, _options.ResponseCacheConfiguration.VaryByQueryKeys);
                 }
 
-                return new ResponseCacheCachedEntry(ResponseCacheConfigurationLevel.Undefined, null, null);
+                return new ResponseCacheCachedEntry(ResponseCacheConfigurationLevel.Undefined, null, null, null);
             });
         }
 
@@ -125,16 +136,18 @@ namespace Weikio.ApiFramework.ResponceCache
             public ResponseCacheConfigurationLevel Level { get; set; }
             public CacheControlHeaderValue CacheControlHeader { get; set; }
             public string[] Vary { get; set; }
+            public string[] VaryByQueryKeys { get; }
 
             public ResponseCacheCachedEntry()
             {
             }
 
-            public ResponseCacheCachedEntry(ResponseCacheConfigurationLevel level, CacheControlHeaderValue cacheControlHeader, string[] vary)
+            public ResponseCacheCachedEntry(ResponseCacheConfigurationLevel level, CacheControlHeaderValue cacheControlHeader, string[] vary, string[] varyByQueryKeys)
             {
                 Level = level;
                 CacheControlHeader = cacheControlHeader;
                 Vary = vary;
+                VaryByQueryKeys = varyByQueryKeys;
             }
         }
     }
