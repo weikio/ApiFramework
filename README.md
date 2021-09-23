@@ -6,6 +6,8 @@ API Framework is a framework built on top of ASP.NET Core that aims to make buil
 
 Learn more at https://weik.io/apiframework. For documentation please visit https://docs.weik.io/apiframework/.
 
+For samples please visit https://github.com/weikio/ApiFramework.Samples.
+
 ## Introduction 
 
 ![Logo](docs/logo_alternative_2_small.png)
