@@ -1,0 +1,29 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <IsPackable>true</IsPackable>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <Description>Starter Kit for Api Framework for ASP.NET Core. Api Framework gives you powerful and dynamic tools for easily building Open Api based endpoints.</Description>
+    <PackageDescription>Starter Kit for Api Framework for ASP.NET Core. Api Framework gives you powerful and dynamic tools for easily building Open Api based endpoints.</PackageDescription>
+    <PackageId>Weikio.ApiFramework.AspNetCore.StarterKit</PackageId>
+    <Product>Weikio.ApiFramework.AspNetCore.StarterKit</Product>
+    <PackageTags>api;open api;aspnetcore;nswag</PackageTags>
+    <Title>Starter Kit for for Api Framework for ASP.NET Core</Title>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Weikio.ApiFramework.Admin\Weikio.ApiFramework.Admin.csproj" />
+    <ProjectReference Include="..\Weikio.ApiFramework.AspNetCore.NSwag\Weikio.ApiFramework.AspNetCore.NSwag.csproj" />
+    <ProjectReference Include="..\Weikio.ApiFramework.AspNetCore\Weikio.ApiFramework.AspNetCore.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="NSwag.AspNetCore" Version="13.8.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+  </ItemGroup>
+
+</Project>

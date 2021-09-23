@@ -1,0 +1,79 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
+using Weikio.ApiFramework.Abstractions;
+
+namespace Weikio.ApiFramework.Core.Apis
+{
+    internal class DefaultApiProvider : List<IApiCatalog>, IApiProvider
+    {
+        private readonly ILogger<DefaultApiProvider> _logger;
+
+        public DefaultApiProvider(ILogger<DefaultApiProvider> logger, IEnumerable<IApiCatalog> apiCatalogs)
+        {
+            _logger = logger;
+            AddRange(apiCatalogs);
+        }
+
+        public async Task Initialize(CancellationToken cancellationToken)
+        {
+            _logger.LogInformation("Initializing Api Providers");
+
+            foreach (var provider in this.Where(x => x.IsInitialized == false))
+            {
+                await provider.Initialize(cancellationToken);
+            }
+        }
+
+        public List<ApiDefinition> List()
+        {
+            var result = new List<ApiDefinition>();
+
+            foreach (var catalog in this.Where(x => x.IsInitialized))
+            {
+                var definitionsInCatalog = catalog.List();
+                result.AddRange(definitionsInCatalog);
+            }
+
+            return result;
+        }
+
+        public List<IApiCatalog> ListCatalogs()
+        {
+            return this;
+        }
+
+        public Api Get(ApiDefinition definition)
+        {
+            foreach (var catalog in this.Where(x => x.IsInitialized))
+            {
+                var api = catalog.Get(definition);
+
+                if (api == null)
+                {
+                    continue;
+                }
+
+                return api;
+            }
+
+            var allDefinitions = List();
+
+            throw new ApiNotFoundException(definition.Name, definition.Version,
+                $"No API found with definition {definition}. Available APIs:{Environment.NewLine}{string.Join(Environment.NewLine, allDefinitions)}");
+        }
+
+        public new void Add(IApiCatalog catalog)
+        {
+            base.Add(catalog);
+        }
+
+        public new void Remove(IApiCatalog catalog)
+        {
+            base.Remove(catalog);
+        }
+    }
+}

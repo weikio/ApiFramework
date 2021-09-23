@@ -1,0 +1,36 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <IsPackable>true</IsPackable>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <Description>Plugin Framework based Api Provider for Api Framework.</Description>
+    <PackageDescription>Plugin Framework based Api Provider for Api Framework.</PackageDescription>
+    <PackageId>Weikio.ApiFramework.ApiProviders.PluginFramework</PackageId>
+    <Product>Weikio.ApiFramework.ApiProviders.PluginFramework</Product>
+    <PackageTags>plugin;api;open api;functions</PackageTags>
+    <Title>Plugin Framework Api Provider for Api Framework</Title>
+  </PropertyGroup>
+  
+  <ItemGroup>
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="3.1.2" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="3.1.2" />
+    <PackageReference Include="System.Text.Json" Version="4.7.2" />
+    <PackageReference Include="Polly" Version="7.2.0" />
+    <PackageReference Include="Weikio.PluginFramework" Version="1.5.0" />
+    <PackageReference Include="Weikio.PluginFramework.Catalogs.Roslyn" Version="1.5.0" />
+    <PackageReference Include="Weikio.PluginFramework.Catalogs.Nuget" Version="1.5.0" />
+    <PackageReference Include="NewtonSoft.Json" Version="12.0.3" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <ProjectReference Include="..\Weikio.ApiFramework.Abstractions.DependencyInjection\Weikio.ApiFramework.Abstractions.DependencyInjection.csproj" />
+    <ProjectReference Include="..\Weikio.ApiFramework.Abstractions\Weikio.ApiFramework.Abstractions.csproj" />
+    <ProjectReference Include="..\Weikio.ApiFramework.SDK\Weikio.ApiFramework.SDK.csproj" />
+  </ItemGroup>
+  
+</Project>
