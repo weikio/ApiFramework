@@ -20,10 +20,11 @@ namespace Weikio.ApiFramework.ApiProviders.PluginFramework
             var catalogOptions = new NugetPluginCatalogOptions()
             {
                 TypeFinderOptions = new TypeFinderOptions() { TypeFinderCriterias = criteria },
+                IncludeSystemFeedsAsSecondary = options.IncludeSystemFeedsAsSecondary
             };
 
             NugetPackagePluginCatalog result;
-
+            
             if (string.IsNullOrWhiteSpace(feedUrl))
             {
                 result = new NugetPackagePluginCatalog(packageName, version, true, options: catalogOptions);

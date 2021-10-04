@@ -16,6 +16,11 @@ namespace Weikio.ApiFramework.ApiProviders.PluginFramework
         public List<string> ApiAssemblies { get; set; } = new List<string>();
         public bool AutoResolveApis { get; set; }
         public Func<string, MetadataReader, TypeDefinition, bool> ApiResolver { get; set; } = ApiLocator.IsApi;
+        
+        /// <summary>
+        /// Gets or sets if system feeds should be used as secondary feeds for finding packages when feed url is defined.
+        /// </summary>
+        public bool IncludeSystemFeedsAsSecondary { get; set; } = true;
 
         /// <summary>
         /// Gets or sets the criteria which is used when scanning assemblies or directories for APIs
