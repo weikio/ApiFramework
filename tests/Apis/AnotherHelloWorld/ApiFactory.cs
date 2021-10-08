@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using AnotherHelloWorld;
+using Weikio.ApiFramework.SDK;
 
 namespace AnotherHelloWorld
 {
@@ -70,6 +72,27 @@ namespace AnotherHelloWorld.MultiTask
         {
             await Task.Delay(TimeSpan.FromMilliseconds(10));
             return new List<Type>() { typeof(TestFunctionality) };
+        }
+    }
+}
+
+
+namespace HelloWorldContext
+{
+    public class ApiFactory
+    {
+        private readonly ApiEndpointFactoryContext _context;
+
+        public ApiFactory(ApiEndpointFactoryContext context)
+        {
+            _context = context;
+        }
+
+        public Task<Type> Create()
+        {
+            var result = typeof(TestFunctionality);
+
+            return Task.FromResult(result);
         }
     }
 }

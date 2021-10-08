@@ -133,8 +133,8 @@ namespace Weikio.ApiFramework.ApiProviders.PluginFramework
                 // It could be possible that there is multiple assemblies in a single API but that is unlikely
                 var assembly = pluginsForApi.First().Assembly;
                 
-                var factoryTypes = pluginsForApi.Where(x => x.Tags?.Contains("Factory") == true).ToList();
-                _logger.LogDebug("Found {FactoryTypeCount} factories for {ApiDefinition}", factoryTypes.Count, apiDefinition);
+                var factoryPlugins = pluginsForApi.Where(x => x.Tags?.Contains("Factory") == true).ToList();
+                _logger.LogDebug("Found {FactoryTypeCount} factories for {ApiDefinition}", factoryPlugins.Count, apiDefinition);
 
                 // Only one health check for api is supported. We try to locate a HealthCheck which resides in the same Assembly as the plugin
                 var allHealthChecks = allPlugins.Where(x => x.Tags?.Contains("HealthCheck") == true);
@@ -153,13 +153,13 @@ namespace Weikio.ApiFramework.ApiProviders.PluginFramework
                         .First(m => m.IsStatic && typeof(Task<IHealthCheck>).IsAssignableFrom(m.ReturnType));
                 }
 
-                var factory = _factoryWrapper.Wrap(factoryTypes.Select(x => x.Type).ToList());
+                var factory = _factoryWrapper.Wrap(factoryPlugins);
                 var healthCheckRunner = _healthCheckWrapper.Wrap(healthCheckFactoryMethod);
 
                 var apiTypes = pluginsForApi.Where(x => x.Tags?.Contains("Api") == true).ToList();
                 _logger.LogDebug("Found {ApiTypeCount} api types for {ApiDefinition}", apiTypes.Count, apiDefinition);
 
-                if (factoryTypes?.Any() != true && apiTypes?.Any() != true)
+                if (factoryPlugins?.Any() != true && apiTypes?.Any() != true)
                 {
                     _logger.LogWarning("No api types or factory types found for api definition {ApiDefinition}. It's not possible to use this as an API.", apiDefinition);
                 }

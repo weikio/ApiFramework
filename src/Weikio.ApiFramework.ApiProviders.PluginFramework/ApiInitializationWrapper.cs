@@ -9,6 +9,11 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using Weikio.ApiFramework.Abstractions;
+using Weikio.ApiFramework.SDK;
+using Weikio.PluginFramework.Abstractions;
+using Weikio.PluginFramework.Catalogs;
+using Weikio.PluginFramework.Context;
+using Weikio.TypeGenerator;
 using JsonSerializer = System.Text.Json.JsonSerializer;
 
 namespace Weikio.ApiFramework.ApiProviders.PluginFramework
@@ -19,14 +24,15 @@ namespace Weikio.ApiFramework.ApiProviders.PluginFramework
         private readonly IOptionsMonitor<EndpointInitializationOptions> _endpointInitializationOptions;
         private readonly IServiceProvider _serviceProvider;
 
-        public ApiInitializationWrapper(ILogger<ApiInitializationWrapper> logger, IOptionsMonitor<EndpointInitializationOptions> endpointInitializationOptions, IServiceProvider serviceProvider)
+        public ApiInitializationWrapper(ILogger<ApiInitializationWrapper> logger, IOptionsMonitor<EndpointInitializationOptions> endpointInitializationOptions,
+            IServiceProvider serviceProvider)
         {
             _logger = logger;
             _endpointInitializationOptions = endpointInitializationOptions;
             _serviceProvider = serviceProvider;
         }
 
-        public Func<Endpoint, Task<IEnumerable<Type>>> Wrap(List<Type> factoryTypes)
+        public Func<Endpoint, Task<IEnumerable<Type>>> Wrap(List<Plugin> factoryTypes)
         {
             if (factoryTypes?.Any() != true)
             {
@@ -57,13 +63,26 @@ namespace Weikio.ApiFramework.ApiProviders.PluginFramework
                 {
                     configurationDictionary = new Dictionary<string, object>();
                 }
-                
+
                 foreach (var factoryType in factoryTypes)
                 {
-                    var staticFactoryMethod = factoryType
+                    var pluginAssemblyLoadContext = GetPluginAssemblyContext(factoryType);
+
+                    if (pluginAssemblyLoadContext != null)
+                    {
+                        // Try to make sure that if the plugin uses CodeToAssemblyGenerator that it uses the same AssemblyLoadContext as the plugin
+                        // Alternatively the ApiFactory can get context if it takes ApiEndpointFactoryContext as a constructor parameter
+                        CodeToAssemblyGenerator.DefaultAssemblyLoadContextFactory = () => pluginAssemblyLoadContext;
+                    }
+                    else
+                    {
+                        CodeToAssemblyGenerator.DefaultAssemblyLoadContextFactory = () => new CustomAssemblyLoadContext(null);
+                    }
+
+                    var staticFactoryMethod = factoryType.Type
                         .GetMethods().FirstOrDefault(m => m.IsStatic && typeof(Task<IEnumerable<Type>>).IsAssignableFrom(m.ReturnType));
 
-                    var hasStaticFactoryMethod = staticFactoryMethod != null && factoryType.IsAbstract && factoryType.IsSealed;
+                    var hasStaticFactoryMethod = staticFactoryMethod != null && factoryType.Type.IsAbstract && factoryType.Type.IsSealed;
 
                     MethodInfo initializerMethod = null;
                     object factoryInstance = null;
@@ -74,7 +93,32 @@ namespace Weikio.ApiFramework.ApiProviders.PluginFramework
                     }
                     else
                     {
-                        factoryInstance = ActivatorUtilities.CreateInstance(_serviceProvider, factoryType);
+                        var context = CreateContext(endpoint, factoryType);
+
+                        // ReSharper disable once PossibleMistakenCallToGetType.2
+                        var constructors = factoryType.Type.GetConstructors();
+
+                        var takesContext = false;
+
+                        foreach (var constructor in constructors)
+                        {
+                            if (constructor.GetParameters().Any(x => x.ParameterType == typeof(ApiEndpointFactoryContext)))
+                            {
+                                takesContext = true;
+
+                                break;
+                            }
+                        }
+
+                        if (takesContext)
+                        {
+                            factoryInstance = ActivatorUtilities.CreateInstance(_serviceProvider, factoryType, new object[] { context });
+                        }
+                        else
+                        {
+                            factoryInstance = ActivatorUtilities.CreateInstance(_serviceProvider, factoryType);
+                        }
+
                         var allMethods = factoryInstance.GetType().GetMethods(BindingFlags.Instance | BindingFlags.Public | BindingFlags.DeclaredOnly);
 
                         foreach (var methodInfo in allMethods)
@@ -84,7 +128,7 @@ namespace Weikio.ApiFramework.ApiProviders.PluginFramework
                             // Not the prettiest solution but is OK for the first release
                             if (methodReturnType == typeof(Type) || methodReturnType == typeof(Task<Type>) ||
                                 typeof(IEnumerable<Type>).IsAssignableFrom(methodReturnType) ||
-                                typeof(Task<IEnumerable<Type>>).IsAssignableFrom(methodReturnType) || 
+                                typeof(Task<IEnumerable<Type>>).IsAssignableFrom(methodReturnType) ||
                                 typeof(Task<List<Type>>).IsAssignableFrom(methodReturnType))
                             {
                                 initializerMethod = methodInfo;
@@ -98,7 +142,7 @@ namespace Weikio.ApiFramework.ApiProviders.PluginFramework
                     {
                         throw new Exception("Couldn't find factory method from type");
                     }
-                        
+
                     var methodParameters = initializerMethod.GetParameters().ToList();
                     var arguments = new List<object>();
 
@@ -110,8 +154,8 @@ namespace Weikio.ApiFramework.ApiProviders.PluginFramework
                             arguments.Add(endpoint.Route);
 
                             continue;
-                        };
-                        
+                        }
+
                         if (string.Equals(methodParameter.Name, "configuration", StringComparison.InvariantCultureIgnoreCase) &&
                             methodParameter.ParameterType != typeof(string) && endpoint.Configuration != null)
                         {
@@ -121,15 +165,13 @@ namespace Weikio.ApiFramework.ApiProviders.PluginFramework
 
                                 continue;
                             }
-                            else
-                            {
-                                var jsonConfiguration = JsonConvert.SerializeObject(configurationDictionary);
-                                var arg = JsonConvert.DeserializeObject(jsonConfiguration, methodParameter.ParameterType);
-                                arguments.Add(arg);
 
-                                continue;
-                            }
-                        };
+                            var jsonConfiguration = JsonConvert.SerializeObject(configurationDictionary);
+                            var arg = JsonConvert.DeserializeObject(jsonConfiguration, methodParameter.ParameterType);
+                            arguments.Add(arg);
+
+                            continue;
+                        }
 
                         if (configurationDictionary != null)
                         {
@@ -146,10 +188,10 @@ namespace Weikio.ApiFramework.ApiProviders.PluginFramework
                             {
                                 var configurationValueAsMethodParameterType = Convert.ChangeType(configurationValue, methodParameter.ParameterType);
                                 arguments.Add(configurationValueAsMethodParameterType);
-                            
+
                                 continue;
                             }
-                            
+
                             var json = JsonSerializer.Serialize(configurationValue);
 
                             var obj = JsonSerializer.Deserialize(json, methodParameter.ParameterType,
@@ -162,7 +204,7 @@ namespace Weikio.ApiFramework.ApiProviders.PluginFramework
                     try
                     {
                         var initializationCount = 0;
-                        
+
                         var endpointRetryPolicyOptions = _endpointInitializationOptions.Get(endpoint.Name);
 
                         var retryPolicy = endpointRetryPolicyOptions.RetryPolicy(endpointRetryPolicyOptions, endpoint, _logger);
@@ -193,7 +235,7 @@ namespace Weikio.ApiFramework.ApiProviders.PluginFramework
                                 else if (methodReturnType == typeof(Task<Type>))
                                 {
                                     var tOut = (Task<Type>) initializerMethod.Invoke(factoryInstance, arguments.ToArray());
-                                    createdApis = new List<Type>() { (await tOut) }; 
+                                    createdApis = new List<Type>() { (await tOut) };
                                 }
                                 else if (typeof(IEnumerable<Type>).IsAssignableFrom(methodReturnType))
                                 {
@@ -229,10 +271,10 @@ namespace Weikio.ApiFramework.ApiProviders.PluginFramework
                                     }
                                 }
                             }
-                            
+
                             result.AddRange(createdApis);
                         });
-                        
+
                         await endpointRetryPolicyOptions.OnInitialized(endpointRetryPolicyOptions, endpoint, _logger);
                     }
                     catch (Exception e)
@@ -258,6 +300,26 @@ namespace Weikio.ApiFramework.ApiProviders.PluginFramework
             }
 
             return Activator.CreateInstance(t);
+        }
+
+        private ApiEndpointFactoryContext CreateContext(Endpoint endpoint, Plugin plugin)
+        {
+            var result = new PluginFrameworkApiEndpointFactoryContext();
+            result.Plugin = plugin;
+            result.Endpoint = endpoint;
+            result.AssemblyLoadContext = GetPluginAssemblyContext(plugin);
+            
+            return result;
+        }
+
+        private PluginAssemblyLoadContext GetPluginAssemblyContext(Plugin plugin)
+        {
+            if (plugin.Source is TypePluginCatalog typePluginCatalog)
+            {
+                return typePluginCatalog.Options.TypeFindingContext as PluginAssemblyLoadContext;
+            }
+
+            return null;
         }
     }
 }

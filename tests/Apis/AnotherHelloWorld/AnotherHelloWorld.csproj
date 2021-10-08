@@ -3,5 +3,9 @@
     <PropertyGroup>
         <TargetFramework>netstandard2.0</TargetFramework>
     </PropertyGroup>
+  
+    <ItemGroup>
+      <ProjectReference Include="..\..\..\src\Weikio.ApiFramework.SDK\Weikio.ApiFramework.SDK.csproj" />
+    </ItemGroup>
 
 </Project>

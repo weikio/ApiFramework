@@ -135,6 +135,22 @@ namespace ApiFramework.IntegrationTests
             // Assert
             Assert.Equal("Hello from Factory", result);
         }
+        
+        [Fact]
+        public async Task CanInjectContext()
+        {
+            var server = Init(builder =>
+            {
+                builder.AddApi(typeof(HelloWorldContext.ApiFactory));
+                builder.AddEndpoint("/mytest", typeof(HelloWorldContext.ApiFactory).FullName);
+            });
+
+            // Act 
+            var result = await server.GetStringAsync("/api/mytest");
+
+            // Assert
+            Assert.Equal("Hello from Factory", result);
+        }
 
         [Fact]
         public void CanCreateApiWithConfiguration()
