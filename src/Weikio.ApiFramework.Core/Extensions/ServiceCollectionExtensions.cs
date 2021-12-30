@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -15,6 +15,7 @@ using Weikio.ApiFramework.Abstractions.DependencyInjection;
 using Weikio.ApiFramework.Core;
 using Weikio.ApiFramework.Core.Apis;
 using Weikio.ApiFramework.Core.AsyncStream;
+using Weikio.ApiFramework.Core.Cache;
 using Weikio.ApiFramework.Core.Configuration;
 using Weikio.ApiFramework.Core.Endpoints;
 using Weikio.ApiFramework.Core.Extensions;
@@ -185,6 +186,10 @@ namespace Weikio.ApiFramework
             {
                 mvcOptions.Filters.Add(filter);
             });
+
+            services.AddDistributedMemoryCache();
+            services.TryAddSingleton<IApiCache, DefaultApiCache>();
+            services.TryAddSingleton<IEndpointCache, DefaultEndpointCache>();
 
             TryAddStartupTasks(services);
 
