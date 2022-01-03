@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Weikio.ApiFramework.Abstractions;
 using Weikio.ApiFramework.AspNetCore;
@@ -16,6 +17,30 @@ namespace Weikio.ApiFramework.Core.Cache
         {
             _apiCache = apiCache;
             _contextAccessor = contextAccessor;
+        }
+
+        public string GetOrCreateString(string key, Func<string> getString)
+        {
+            var endpoint = _contextAccessor.HttpContext.GetEndpointMetadata();
+            return _apiCache.GetOrCreateString(endpoint, key, getString);
+        }
+
+        public async Task<string> GetOrCreateStringAsync(string key, Func<Task<string>> getString)
+        {
+            var endpoint = _contextAccessor.HttpContext.GetEndpointMetadata();
+            return await _apiCache.GetOrCreateStringAsync(endpoint, key, getString);
+        }
+
+        public object GetOrCreateObject(string key, Func<object> getObject)
+        {
+            var endpoint = _contextAccessor.HttpContext.GetEndpointMetadata();
+            return _apiCache.GetOrCreateObject(endpoint, key, getObject);
+        }
+
+        public async Task<object> GetOrCreateObjectAsync(string key, Func<Task<object>> getObject)
+        {
+            var endpoint = _contextAccessor.HttpContext.GetEndpointMetadata();
+            return await _apiCache.GetOrCreateObjectAsync(endpoint, key, getObject);
         }
 
         public object GetObject(string key)
