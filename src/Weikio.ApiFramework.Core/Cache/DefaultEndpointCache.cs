@@ -1,11 +1,13 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using Microsoft.AspNetCore.Http;
 using Weikio.ApiFramework.Abstractions;
+using Weikio.ApiFramework.AspNetCore;
 
 namespace Weikio.ApiFramework.Core.Cache
 {
-    public class DefaultEndpointCache : IEndpointCache
+    internal class DefaultEndpointCache : IEndpointCache
     {
         private readonly IApiCache _apiCache;
 

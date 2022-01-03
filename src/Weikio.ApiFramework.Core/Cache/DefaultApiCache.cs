@@ -7,20 +7,30 @@ using Weikio.ApiFramework.Abstractions;
 
 namespace Weikio.ApiFramework.Core.Cache
 {
-    public class DefaultApiCache : IApiCache
+    internal class DefaultApiCache : IApiCache
     {
         private readonly IDistributedCache _distributedCache;
-        private readonly ApiCacheOptions _cacheOptions;
+        private readonly ICacheOptions _cacheOptions;
+        private readonly ApiCacheOptions _apiCacheOptions;
 
-        public DefaultApiCache(IDistributedCache distributedCache, IOptions<ApiCacheOptions> options)
+
+        public DefaultApiCache(IDistributedCache distributedCache, 
+            IOptions<ApiCacheOptions> options, ICacheOptions cacheOptions)
         {
             _distributedCache = distributedCache;
-            _cacheOptions = options.Value;
+            _cacheOptions = cacheOptions;
+            _apiCacheOptions = options.Value;
+        }
+
+        private string GetKey(string key)
+        {
+            return _cacheOptions.KeyFunc(key);
         }
 
         public string GetOrCreateString(string key, Func<string> getString)
         {
-            var item = _distributedCache.GetString(key.ToString());
+            var cacheKey = GetKey(key);
+            var item = _distributedCache.GetString(cacheKey.ToString());
             if (item != null)
             {
                 return item;
@@ -32,21 +42,23 @@ namespace Weikio.ApiFramework.Core.Cache
 
         public string GetString(string key)
         {
-            return _distributedCache.GetString(key.ToString());
+            var cacheKey = GetKey(key);
+            return _distributedCache.GetString(cacheKey.ToString());
         }
 
         public void SetString(string key, string value)
         {
+            var cacheKey = GetKey(key);
             var options = GetEntryOptions();
-            _distributedCache.SetString(key, value, options);
+            _distributedCache.SetString(cacheKey, value, options);
         }
 
         private DistributedCacheEntryOptions GetEntryOptions()
         {
             var options = new DistributedCacheEntryOptions();
-            if(_cacheOptions.ExpirationTimeInSeconds > 0)
+            if(_apiCacheOptions.ExpirationTimeInSeconds > 0)
             {
-                options.AbsoluteExpirationRelativeToNow = TimeSpan.FromSeconds(_cacheOptions.ExpirationTimeInSeconds);
+                options.AbsoluteExpirationRelativeToNow = TimeSpan.FromSeconds(_apiCacheOptions.ExpirationTimeInSeconds);
             }
             return options;
         }
