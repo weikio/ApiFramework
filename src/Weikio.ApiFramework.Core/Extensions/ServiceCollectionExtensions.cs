@@ -188,9 +188,8 @@ namespace Weikio.ApiFramework
             });
 
             services.AddDistributedMemoryCache();
-            services.TryAddSingleton<IApiCache, DefaultApiCache>();
-            services.TryAddSingleton<ICacheOptions, EndPointCacheOptions>();
-            services.TryAddSingleton<IEndpointCache, DefaultEndpointCache>();
+            services.TryAddTransient<IApiCache, DefaultApiCache>();
+            services.TryAddTransient<IEndpointCache, DefaultEndpointCache>();
 
             TryAddStartupTasks(services);
 
