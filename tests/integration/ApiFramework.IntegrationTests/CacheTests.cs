@@ -25,7 +25,6 @@ namespace ApiFramework.IntegrationTests
             {
                 builder.AddApi(typeof(HelloWorldCacheApi));
                 builder.AddEndpoint<HelloWorldCacheApi>("/cache");
-
             },
             configureServices: services => {
                 var apiCacheOptions = new Action<ApiCacheOptions>(options =>
@@ -92,6 +91,56 @@ namespace ApiFramework.IntegrationTests
             var server = GetClient();
             var resultGet = await server.GetStringAsync("/api/cache/timeout?name=test&timeInSeconds=6");
             Assert.Equal("Hello. You were removed from cache", resultGet);
+        }
+
+        [Fact]
+        public async Task SeparateEndPoints()
+        {
+            var server = Init(builder =>
+            {
+                builder.AddApi(typeof(HelloWorldCacheApi));
+                builder.AddEndpoint<HelloWorldCacheApi>("/cache1");
+                builder.AddEndpoint<HelloWorldCacheApi>("/cache2");
+            },
+            configureServices: services => {
+                var apiCacheOptions = new Action<ApiCacheOptions>(options =>
+                {
+                    options.ExpirationTimeInSeconds = 5;
+                });
+                services.Configure(apiCacheOptions);
+            });
+            //set with first end point
+            await server.GetStringAsync("/api/cache1/setstring?name=test");
+            //retrieve from another
+            var resultGet = await server.GetStringAsync("/api/cache2/getstring");
+
+            Assert.Equal("Hello. Value not found from cache", resultGet);
+        }
+
+
+        [Fact]
+        public async Task SeparateEndPointsWithSameKey()
+        {
+            var server = Init(builder =>
+            {
+                builder.AddApi(typeof(HelloWorldCacheApi));
+                builder.AddEndpoint<HelloWorldCacheApi>("/cache1");
+                builder.AddEndpoint<HelloWorldCacheApi>("/cache2");
+            },
+            configureServices: services => {
+                var apiCacheOptions = new Action<ApiCacheOptions>(options =>
+                {
+                    options.ExpirationTimeInSeconds = 5;
+                    options.GetKey = (endpoint, provider, key) => { return key; };
+                });
+                services.Configure(apiCacheOptions);
+            });
+            //set with first end point
+            await server.GetStringAsync("/api/cache1/setstring?name=test");
+            //retrieve from another
+            var resultGet = await server.GetStringAsync("/api/cache2/getstring");
+
+            Assert.Equal("Hello test from cache", resultGet);
         }
     }
 }
