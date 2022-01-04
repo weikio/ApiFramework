@@ -30,7 +30,7 @@ namespace Weikio.ApiFramework.Core.Cache
             if (item == null)
             {
                 item = getString();
-                _distributedCache.SetString(key, item);
+                _distributedCache.SetString(cacheKey, item);
             }
             return item;
         }
@@ -42,7 +42,7 @@ namespace Weikio.ApiFramework.Core.Cache
             if (item == null)
             {
                 item = await getString();
-                _distributedCache.SetString(key, item);
+                _distributedCache.SetString(cacheKey, item);
             }
             return item;
         }
@@ -54,7 +54,7 @@ namespace Weikio.ApiFramework.Core.Cache
             if (item == null)
             {
                 item = ObjectToByteArray(getObject());
-                _distributedCache.Set(key, item);
+                _distributedCache.Set(cacheKey, item);
             }
             return ByteArrayToObject(item);
         }
@@ -66,7 +66,7 @@ namespace Weikio.ApiFramework.Core.Cache
             if (item == null)
             {
                 item = ObjectToByteArray(await getObject());
-                _distributedCache.Set(key, item);
+                _distributedCache.Set(cacheKey, item);
             }
             return ByteArrayToObject(item);
         }
