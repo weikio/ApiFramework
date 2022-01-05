@@ -47,28 +47,28 @@ namespace Weikio.ApiFramework.Core.Cache
             return item;
         }
 
-        public object GetOrCreateObject(Endpoint endpoint, string key, Func<object> getObject)
+        public byte[] GetOrCreateObject(Endpoint endpoint, string key, Func<byte[]> getObject)
         {
             var cacheKey = _apiCacheOptions.GetKey(endpoint, _serviceProvider, key);
             var item = _distributedCache.Get(cacheKey.ToString());
             if (item == null)
             {
-                item = ObjectToByteArray(getObject());
+                item = getObject();
                 _distributedCache.Set(cacheKey, item);
             }
-            return ByteArrayToObject(item);
+            return item;
         }
 
-        public async Task<object> GetOrCreateObjectAsync(Endpoint endpoint, string key, Func<Task<object>> getObject)
+        public async Task<byte[]> GetOrCreateObjectAsync(Endpoint endpoint, string key, Func<Task<byte[]>> getObject)
         {
             var cacheKey = _apiCacheOptions.GetKey(endpoint, _serviceProvider, key);
             var item = _distributedCache.Get(cacheKey.ToString());
             if (item == null)
             {
-                item = ObjectToByteArray(await getObject());
+                item = await getObject();
                 _distributedCache.Set(cacheKey, item);
             }
-            return ByteArrayToObject(item);
+            return item;
         }
 
         public string GetString(Endpoint endpoint, string key)
@@ -84,17 +84,17 @@ namespace Weikio.ApiFramework.Core.Cache
             _distributedCache.SetString(cacheKey, value, options);
         }
 
-        public object GetObject(Endpoint endpoint, string key)
+        public byte[] GetObject(Endpoint endpoint, string key)
         {
             var cacheKey = _apiCacheOptions.GetKey(endpoint, _serviceProvider, key);
-            return ByteArrayToObject(_distributedCache.Get(cacheKey.ToString()));
+            return _distributedCache.Get(cacheKey.ToString());
         }
 
-        public void SetObject(Endpoint endpoint, string key, object value)
+        public void SetObject(Endpoint endpoint, string key, byte[] value)
         {
             var cacheKey = _apiCacheOptions.GetKey(endpoint, _serviceProvider, key);
             var options = GetEntryOptions();
-            _distributedCache.Set(cacheKey, ObjectToByteArray(value), options);
+            _distributedCache.Set(cacheKey, value, options);
         }
 
         private DistributedCacheEntryOptions GetEntryOptions()
@@ -105,28 +105,6 @@ namespace Weikio.ApiFramework.Core.Cache
                 options.AbsoluteExpirationRelativeToNow = TimeSpan.FromSeconds(_apiCacheOptions.ExpirationTimeInSeconds);
             }
             return options;
-        }
-
-        private byte[] ObjectToByteArray(object obj)
-        {
-            var bf = new BinaryFormatter();
-            using (var ms = new MemoryStream())
-            {
-                bf.Serialize(ms, obj);
-                return ms.ToArray();
-            }
-        }
-
-        public static object ByteArrayToObject(byte[] arrBytes)
-        {
-            using (var memStream = new MemoryStream())
-            {
-                var binForm = new BinaryFormatter();
-                memStream.Write(arrBytes, 0, arrBytes.Length);
-                memStream.Seek(0, SeekOrigin.Begin);
-                var obj = binForm.Deserialize(memStream);
-                return obj;
-            }
         }
     }
 }

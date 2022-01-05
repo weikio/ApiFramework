@@ -12,9 +12,9 @@ namespace Weikio.ApiFramework.Abstractions
         string GetString(Endpoint endpoint, string key);
         void SetString(Endpoint endpoint, string key, string value);
 
-        object GetOrCreateObject(Endpoint endpoint, string key, Func<object> getObject);
-        Task<object> GetOrCreateObjectAsync(Endpoint endpoint, string key, Func<Task<object>> getString);
-        object GetObject(Endpoint endpoint, string key);
-        void SetObject(Endpoint endpoint, string key, object value);
+        byte[] GetOrCreateObject(Endpoint endpoint, string key, Func<byte[]> getObject);
+        Task<byte[]> GetOrCreateObjectAsync(Endpoint endpoint, string key, Func<Task<byte[]>> getObject);
+        byte[] GetObject(Endpoint endpoint, string key);
+        void SetObject(Endpoint endpoint, string key, byte[] value);
     }
 }

@@ -1,4 +1,5 @@
 using System;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
@@ -79,7 +80,7 @@ namespace HelloWorld
 
         public void SetObject(string name)
         {
-            var obj = GetTestObject(name);
+            var obj = Encoding.ASCII.GetBytes(name);
             _cache.SetObject("MyKey", obj);
             return;
         }
@@ -91,28 +92,13 @@ namespace HelloWorld
             {
                 return $"Hello. Value not found from cache";
             }
-            var obj = (TestObject)cacheValue;
-            return $"Hello {obj.Name} object from cache";
+            var obj = Encoding.ASCII.GetString(cacheValue);
+            return $"Hello {obj} object from cache";
         }
+    }
 
-        //    public async Task<string> CreateAsyncHelloObjectAsync(string name)
-        //    {
-        //        Func<Task<object>> func = () => GetTestObjectAsync(name);
-        //        var cacheValue = await _cache.GetOrCreateObjectAsync("MyKey", func);
-        //        return $"Hello {cacheValue} from cache";
-        //    }
-
-        //    public string SetObject(string name)
-        //    {
-        //        _cache.SetObject("MyObjectKey", name);
-        //        var cacheValue = _cache.GetObject("MyObjectKey");
-        //        return $"Hello {cacheValue} from cache";
-        //    }
-
-        [Serializable]
-        internal class TestObject
-        {
-            public string Name { get; set; }
-        }
+    internal class TestObject
+    {
+        public string Name { get; set; }
     }
 }

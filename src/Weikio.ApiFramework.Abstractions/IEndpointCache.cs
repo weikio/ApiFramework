@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace Weikio.ApiFramework.Abstractions
@@ -12,9 +13,9 @@ namespace Weikio.ApiFramework.Abstractions
         string GetString(string key);
         void SetString(string key, string value);
 
-        object GetOrCreateObject(string key, Func<object> getObject);
-        Task<object> GetOrCreateObjectAsync(string key, Func<Task<object>> getString);
-        object GetObject(string key);
-        void SetObject(string key, object value);
+        byte[] GetOrCreateObject(string key, Func<byte[]> getObject);
+        Task<byte[]> GetOrCreateObjectAsync(string key, Func<Task<byte[]>> getObject);
+        byte[] GetObject(string key);
+        void SetObject(string key, byte[] value);
     }
 }

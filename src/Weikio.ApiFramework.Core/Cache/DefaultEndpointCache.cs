@@ -31,19 +31,19 @@ namespace Weikio.ApiFramework.Core.Cache
             return await _apiCache.GetOrCreateStringAsync(endpoint, key, getString);
         }
 
-        public object GetOrCreateObject(string key, Func<object> getObject)
+        public byte[] GetOrCreateObject(string key, Func<byte[]> getObject)
         {
             var endpoint = _contextAccessor.HttpContext.GetEndpointMetadata();
             return _apiCache.GetOrCreateObject(endpoint, key, getObject);
         }
 
-        public async Task<object> GetOrCreateObjectAsync(string key, Func<Task<object>> getObject)
+        public async Task<byte[]> GetOrCreateObjectAsync(string key, Func<Task<byte[]>> getObject)
         {
             var endpoint = _contextAccessor.HttpContext.GetEndpointMetadata();
             return await _apiCache.GetOrCreateObjectAsync(endpoint, key, getObject);
         }
 
-        public object GetObject(string key)
+        public byte[] GetObject(string key)
         {
             var endpoint = _contextAccessor.HttpContext.GetEndpointMetadata();
             return _apiCache.GetObject(endpoint, key);
@@ -55,7 +55,7 @@ namespace Weikio.ApiFramework.Core.Cache
             return _apiCache.GetString(endpoint, key);
         }
 
-        public void SetObject(string key, object value)
+        public void SetObject(string key, byte[] value)
         {
             var endpoint = _contextAccessor.HttpContext.GetEndpointMetadata();
             _apiCache.SetObject(endpoint, key, value);
