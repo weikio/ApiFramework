@@ -29,7 +29,7 @@ namespace ApiFramework.IntegrationTests
             configureServices: services => {
                 var apiCacheOptions = new Action<ApiCacheOptions>(options =>
                 {
-                    options.ExpirationTimeInSeconds = 5;
+                    options.ExpirationTime = TimeSpan.FromSeconds(5);
                 });
                 services.Configure(apiCacheOptions);
             });
@@ -73,6 +73,7 @@ namespace ApiFramework.IntegrationTests
             var server = GetClient();
             await server.PostAsync("/api/cache/setobject?name=test", null);
             var resultGet = await server.GetStringAsync("/api/cache/getobject");
+
             Assert.Equal("Hello test object from cache", resultGet);
         }
 
@@ -105,7 +106,7 @@ namespace ApiFramework.IntegrationTests
             configureServices: services => {
                 var apiCacheOptions = new Action<ApiCacheOptions>(options =>
                 {
-                    options.ExpirationTimeInSeconds = 5;
+                    options.ExpirationTime = TimeSpan.FromSeconds(5);
                 });
                 services.Configure(apiCacheOptions);
             });
@@ -130,7 +131,7 @@ namespace ApiFramework.IntegrationTests
             configureServices: services => {
                 var apiCacheOptions = new Action<ApiCacheOptions>(options =>
                 {
-                    options.ExpirationTimeInSeconds = 5;
+                    options.ExpirationTime = TimeSpan.FromSeconds(5);
                     options.GetKey = (endpoint, provider, key) => { return key; };
                 });
                 services.Configure(apiCacheOptions);

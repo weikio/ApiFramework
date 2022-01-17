@@ -106,9 +106,9 @@ namespace Weikio.ApiFramework.Core.Cache
         private DistributedCacheEntryOptions GetEntryOptions()
         {
             var options = new DistributedCacheEntryOptions();
-            if (_apiCacheOptions.ExpirationTimeInSeconds > 0)
+            if (_apiCacheOptions.ExpirationTime.TotalSeconds > 0)
             {
-                options.AbsoluteExpirationRelativeToNow = TimeSpan.FromSeconds(_apiCacheOptions.ExpirationTimeInSeconds);
+                options.AbsoluteExpirationRelativeToNow = _apiCacheOptions.ExpirationTime;
             }
 
             return options;

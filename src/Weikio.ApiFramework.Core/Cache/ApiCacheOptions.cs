@@ -7,7 +7,7 @@ namespace Weikio.ApiFramework.Core.Cache
 {
     public class ApiCacheOptions
     {
-        public int ExpirationTimeInSeconds { get; set; } = 60;
+        public TimeSpan ExpirationTime { get; set; } = TimeSpan.FromSeconds(60);
         public Func<Endpoint, IServiceProvider, string, string> GetKey { get; set; } = (endpoint, provider, key) =>
         {
             var route = endpoint.Route;
