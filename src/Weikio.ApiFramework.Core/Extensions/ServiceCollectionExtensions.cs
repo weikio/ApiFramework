@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
+using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
@@ -187,7 +188,11 @@ namespace Weikio.ApiFramework
                 mvcOptions.Filters.Add(filter);
             });
 
-            services.AddDistributedMemoryCache();
+            if (!services.Any(s => s.ServiceType == typeof(IDistributedCache)))
+            { 
+                services.AddDistributedMemoryCache();
+            }
+
             services.TryAddTransient<IApiCache, DefaultApiCache>();
             services.TryAddTransient<IEndpointCache, DefaultEndpointCache>();
 
