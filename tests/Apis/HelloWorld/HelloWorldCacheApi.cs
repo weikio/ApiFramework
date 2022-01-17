@@ -26,15 +26,6 @@ namespace HelloWorld
             return await Task.FromResult($"{name} (async function)");
         }
 
-        private object GetTestObject(string name)
-        {
-            var testObject = new TestObject()
-            {
-                Name = name
-            };
-            return testObject;
-        }
-
         public string SetString(string name)
         {
             _cache.SetString("MyKey", name);
@@ -95,10 +86,5 @@ namespace HelloWorld
             var obj = Encoding.ASCII.GetString(cacheValue);
             return $"Hello {obj} object from cache";
         }
-    }
-
-    internal class TestObject
-    {
-        public string Name { get; set; }
     }
 }
