@@ -32,6 +32,7 @@ namespace Weikio.ApiFramework.Core.Cache
                 item = getString();
                 _distributedCache.SetString(cacheKey, item);
             }
+
             return item;
         }
 
@@ -44,6 +45,7 @@ namespace Weikio.ApiFramework.Core.Cache
                 item = await getString();
                 _distributedCache.SetString(cacheKey, item);
             }
+
             return item;
         }
 
@@ -56,6 +58,7 @@ namespace Weikio.ApiFramework.Core.Cache
                 item = getObject();
                 _distributedCache.Set(cacheKey, item);
             }
+
             return item;
         }
 
@@ -68,12 +71,14 @@ namespace Weikio.ApiFramework.Core.Cache
                 item = await getObject();
                 _distributedCache.Set(cacheKey, item);
             }
+
             return item;
         }
 
         public string GetString(Endpoint endpoint, string key)
         {
             var cacheKey = _apiCacheOptions.GetKey(endpoint, _serviceProvider, key);
+
             return _distributedCache.GetString(cacheKey.ToString());
         }
 
@@ -87,6 +92,7 @@ namespace Weikio.ApiFramework.Core.Cache
         public byte[] GetObject(Endpoint endpoint, string key)
         {
             var cacheKey = _apiCacheOptions.GetKey(endpoint, _serviceProvider, key);
+
             return _distributedCache.Get(cacheKey.ToString());
         }
 
@@ -104,6 +110,7 @@ namespace Weikio.ApiFramework.Core.Cache
             {
                 options.AbsoluteExpirationRelativeToNow = TimeSpan.FromSeconds(_apiCacheOptions.ExpirationTimeInSeconds);
             }
+
             return options;
         }
     }
