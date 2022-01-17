@@ -21,50 +21,69 @@ namespace Weikio.ApiFramework.Core.Cache
 
         public string GetOrCreateString(string key, Func<string> getString)
         {
-            var endpoint = _contextAccessor.HttpContext.GetEndpointMetadata();
+            var endpoint = GetHttpEndpointMetadata();
             return _apiCache.GetOrCreateString(endpoint, key, getString);
         }
 
         public async Task<string> GetOrCreateStringAsync(string key, Func<Task<string>> getString)
         {
-            var endpoint = _contextAccessor.HttpContext.GetEndpointMetadata();
+            var endpoint = GetHttpEndpointMetadata();
             return await _apiCache.GetOrCreateStringAsync(endpoint, key, getString);
         }
 
         public byte[] GetOrCreateObject(string key, Func<byte[]> getObject)
         {
-            var endpoint = _contextAccessor.HttpContext.GetEndpointMetadata();
+            var endpoint = GetHttpEndpointMetadata();
             return _apiCache.GetOrCreateObject(endpoint, key, getObject);
         }
 
         public async Task<byte[]> GetOrCreateObjectAsync(string key, Func<Task<byte[]>> getObject)
         {
-            var endpoint = _contextAccessor.HttpContext.GetEndpointMetadata();
+            var endpoint = GetHttpEndpointMetadata();
             return await _apiCache.GetOrCreateObjectAsync(endpoint, key, getObject);
         }
 
         public byte[] GetObject(string key)
         {
-            var endpoint = _contextAccessor.HttpContext.GetEndpointMetadata();
+            var endpoint = GetHttpEndpointMetadata();
             return _apiCache.GetObject(endpoint, key);
         }
 
         public string GetString(string key)
         {
-            var endpoint = _contextAccessor.HttpContext.GetEndpointMetadata();
+            var endpoint = GetHttpEndpointMetadata();
             return _apiCache.GetString(endpoint, key);
         }
 
         public void SetObject(string key, byte[] value)
         {
-            var endpoint = _contextAccessor.HttpContext.GetEndpointMetadata();
+            var endpoint = GetHttpEndpointMetadata();
             _apiCache.SetObject(endpoint, key, value);
         }
 
         public void SetString(string key, string value)
         {
-            var endpoint = _contextAccessor.HttpContext.GetEndpointMetadata();
+            var endpoint = GetHttpEndpointMetadata();
             _apiCache.SetString(endpoint, key, value);
+        }
+
+        private Abstractions.Endpoint GetHttpEndpointMetadata()
+        {
+            var httpContext = _contextAccessor.HttpContext;
+
+            if (httpContext == null)
+            {
+                throw new InvalidOperationException("Endpoint metadata cannot be retrieved without HttpContext.");
+            }
+
+            var endpointMetadata = httpContext.GetEndpointMetadata();
+
+            if (endpointMetadata == null)
+            {
+                throw new InvalidOperationException("Endpoint metadata cannot be found from HttpContext.");
+            }
+
+            return endpointMetadata;
         }
     }
 }
