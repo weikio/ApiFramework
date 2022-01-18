@@ -1,8 +1,7 @@
 using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Options;
@@ -16,91 +15,39 @@ namespace Weikio.ApiFramework.Core.Cache
         private readonly IServiceProvider _serviceProvider;
         private readonly ApiCacheOptions _apiCacheOptions;
 
-
-        public DefaultApiCache(IDistributedCache distributedCache, IOptions<ApiCacheOptions> options)
+        public DefaultApiCache(IDistributedCache distributedCache, IServiceProvider serviceProvider, IOptions<ApiCacheOptions> options)
         {
             _distributedCache = distributedCache;
+            _serviceProvider = serviceProvider;
             _apiCacheOptions = options.Value;
         }
-
-        public string GetOrCreateString(Endpoint endpoint, string key, Func<string> getString)
-        {
-            var cacheKey = _apiCacheOptions.GetKey(endpoint, _serviceProvider, key);
-            var item = _distributedCache.GetString(cacheKey.ToString());
-            if (item == null)
-            {
-                item = getString();
-                _distributedCache.SetString(cacheKey, item);
-            }
-
-            return item;
-        }
-
-        public async Task<string> GetOrCreateStringAsync(Endpoint endpoint, string key, Func<Task<string>> getString)
-        {
-            var cacheKey = _apiCacheOptions.GetKey(endpoint, _serviceProvider, key);
-            var item = _distributedCache.GetString(cacheKey.ToString());
-            if (item == null)
-            {
-                item = await getString();
-                _distributedCache.SetString(cacheKey, item);
-            }
-
-            return item;
-        }
-
-        public byte[] GetOrCreateObject(Endpoint endpoint, string key, Func<byte[]> getObject)
-        {
-            var cacheKey = _apiCacheOptions.GetKey(endpoint, _serviceProvider, key);
-            var item = _distributedCache.Get(cacheKey.ToString());
-            if (item == null)
-            {
-                item = getObject();
-                _distributedCache.Set(cacheKey, item);
-            }
-
-            return item;
-        }
-
-        public async Task<byte[]> GetOrCreateObjectAsync(Endpoint endpoint, string key, Func<Task<byte[]>> getObject)
-        {
-            var cacheKey = _apiCacheOptions.GetKey(endpoint, _serviceProvider, key);
-            var item = _distributedCache.Get(cacheKey.ToString());
-            if (item == null)
-            {
-                item = await getObject();
-                _distributedCache.Set(cacheKey, item);
-            }
-
-            return item;
-        }
-
-        public string GetString(Endpoint endpoint, string key)
-        {
-            var cacheKey = _apiCacheOptions.GetKey(endpoint, _serviceProvider, key);
-
-            return _distributedCache.GetString(cacheKey.ToString());
-        }
-
-        public void SetString(Endpoint endpoint, string key, string value)
-        {
-            var cacheKey = _apiCacheOptions.GetKey(endpoint, _serviceProvider, key);
-            var options = GetEntryOptions();
-            _distributedCache.SetString(cacheKey, value, options);
-        }
-
-        public byte[] GetObject(Endpoint endpoint, string key)
+        
+        public byte[] GetData(Endpoint endpoint, string key)
         {
             var cacheKey = _apiCacheOptions.GetKey(endpoint, _serviceProvider, key);
 
             return _distributedCache.Get(cacheKey.ToString());
         }
 
-        public void SetObject(Endpoint endpoint, string key, byte[] value)
+        public async Task<byte[]> GetDataAsync(Endpoint endpoint, string key, CancellationToken token = default)
+        {
+            var cacheKey = _apiCacheOptions.GetKey(endpoint, _serviceProvider, key);
+
+            return await _distributedCache.GetAsync(cacheKey.ToString(), token);
+        }
+
+        public void SetData(Endpoint endpoint, string key, byte[] value)
         {
             var cacheKey = _apiCacheOptions.GetKey(endpoint, _serviceProvider, key);
             var options = GetEntryOptions();
             _distributedCache.Set(cacheKey, value, options);
+        }
+
+        public async Task SetDataAsync(Endpoint endpoint, string key, byte[] value, CancellationToken token = default)
+        {
+            var cacheKey = _apiCacheOptions.GetKey(endpoint, _serviceProvider, key);
+            var options = GetEntryOptions();
+            await _distributedCache.SetAsync(cacheKey, value, options, token);
         }
 
         private DistributedCacheEntryOptions GetEntryOptions()

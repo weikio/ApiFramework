@@ -68,13 +68,13 @@ namespace ApiFramework.IntegrationTests
 
 
         [Fact]
-        public async Task CreateAndRetrieveObject()
+        public async Task CreateAndRetrieveData()
         {
             var server = GetClient();
-            await server.PostAsync("/api/cache/setobject?name=test", null);
-            var resultGet = await server.GetStringAsync("/api/cache/getobject");
+            await server.PostAsync("/api/cache/setdata?name=test", null);
+            var resultGet = await server.GetStringAsync("/api/cache/getdata");
 
-            Assert.Equal("Hello test object from cache", resultGet);
+            Assert.Equal("Hello test data from cache", resultGet);
         }
 
         [Fact]

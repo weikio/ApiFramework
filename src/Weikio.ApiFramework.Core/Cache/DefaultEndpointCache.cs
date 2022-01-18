@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Weikio.ApiFramework.Abstractions;
@@ -19,52 +20,27 @@ namespace Weikio.ApiFramework.Core.Cache
             _contextAccessor = contextAccessor;
         }
 
-        public string GetOrCreateString(string key, Func<string> getString)
+        public byte[] GetData(string key)
         {
             var endpoint = GetHttpEndpointMetadata();
-            return _apiCache.GetOrCreateString(endpoint, key, getString);
+            return _apiCache.GetData(endpoint, key);
+        }
+        public async Task<byte[]> GetDataAsync(string key, CancellationToken token = default)
+        {
+            var endpoint = GetHttpEndpointMetadata();
+            return await _apiCache.GetDataAsync(endpoint, key, token);
         }
 
-        public async Task<string> GetOrCreateStringAsync(string key, Func<Task<string>> getString)
+        public void SetData(string key, byte[] value)
         {
             var endpoint = GetHttpEndpointMetadata();
-            return await _apiCache.GetOrCreateStringAsync(endpoint, key, getString);
+            _apiCache.SetData(endpoint, key, value);
         }
 
-        public byte[] GetOrCreateObject(string key, Func<byte[]> getObject)
+        public async Task SetDataAsync(string key, byte[] value, CancellationToken token = default)
         {
             var endpoint = GetHttpEndpointMetadata();
-            return _apiCache.GetOrCreateObject(endpoint, key, getObject);
-        }
-
-        public async Task<byte[]> GetOrCreateObjectAsync(string key, Func<Task<byte[]>> getObject)
-        {
-            var endpoint = GetHttpEndpointMetadata();
-            return await _apiCache.GetOrCreateObjectAsync(endpoint, key, getObject);
-        }
-
-        public byte[] GetObject(string key)
-        {
-            var endpoint = GetHttpEndpointMetadata();
-            return _apiCache.GetObject(endpoint, key);
-        }
-
-        public string GetString(string key)
-        {
-            var endpoint = GetHttpEndpointMetadata();
-            return _apiCache.GetString(endpoint, key);
-        }
-
-        public void SetObject(string key, byte[] value)
-        {
-            var endpoint = GetHttpEndpointMetadata();
-            _apiCache.SetObject(endpoint, key, value);
-        }
-
-        public void SetString(string key, string value)
-        {
-            var endpoint = GetHttpEndpointMetadata();
-            _apiCache.SetString(endpoint, key, value);
+            await _apiCache.SetDataAsync(endpoint, key, value, token);
         }
 
         private Abstractions.Endpoint GetHttpEndpointMetadata()

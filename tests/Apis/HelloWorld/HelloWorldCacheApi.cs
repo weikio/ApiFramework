@@ -69,22 +69,22 @@ namespace HelloWorld
             return $"Hello {cacheValue}. You are still in cache";
         }
 
-        public void SetObject(string name)
+        public void SetData(string name)
         {
             var obj = Encoding.ASCII.GetBytes(name);
-            _cache.SetObject("MyKey", obj);
+            _cache.SetData("MyKey", obj);
             return;
         }
 
-        public string GetObject()
+        public string GetData()
         {
-            var cacheValue = _cache.GetObject("MyKey");
+            var cacheValue = _cache.GetData("MyKey");
             if (cacheValue == null)
             {
                 return $"Hello. Value not found from cache";
             }
-            var obj = Encoding.ASCII.GetString(cacheValue);
-            return $"Hello {obj} object from cache";
+            var value = Encoding.ASCII.GetString(cacheValue);
+            return $"Hello {value} data from cache";
         }
     }
 }
