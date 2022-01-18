@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
+using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
@@ -15,6 +16,7 @@ using Weikio.ApiFramework.Abstractions.DependencyInjection;
 using Weikio.ApiFramework.Core;
 using Weikio.ApiFramework.Core.Apis;
 using Weikio.ApiFramework.Core.AsyncStream;
+using Weikio.ApiFramework.Core.Cache;
 using Weikio.ApiFramework.Core.Configuration;
 using Weikio.ApiFramework.Core.Endpoints;
 using Weikio.ApiFramework.Core.Extensions;
@@ -185,6 +187,14 @@ namespace Weikio.ApiFramework
             {
                 mvcOptions.Filters.Add(filter);
             });
+
+            if (!services.Any(s => s.ServiceType == typeof(IDistributedCache)))
+            { 
+                services.AddDistributedMemoryCache();
+            }
+
+            services.TryAddTransient<IApiCache, DefaultApiCache>();
+            services.TryAddTransient<IEndpointCache, DefaultEndpointCache>();
 
             TryAddStartupTasks(services);
 
