@@ -11,6 +11,7 @@ namespace HelloWorld
     public class HelloWorldCacheApi
     {
         private readonly IEndpointCache _cache;
+        private readonly TimeSpan _absoluteExpirationRelativeToNow = TimeSpan.FromSeconds(5);
 
         public HelloWorldCacheApi(IEndpointCache cache)
         {
@@ -28,7 +29,7 @@ namespace HelloWorld
 
         public string SetString(string name)
         {
-            _cache.SetString("MyKey", name);
+            _cache.SetString("MyKey", name, _absoluteExpirationRelativeToNow);
             var cacheValue = _cache.GetString("MyKey");
             return $"Hello {cacheValue} from cache";
         }
@@ -46,20 +47,20 @@ namespace HelloWorld
         public string CreateString(string name)
         {
             Func<string> func = () => GetTestString(name);
-            var cacheValue = _cache.GetOrCreateString("MyKey", func);
+            var cacheValue = _cache.GetOrCreateString("MyKey", _absoluteExpirationRelativeToNow, func);
             return $"Hello {cacheValue} from cache";
         }
 
         public async Task<string> CreateAsyncronousStringAsync(string name)
         {
             Func<Task<string>> func = () => GetTestStringAsync(name);
-            var cacheValue = await _cache.GetOrCreateStringAsync("MyKey", func);
+            var cacheValue = await _cache.GetOrCreateStringAsync("MyKey", _absoluteExpirationRelativeToNow, func);
             return $"Hello {cacheValue} from cache";
         }
 
         public string Timeout(string name, int timeInSeconds)
         {
-            _cache.SetString("MyKey", name);
+            _cache.SetString("MyKey", name, _absoluteExpirationRelativeToNow);
             Thread.Sleep(timeInSeconds * 1000);
             var cacheValue = _cache.GetString("MyKey");
             if (string.IsNullOrEmpty(cacheValue))
@@ -72,7 +73,7 @@ namespace HelloWorld
         public void SetData(string name)
         {
             var obj = Encoding.ASCII.GetBytes(name);
-            _cache.SetData("MyKey", obj);
+            _cache.SetData("MyKey", obj, _absoluteExpirationRelativeToNow);
             return;
         }
 

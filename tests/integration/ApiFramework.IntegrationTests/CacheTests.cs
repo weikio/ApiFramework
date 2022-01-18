@@ -25,13 +25,6 @@ namespace ApiFramework.IntegrationTests
             {
                 builder.AddApi(typeof(HelloWorldCacheApi));
                 builder.AddEndpoint<HelloWorldCacheApi>("/cache");
-            },
-            configureServices: services => {
-                var apiCacheOptions = new Action<ApiCacheOptions>(options =>
-                {
-                    options.ExpirationTime = TimeSpan.FromSeconds(5);
-                });
-                services.Configure(apiCacheOptions);
             });
             return server;
         }
@@ -102,13 +95,6 @@ namespace ApiFramework.IntegrationTests
                 builder.AddApi(typeof(HelloWorldCacheApi));
                 builder.AddEndpoint<HelloWorldCacheApi>("/cache1");
                 builder.AddEndpoint<HelloWorldCacheApi>("/cache2");
-            },
-            configureServices: services => {
-                var apiCacheOptions = new Action<ApiCacheOptions>(options =>
-                {
-                    options.ExpirationTime = TimeSpan.FromSeconds(5);
-                });
-                services.Configure(apiCacheOptions);
             });
             //set with first end point
             await server.GetStringAsync("/api/cache1/setstring?name=test");
@@ -131,7 +117,6 @@ namespace ApiFramework.IntegrationTests
             configureServices: services => {
                 var apiCacheOptions = new Action<ApiCacheOptions>(options =>
                 {
-                    options.ExpirationTime = TimeSpan.FromSeconds(5);
                     options.GetKey = (endpoint, provider, key) => { return key; };
                 });
                 services.Configure(apiCacheOptions);

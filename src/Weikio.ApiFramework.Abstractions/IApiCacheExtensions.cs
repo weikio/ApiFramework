@@ -8,25 +8,25 @@ namespace Weikio.ApiFramework.Abstractions
 {
     public static class IApiCacheExtensions
     {
-        public static byte[] GetOrCreateData(this IApiCache cache, Endpoint endpoint, string key, Func<byte[]> getValue)
+        public static byte[] GetOrCreateData(this IApiCache cache, Endpoint endpoint, string key, ApiCacheEntryOptions options, Func<byte[]> getValue)
         {
             var data = cache.GetData(endpoint, key);
             if (data == null)
             {
                 data = getValue();
-                cache.SetData(endpoint, key, data);
+                cache.SetData(endpoint, key, data, options);
             }
 
             return data;
         }
 
-        public static async Task<byte[]> GetOrCreateDataAsync(this IApiCache cache, Endpoint endpoint, string key, Func<Task<byte[]>> getValue, CancellationToken token = default)
+        public static async Task<byte[]> GetOrCreateDataAsync(this IApiCache cache, Endpoint endpoint, string key, ApiCacheEntryOptions options, Func<Task<byte[]>> getValue, CancellationToken token = default)
         {
             var data = await cache.GetDataAsync(endpoint, key, token);
             if (data == null)
             {
                 data = await getValue();
-                await cache.SetDataAsync(endpoint, key, data, token);
+                await cache.SetDataAsync(endpoint, key, data, options, token);
             }
 
             return data;
@@ -54,19 +54,19 @@ namespace Weikio.ApiFramework.Abstractions
             return Encoding.UTF8.GetString(data, 0, data.Length);
         }
 
-        public static void SetString(this IApiCache cache, Endpoint endpoint, string key, string value)
+        public static void SetString(this IApiCache cache, Endpoint endpoint, string key, string value, ApiCacheEntryOptions options)
         {
-            cache.SetData(endpoint, key, Encoding.UTF8.GetBytes(value));
+            cache.SetData(endpoint, key, Encoding.UTF8.GetBytes(value), options);
         }
 
-        public static async Task SetStringAsync(this IApiCache cache, Endpoint endpoint, string key, string value, CancellationToken token = default)
+        public static async Task SetStringAsync(this IApiCache cache, Endpoint endpoint, string key, string value, ApiCacheEntryOptions options, CancellationToken token = default)
         {
-            await cache.SetDataAsync(endpoint, key, Encoding.UTF8.GetBytes(value), token);
+            await cache.SetDataAsync(endpoint, key, Encoding.UTF8.GetBytes(value), options, token);
         }
 
-        public static string GetOrCreateString(this IApiCache cache, Endpoint endpoint, string key, Func<string> getValue)
+        public static string GetOrCreateString(this IApiCache cache, Endpoint endpoint, string key, ApiCacheEntryOptions options, Func<string> getValue)
         {
-            var data = cache.GetOrCreateData(endpoint, key, () =>
+            var data = cache.GetOrCreateData(endpoint, key, options, () =>
             {
                 return Encoding.UTF8.GetBytes(getValue());
             });
@@ -74,9 +74,9 @@ namespace Weikio.ApiFramework.Abstractions
             return Encoding.UTF8.GetString(data, 0, data.Length);
         }
 
-        public static async Task<string> GetOrCreateStringAsync(this IApiCache cache, Endpoint endpoint, string key, Func<Task<string>> getValue, CancellationToken token = default)
+        public static async Task<string> GetOrCreateStringAsync(this IApiCache cache, Endpoint endpoint, string key, ApiCacheEntryOptions options, Func<Task<string>> getValue, CancellationToken token = default)
         {
-            var data = await cache.GetOrCreateDataAsync(endpoint, key, async () =>
+            var data = await cache.GetOrCreateDataAsync(endpoint, key, options, async () =>
             {
                 return Encoding.UTF8.GetBytes(await getValue());
             }, token);

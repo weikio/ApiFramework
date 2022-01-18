@@ -31,16 +31,16 @@ namespace Weikio.ApiFramework.Core.Cache
             return await _apiCache.GetDataAsync(endpoint, key, token);
         }
 
-        public void SetData(string key, byte[] value)
+        public void SetData(string key, byte[] value, ApiCacheEntryOptions options)
         {
             var endpoint = GetHttpEndpointMetadata();
-            _apiCache.SetData(endpoint, key, value);
+            _apiCache.SetData(endpoint, key, value, options);
         }
 
-        public async Task SetDataAsync(string key, byte[] value, CancellationToken token = default)
+        public async Task SetDataAsync(string key, byte[] value, ApiCacheEntryOptions options, CancellationToken token = default)
         {
             var endpoint = GetHttpEndpointMetadata();
-            await _apiCache.SetDataAsync(endpoint, key, value, token);
+            await _apiCache.SetDataAsync(endpoint, key, value, options, token);
         }
 
         private Abstractions.Endpoint GetHttpEndpointMetadata()

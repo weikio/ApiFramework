@@ -12,7 +12,7 @@ namespace Weikio.ApiFramework.Abstractions
         byte[] GetData(string key);
         Task<byte[]> GetDataAsync(string key, CancellationToken token = default);
 
-        void SetData(string key, byte[] value);
-        Task SetDataAsync(string key, byte[] value, CancellationToken token = default);
+        void SetData(string key, byte[] value, ApiCacheEntryOptions options);
+        Task SetDataAsync(string key, byte[] value, ApiCacheEntryOptions options, CancellationToken token = default);
     }
 }

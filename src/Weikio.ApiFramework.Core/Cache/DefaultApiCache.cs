@@ -36,29 +36,28 @@ namespace Weikio.ApiFramework.Core.Cache
             return await _distributedCache.GetAsync(cacheKey.ToString(), token);
         }
 
-        public void SetData(Endpoint endpoint, string key, byte[] value)
+        public void SetData(Endpoint endpoint, string key, byte[] value, ApiCacheEntryOptions options)
         {
             var cacheKey = _apiCacheOptions.GetKey(endpoint, _serviceProvider, key);
-            var options = GetEntryOptions();
-            _distributedCache.Set(cacheKey, value, options);
+            var entryOptions = GetEntryOptions(options);
+            _distributedCache.Set(cacheKey, value, entryOptions);
         }
 
-        public async Task SetDataAsync(Endpoint endpoint, string key, byte[] value, CancellationToken token = default)
+        public async Task SetDataAsync(Endpoint endpoint, string key, byte[] value, ApiCacheEntryOptions options, CancellationToken token = default)
         {
             var cacheKey = _apiCacheOptions.GetKey(endpoint, _serviceProvider, key);
-            var options = GetEntryOptions();
-            await _distributedCache.SetAsync(cacheKey, value, options, token);
+            var entryOptions = GetEntryOptions(options);
+            await _distributedCache.SetAsync(cacheKey, value, entryOptions, token);
         }
 
-        private DistributedCacheEntryOptions GetEntryOptions()
+        private DistributedCacheEntryOptions GetEntryOptions(ApiCacheEntryOptions options)
         {
-            var options = new DistributedCacheEntryOptions();
-            if (_apiCacheOptions.ExpirationTime.TotalSeconds > 0)
+            return new DistributedCacheEntryOptions()
             {
-                options.AbsoluteExpirationRelativeToNow = _apiCacheOptions.ExpirationTime;
-            }
-
-            return options;
+                AbsoluteExpiration = options.AbsoluteExpiration,
+                AbsoluteExpirationRelativeToNow = options.AbsoluteExpirationRelativeToNow,
+                SlidingExpiration = options.SlidingExpiration
+            };
         }
     }
 }
