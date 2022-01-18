@@ -9,7 +9,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\src\Weikio.ApiFramework.Abstractions\Weikio.ApiFramework.Abstractions.csproj" />
+    <ProjectReference Include="..\..\..\src\Weikio.ApiFramework.SDK\Weikio.ApiFramework.SDK.csproj" />
   </ItemGroup>
 
 </Project>
