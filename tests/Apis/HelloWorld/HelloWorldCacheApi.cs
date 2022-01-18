@@ -17,75 +17,76 @@ namespace HelloWorld
         {
             _cache = cache;
         }
-        private string GetTestString(string name)
+
+        public string SetString(string key, string value)
         {
-            return $"{name} (function)";
+            _cache.SetString(key, value, _absoluteExpirationRelativeToNow);
+            
+            return _cache.GetString(key);
         }
 
-        private async Task<string> GetTestStringAsync(string name)
+        public string SetSlidingString(string key, string value, int slidingExpirationInSeconds)
         {
-            return await Task.FromResult($"{name} (async function)");
+            _cache.SetString(key, value, new ApiCacheEntryOptions()
+            { 
+                SlidingExpiration = TimeSpan.FromSeconds(slidingExpirationInSeconds)
+            });
+
+            return _cache.GetString(key);
         }
 
-        public string SetString(string name)
+        public string GetString(string key)
         {
-            _cache.SetString("MyKey", name, _absoluteExpirationRelativeToNow);
-            var cacheValue = _cache.GetString("MyKey");
-            return $"Hello {cacheValue} from cache";
+            return _cache.GetString(key);
         }
 
-        public string GetString()
+        public string CreateString(string key, string value)
         {
-            var cacheValue = _cache.GetString("MyKey");
-            if (string.IsNullOrEmpty(cacheValue))
+            var cacheValue = _cache.GetOrCreateString(key, _absoluteExpirationRelativeToNow, () =>
             {
-                return $"Hello. Value not found from cache";
-            }
-            return $"Hello {cacheValue} from cache";
+                return value;
+            });
+            
+            return cacheValue;
         }
 
-        public string CreateString(string name)
+        public async Task<string> CreateAsyncronousStringAsync(string key, string value)
         {
-            Func<string> func = () => GetTestString(name);
-            var cacheValue = _cache.GetOrCreateString("MyKey", _absoluteExpirationRelativeToNow, func);
-            return $"Hello {cacheValue} from cache";
-        }
-
-        public async Task<string> CreateAsyncronousStringAsync(string name)
-        {
-            Func<Task<string>> func = () => GetTestStringAsync(name);
-            var cacheValue = await _cache.GetOrCreateStringAsync("MyKey", _absoluteExpirationRelativeToNow, func);
-            return $"Hello {cacheValue} from cache";
-        }
-
-        public string Timeout(string name, int timeInSeconds)
-        {
-            _cache.SetString("MyKey", name, _absoluteExpirationRelativeToNow);
-            Thread.Sleep(timeInSeconds * 1000);
-            var cacheValue = _cache.GetString("MyKey");
-            if (string.IsNullOrEmpty(cacheValue))
+            var cacheValue = await _cache.GetOrCreateStringAsync(key, _absoluteExpirationRelativeToNow, () =>
             {
-                return $"Hello. You were removed from cache";
-            }
-            return $"Hello {cacheValue}. You are still in cache";
+                return Task.FromResult(value);
+            });
+
+            return cacheValue;
         }
 
-        public void SetData(string name)
+        public void SetStringBytes(string key, string value)
         {
-            var obj = Encoding.ASCII.GetBytes(name);
-            _cache.Set("MyKey", obj, _absoluteExpirationRelativeToNow);
+            var valueBytes = Encoding.UTF8.GetBytes(value);
+            _cache.Set(key, valueBytes, _absoluteExpirationRelativeToNow);
+
             return;
         }
 
-        public string GetData()
+        public string GetStringFromBytes(string key)
         {
-            var cacheValue = _cache.Get("MyKey");
-            if (cacheValue == null)
+            var stringBytes = _cache.Get(key);
+            if (stringBytes == null)
             {
-                return $"Hello. Value not found from cache";
+                return null;
             }
-            var value = Encoding.ASCII.GetString(cacheValue);
-            return $"Hello {value} data from cache";
+
+            return Encoding.UTF8.GetString(stringBytes);
+        }
+
+        public void ItemRemove(string key)
+        {
+            _cache.Remove(key);
+        }
+
+        public void ItemRefresh(string key)
+        {
+            _cache.Refresh(key);
         }
     }
 }

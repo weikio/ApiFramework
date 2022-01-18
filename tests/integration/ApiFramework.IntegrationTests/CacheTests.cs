@@ -1,5 +1,6 @@
 using System;
 using System.Net.Http;
+using System.Threading;
 using System.Threading.Tasks;
 using ApiFramework.IntegrationTests.Infrastructure;
 using CodeConfiguration;
@@ -32,59 +33,124 @@ namespace ApiFramework.IntegrationTests
         [Fact]
         public async Task SetAndRetrieveString()
         {
-            var server = GetClient();
-            await server.GetStringAsync("/api/cache/setstring?name=test");
-            var resultGet = await server.GetStringAsync("/api/cache/getstring");
+            var cacheValue = Guid.NewGuid().ToString();
 
-            Assert.Equal("Hello test from cache", resultGet);
+            var server = GetClient();
+            await server.GetStringAsync($"/api/cache/setstring?key=SetAndRetrieve&value={cacheValue}");
+            var resultGet = await server.GetStringAsync("/api/cache/getstring?key=SetAndRetrieve");
+
+            Assert.Equal(cacheValue, resultGet);
         }
 
         [Fact]
         public async Task CreateAndRetrieveString()
         {
+            var cacheValue = Guid.NewGuid().ToString();
+            
             var server = GetClient();
-            await server.PostAsync("/api/cache/createstring?name=test", null);
-            var resultGet = await server.GetStringAsync("/api/cache/getstring");
+            await server.PostAsync($"/api/cache/createstring?key=CreateAndRetrieve&value={cacheValue}", null);
+            var resultGet = await server.GetStringAsync("/api/cache/getstring?key=CreateAndRetrieve");
 
-            Assert.Equal("Hello test (function) from cache", resultGet);
+            Assert.Equal(cacheValue, resultGet);
         }
 
         [Fact]
         public async Task CreateAndRetrieveAsyncronousString()
         {
-            var server = GetClient();
-            await server.PostAsync("/api/cache/createasyncronousstring?name=test", null);
-            var resultGet = await server.GetStringAsync("/api/cache/getstring");
+            var cacheValue = Guid.NewGuid().ToString();
 
-            Assert.Equal("Hello test (async function) from cache", resultGet);
+            var server = GetClient();
+            await server.PostAsync($"/api/cache/createasyncronousstring?key=CreateAndRetrieveAsyncronous&value={cacheValue}", null);
+            var resultGet = await server.GetStringAsync("/api/cache/getstring?key=CreateAndRetrieveAsyncronous");
+
+            Assert.Equal(cacheValue, resultGet);
         }
 
+        [Fact]
+        public async Task SetAndRemoveString()
+        {
+            var cacheKey = "SetAndRemoveString";
+            var cacheValue = Guid.NewGuid().ToString();
+
+            var server = GetClient();
+            await server.GetStringAsync($"/api/cache/setstring?key={cacheKey}&value={cacheValue}");
+
+            var firstQueryResult = await server.GetStringAsync($"/api/cache/getstring?key={cacheKey}");
+            Assert.Equal(cacheValue, firstQueryResult);
+
+            await server.GetAsync($"/api/cache/itemremove?key={cacheKey}");
+
+            var secondQueryResult = await server.GetStringAsync($"/api/cache/getstring?key={cacheKey}");
+            Assert.Empty(secondQueryResult);
+        }
 
         [Fact]
-        public async Task CreateAndRetrieveData()
+        public async Task CreateAndRetrieveBytes()
         {
-            var server = GetClient();
-            await server.PostAsync("/api/cache/setdata?name=test", null);
-            var resultGet = await server.GetStringAsync("/api/cache/getdata");
+            var cacheValue = Guid.NewGuid().ToString();
 
-            Assert.Equal("Hello test data from cache", resultGet);
+            var server = GetClient();
+            await server.PostAsync($"/api/cache/setstringbytes?key=CreateAndRetrieveBytes&value={cacheValue}", null);
+            var resultGet = await server.GetStringAsync("/api/cache/getstringfrombytes?key=CreateAndRetrieveBytes");
+
+            Assert.Equal(cacheValue, resultGet);
         }
 
         [Fact]
         public async Task StringNotSet()
         {
             var server = GetClient();
-            var resultGet = await server.GetStringAsync("/api/cache/getstring");
+            var resultGet = await server.GetStringAsync("/api/cache/getstring?key=unknownkey");
 
-            Assert.Equal("Hello. Value not found from cache", resultGet);
+            Assert.Empty(resultGet);
         }
 
         [Fact]
         public async Task Timeout()
         {
+            var cacheKey = "Timeout";
+            var cacheValue = Guid.NewGuid().ToString();
+            var expirationTimeInSeconds = 1;
+
             var server = GetClient();
-            var resultGet = await server.GetStringAsync("/api/cache/timeout?name=test&timeInSeconds=6");
-            Assert.Equal("Hello. You were removed from cache", resultGet);
+            await server.GetStringAsync($"/api/cache/setslidingstring?key={cacheKey}&value={cacheValue}&slidingExpirationInSeconds={expirationTimeInSeconds}");
+
+            var firstQueryResult = await server.GetStringAsync($"/api/cache/getstring?key={cacheKey}");
+            Assert.Equal(cacheValue, firstQueryResult);
+
+            Thread.Sleep((int)TimeSpan.FromSeconds(expirationTimeInSeconds).TotalMilliseconds);
+
+            var secondQueryResult = await server.GetStringAsync($"/api/cache/getstring?key={cacheKey}");
+            Assert.Empty(secondQueryResult);
+        }
+
+        [Fact]
+        public async Task SlidingTimeout()
+        {
+            var cacheKey = "SlidingTimeout";
+            var cacheValue = Guid.NewGuid().ToString();
+            var expirationTimeInSeconds = 1;
+
+            var server = GetClient();
+            await server.GetStringAsync($"/api/cache/setslidingstring?key={cacheKey}&value={cacheValue}&slidingExpirationInSeconds={expirationTimeInSeconds}");
+
+            var firstQueryResult = await server.GetStringAsync($"/api/cache/getstring?key={cacheKey}");
+            Assert.Equal(cacheValue, firstQueryResult);
+
+            Thread.Sleep(750);
+
+            // refresh sliding expiration
+            await server.GetStringAsync($"/api/cache/itemrefresh?key={cacheKey}");
+
+            Thread.Sleep(750);
+
+            var secondQueryResult = await server.GetStringAsync($"/api/cache/getstring?key={cacheKey}");
+            Assert.Equal(cacheValue, secondQueryResult);
+
+            Thread.Sleep((int)TimeSpan.FromSeconds(expirationTimeInSeconds).TotalMilliseconds);
+
+            var thirdQueryResult = await server.GetStringAsync($"/api/cache/getstring?key={cacheKey}");
+            Assert.Empty(thirdQueryResult);
         }
 
         [Fact]
@@ -96,14 +162,17 @@ namespace ApiFramework.IntegrationTests
                 builder.AddEndpoint<HelloWorldCacheApi>("/cache1");
                 builder.AddEndpoint<HelloWorldCacheApi>("/cache2");
             });
+
+            var cacheKey = "SeparateEndPoints";
+            var cacheValue = Guid.NewGuid().ToString();
+            
             //set with first end point
-            await server.GetStringAsync("/api/cache1/setstring?name=test");
+            await server.GetStringAsync($"/api/cache1/setstring?key={cacheKey}&value={cacheValue}");
             //retrieve from another
-            var resultGet = await server.GetStringAsync("/api/cache2/getstring");
+            var resultGet = await server.GetStringAsync($"/api/cache2/getstring?key={cacheKey}");
 
-            Assert.Equal("Hello. Value not found from cache", resultGet);
+            Assert.Empty(resultGet);
         }
-
 
         [Fact]
         public async Task SeparateEndPointsWithSameKey()
@@ -121,12 +190,15 @@ namespace ApiFramework.IntegrationTests
                 });
                 services.Configure(apiCacheOptions);
             });
-            //set with first end point
-            await server.GetStringAsync("/api/cache1/setstring?name=test");
-            //retrieve from another
-            var resultGet = await server.GetStringAsync("/api/cache2/getstring");
 
-            Assert.Equal("Hello test from cache", resultGet);
+            var cacheValue = Guid.NewGuid().ToString();
+
+            //set with first end point
+            await server.GetStringAsync($"/api/cache1/setstring?key=SeparateEndPointsWithSameKey&value={cacheValue}");
+            //retrieve from another
+            var resultGet = await server.GetStringAsync("/api/cache2/getstring?key=SeparateEndPointsWithSameKey");
+
+            Assert.Equal(cacheValue, resultGet);
         }
     }
 }

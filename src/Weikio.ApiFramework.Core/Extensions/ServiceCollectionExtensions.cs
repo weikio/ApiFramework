@@ -188,10 +188,10 @@ namespace Weikio.ApiFramework
                 mvcOptions.Filters.Add(filter);
             });
 
-if (!services.Any(s => s.ServiceType == typeof(IDistributedCache)))
-{ 
-    services.AddDistributedMemoryCache();
-}
+            if (!services.Any(s => s.ServiceType == typeof(IDistributedCache)))
+            { 
+                services.AddDistributedMemoryCache();
+            }
 
             services.TryAddTransient<IApiCache, DefaultApiCache>();
             services.TryAddTransient<IEndpointCache, DefaultEndpointCache>();
