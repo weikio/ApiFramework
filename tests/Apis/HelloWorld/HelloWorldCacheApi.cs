@@ -73,7 +73,7 @@ namespace HelloWorld
         public void SetData(string name)
         {
             var obj = Encoding.ASCII.GetBytes(name);
-            _cache.SetData("MyKey", obj, _absoluteExpirationRelativeToNow);
+            _cache.Set("MyKey", obj, _absoluteExpirationRelativeToNow);
             return;
         }
 
