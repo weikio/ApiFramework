@@ -79,7 +79,7 @@ namespace HelloWorld
 
         public string GetData()
         {
-            var cacheValue = _cache.GetData("MyKey");
+            var cacheValue = _cache.Get("MyKey");
             if (cacheValue == null)
             {
                 return $"Hello. Value not found from cache";

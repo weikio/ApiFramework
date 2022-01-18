@@ -8,11 +8,34 @@ namespace Weikio.ApiFramework.Abstractions
 {
     public interface IApiCache
     {
-        byte[] GetData(Endpoint endpoint, string key);
-        Task<byte[]> GetDataAsync(Endpoint endpoint, string key, CancellationToken token = default);
+        byte[] Get(Endpoint endpoint, string key);
+        Task<byte[]> GetAsync(Endpoint endpoint, string key, CancellationToken token = default);
 
-        void SetData(Endpoint endpoint, string key, byte[] value, ApiCacheEntryOptions options);
-        Task SetDataAsync(Endpoint endpoint, string key, byte[] value, ApiCacheEntryOptions options, CancellationToken token = default);
+        void Set(Endpoint endpoint, string key, byte[] value, ApiCacheEntryOptions options);
+        Task SetAsync(Endpoint endpoint, string key, byte[] value, ApiCacheEntryOptions options, CancellationToken token = default);
+
+        /// <summary>
+        /// Refreshes a value in the cache based on its key, resetting its sliding expiration
+        /// timeout (if any).
+        /// </summary>
+        /// <param name="endpoint"></param>
+        /// <param name="key">A string identifying the cached value.</param>
+        void Refresh(Endpoint endpoint, string key);
+        /// <summary>
+        /// Refreshes a value in the cache based on its key, resetting its sliding expiration
+        /// timeout (if any). 
+        /// </summary>
+        /// <param name="endpoint"></param>
+        /// <param name="key">A string identifying the cached value.</param>
+        /// <param name="token">
+        /// Optional. The System.Threading.CancellationToken used to propagate notifications
+        //  that the operation should be canceled.
+        /// </param>
+        /// <returns>The System.Threading.Tasks.Task that represents the asynchronous operation.</returns>
+        Task RefreshAsync(Endpoint endpoint, string key, CancellationToken token = default);
+
+        void Remove(Endpoint endpoint, string key);
+        Task RemoveAsync(Endpoint endpoint, string key, CancellationToken token = default);
     }
 
     public class ApiCacheEntryOptions

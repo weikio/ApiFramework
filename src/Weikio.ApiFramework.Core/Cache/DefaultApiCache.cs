@@ -22,32 +22,60 @@ namespace Weikio.ApiFramework.Core.Cache
             _apiCacheOptions = options.Value;
         }
         
-        public byte[] GetData(Endpoint endpoint, string key)
+        public byte[] Get(Endpoint endpoint, string key)
         {
             var cacheKey = _apiCacheOptions.GetKey(endpoint, _serviceProvider, key);
 
             return _distributedCache.Get(cacheKey.ToString());
         }
 
-        public async Task<byte[]> GetDataAsync(Endpoint endpoint, string key, CancellationToken token = default)
+        public async Task<byte[]> GetAsync(Endpoint endpoint, string key, CancellationToken token = default)
         {
             var cacheKey = _apiCacheOptions.GetKey(endpoint, _serviceProvider, key);
 
             return await _distributedCache.GetAsync(cacheKey.ToString(), token);
         }
 
-        public void SetData(Endpoint endpoint, string key, byte[] value, ApiCacheEntryOptions options)
+        public void Set(Endpoint endpoint, string key, byte[] value, ApiCacheEntryOptions options)
         {
             var cacheKey = _apiCacheOptions.GetKey(endpoint, _serviceProvider, key);
             var entryOptions = GetEntryOptions(options);
             _distributedCache.Set(cacheKey, value, entryOptions);
         }
 
-        public async Task SetDataAsync(Endpoint endpoint, string key, byte[] value, ApiCacheEntryOptions options, CancellationToken token = default)
+        public async Task SetAsync(Endpoint endpoint, string key, byte[] value, ApiCacheEntryOptions options, CancellationToken token = default)
         {
             var cacheKey = _apiCacheOptions.GetKey(endpoint, _serviceProvider, key);
             var entryOptions = GetEntryOptions(options);
             await _distributedCache.SetAsync(cacheKey, value, entryOptions, token);
+        }
+
+        public void Refresh(Endpoint endpoint, string key)
+        {
+            var cacheKey = _apiCacheOptions.GetKey(endpoint, _serviceProvider, key);
+
+            _distributedCache.Refresh(cacheKey.ToString());
+        }
+
+        public async Task RefreshAsync(Endpoint endpoint, string key, CancellationToken token = default)
+        {
+            var cacheKey = _apiCacheOptions.GetKey(endpoint, _serviceProvider, key);
+
+            await _distributedCache.RefreshAsync(cacheKey.ToString(), token);
+        }
+
+        public void Remove(Endpoint endpoint, string key)
+        {
+            var cacheKey = _apiCacheOptions.GetKey(endpoint, _serviceProvider, key);
+
+            _distributedCache.Remove(cacheKey.ToString());
+        }
+
+        public async Task RemoveAsync(Endpoint endpoint, string key, CancellationToken token = default)
+        {
+            var cacheKey = _apiCacheOptions.GetKey(endpoint, _serviceProvider, key);
+
+            await _distributedCache.RemoveAsync(cacheKey.ToString(), token);
         }
 
         private DistributedCacheEntryOptions GetEntryOptions(ApiCacheEntryOptions options)

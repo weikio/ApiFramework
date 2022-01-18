@@ -10,7 +10,7 @@ namespace Weikio.ApiFramework.Abstractions
     {
         public static void SetData(this IEndpointCache cache, string key, byte[] value, TimeSpan absoluteExpirationRelativeToNow)
         {
-            cache.SetData(key, value, new ApiCacheEntryOptions()
+            cache.Set(key, value, new ApiCacheEntryOptions()
             {
                 AbsoluteExpirationRelativeToNow = absoluteExpirationRelativeToNow
             });
@@ -18,7 +18,7 @@ namespace Weikio.ApiFramework.Abstractions
 
         public static async Task SetDataAsync(this IEndpointCache cache, string key, byte[] value, TimeSpan absoluteExpirationRelativeToNow, CancellationToken token = default)
         {
-            await cache.SetDataAsync(key, value, new ApiCacheEntryOptions()
+            await cache.SetAsync(key, value, new ApiCacheEntryOptions()
             {
                 AbsoluteExpirationRelativeToNow = absoluteExpirationRelativeToNow
             }, token);
@@ -26,11 +26,11 @@ namespace Weikio.ApiFramework.Abstractions
 
         public static byte[] GetOrCreateData(this IEndpointCache cache, string key, ApiCacheEntryOptions options, Func<byte[]> getValue)
         {
-            var data = cache.GetData(key);
+            var data = cache.Get(key);
             if (data == null)
             {
                 data = getValue();
-                cache.SetData(key, data, options);
+                cache.Set(key, data, options);
             }
 
             return data;
@@ -44,11 +44,11 @@ namespace Weikio.ApiFramework.Abstractions
 
         public static async Task<byte[]> GetOrCreateDataAsync(this IEndpointCache cache, string key, ApiCacheEntryOptions options, Func<Task<byte[]>> getValue, CancellationToken token = default)
         {
-            var data = await cache.GetDataAsync(key, token);
+            var data = await cache.GetAsync(key, token);
             if (data == null)
             {
                 data = await getValue();
-                await cache.SetDataAsync(key, data, options, token);
+                await cache.SetAsync(key, data, options, token);
             }
 
             return data;
@@ -62,7 +62,7 @@ namespace Weikio.ApiFramework.Abstractions
 
         public static string GetString(this IEndpointCache cache, string key)
         {
-            var data = cache.GetData(key);
+            var data = cache.Get(key);
             if (data == null)
             {
                 return null;
@@ -73,7 +73,7 @@ namespace Weikio.ApiFramework.Abstractions
 
         public static async Task<string> GetStringAsync(this IEndpointCache cache, string key, CancellationToken token = default)
         {
-            var data = await cache.GetDataAsync(key, token);
+            var data = await cache.GetAsync(key, token);
             if (data == null)
             {
                 return null;
@@ -84,7 +84,7 @@ namespace Weikio.ApiFramework.Abstractions
 
         public static void SetString(this IEndpointCache cache, string key, string value, ApiCacheEntryOptions options)
         {
-            cache.SetData(key, Encoding.UTF8.GetBytes(value), options);
+            cache.Set(key, Encoding.UTF8.GetBytes(value), options);
         }
 
         public static void SetString(this IEndpointCache cache, string key, string value, TimeSpan absoluteExpirationRelativeToNow)
@@ -94,7 +94,7 @@ namespace Weikio.ApiFramework.Abstractions
 
         public static async Task SetStringAsync(this IEndpointCache cache, string key, string value, ApiCacheEntryOptions options, CancellationToken token = default)
         {
-            await cache.SetDataAsync(key, Encoding.UTF8.GetBytes(value), options, token);
+            await cache.SetAsync(key, Encoding.UTF8.GetBytes(value), options, token);
         }
 
         public static async Task SetStringAsync(this IEndpointCache cache, string key, string value, TimeSpan absoluteExpirationRelativeToNow, CancellationToken token = default)

@@ -20,27 +20,49 @@ namespace Weikio.ApiFramework.Core.Cache
             _contextAccessor = contextAccessor;
         }
 
-        public byte[] GetData(string key)
+        public byte[] Get(string key)
         {
             var endpoint = GetHttpEndpointMetadata();
-            return _apiCache.GetData(endpoint, key);
+            return _apiCache.Get(endpoint, key);
         }
-        public async Task<byte[]> GetDataAsync(string key, CancellationToken token = default)
+        public async Task<byte[]> GetAsync(string key, CancellationToken token = default)
         {
             var endpoint = GetHttpEndpointMetadata();
-            return await _apiCache.GetDataAsync(endpoint, key, token);
-        }
-
-        public void SetData(string key, byte[] value, ApiCacheEntryOptions options)
-        {
-            var endpoint = GetHttpEndpointMetadata();
-            _apiCache.SetData(endpoint, key, value, options);
+            return await _apiCache.GetAsync(endpoint, key, token);
         }
 
-        public async Task SetDataAsync(string key, byte[] value, ApiCacheEntryOptions options, CancellationToken token = default)
+        public void Set(string key, byte[] value, ApiCacheEntryOptions options)
         {
             var endpoint = GetHttpEndpointMetadata();
-            await _apiCache.SetDataAsync(endpoint, key, value, options, token);
+            _apiCache.Set(endpoint, key, value, options);
+        }
+
+        public async Task SetAsync(string key, byte[] value, ApiCacheEntryOptions options, CancellationToken token = default)
+        {
+            var endpoint = GetHttpEndpointMetadata();
+            await _apiCache.SetAsync(endpoint, key, value, options, token);
+        }
+
+        public void Refresh(string key)
+        {
+            var endpoint = GetHttpEndpointMetadata();
+            _apiCache.Refresh(endpoint, key);
+        }
+        public async Task RefreshAsync(string key, CancellationToken token = default)
+        {
+            var endpoint = GetHttpEndpointMetadata();
+            await _apiCache.RefreshAsync(endpoint, key, token);
+        }
+
+        public void Remove(string key)
+        {
+            var endpoint = GetHttpEndpointMetadata();
+            _apiCache.Remove(endpoint, key);
+        }
+        public async Task RemoveAsync(string key, CancellationToken token = default)
+        {
+            var endpoint = GetHttpEndpointMetadata();
+            await _apiCache.RemoveAsync(endpoint, key, token);
         }
 
         private Abstractions.Endpoint GetHttpEndpointMetadata()
