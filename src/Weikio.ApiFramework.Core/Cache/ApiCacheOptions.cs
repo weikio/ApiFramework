@@ -10,7 +10,7 @@ namespace Weikio.ApiFramework.Core.Cache
         public Func<Endpoint, IServiceProvider, string, string> GetKey { get; set; } = (endpoint, provider, key) =>
         {
             var route = endpoint.Route;
-            var result = $"{route}{key}";
+            var result = $"{route}:{key}";
 
             return result;
         };
