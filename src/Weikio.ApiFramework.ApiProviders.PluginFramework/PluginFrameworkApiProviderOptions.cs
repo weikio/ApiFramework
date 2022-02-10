@@ -6,6 +6,7 @@ using System.Reflection.Metadata;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
+using Weikio.ApiFramework.SDK;
 using Weikio.PluginFramework.Abstractions;
 using Weikio.PluginFramework.TypeFinding;
 
@@ -125,10 +126,12 @@ namespace Weikio.ApiFramework.ApiProviders.PluginFramework
                     var methodReturnType = methodInfo.ReturnType;
 
                     // Not the prettiest solution but is OK for the first release
+                    // TODO: This is a duplicate from ApiInitializationWrapper
                     if (methodReturnType == typeof(Type) || methodReturnType == typeof(Task<Type>) ||
                         typeof(IEnumerable<Type>).IsAssignableFrom(methodReturnType) ||
                         typeof(Task<IEnumerable<Type>>).IsAssignableFrom(methodReturnType) ||
-                        typeof(Task<List<Type>>).IsAssignableFrom(methodReturnType))
+                        typeof(Task<List<Type>>).IsAssignableFrom(methodReturnType)||
+                        typeof(ApiFactoryResult).IsAssignableFrom(methodReturnType))
                     {
                         result = true;
 

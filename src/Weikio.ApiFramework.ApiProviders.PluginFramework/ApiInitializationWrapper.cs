@@ -129,7 +129,8 @@ namespace Weikio.ApiFramework.ApiProviders.PluginFramework
                             if (methodReturnType == typeof(Type) || methodReturnType == typeof(Task<Type>) ||
                                 typeof(IEnumerable<Type>).IsAssignableFrom(methodReturnType) ||
                                 typeof(Task<IEnumerable<Type>>).IsAssignableFrom(methodReturnType) ||
-                                typeof(Task<List<Type>>).IsAssignableFrom(methodReturnType))
+                                typeof(Task<List<Type>>).IsAssignableFrom(methodReturnType) ||
+                                typeof(ApiFactoryResult).IsAssignableFrom(methodReturnType))
                             {
                                 initializerMethod = methodInfo;
 
@@ -251,6 +252,16 @@ namespace Weikio.ApiFramework.ApiProviders.PluginFramework
                                 {
                                     var tOut = (Task<List<Type>>) initializerMethod.Invoke(factoryInstance, arguments.ToArray());
                                     createdApis = new List<Type>((await tOut));
+                                }
+                                else if (typeof(ApiFactoryResult).IsAssignableFrom(methodReturnType))
+                                {
+                                    var tOut = (ApiFactoryResult) initializerMethod.Invoke(factoryInstance, arguments.ToArray());
+                                    createdApis = new List<Type>((tOut.Types));
+
+                                    if (tOut.Services != null)
+                                    {
+                                        endpoint.AddMetadata(tOut.Services);
+                                    }
                                 }
                                 else
                                 {
