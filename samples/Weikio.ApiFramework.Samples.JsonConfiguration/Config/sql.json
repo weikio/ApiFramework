@@ -1,0 +1,22 @@
+{
+  "ApiFramework": {
+    "Apis": [
+      {
+        "Name": "Weikio.ApiFramework.Plugins.SqlServer",
+        "Version": "2.2.0"
+      }
+    ],
+    "Endpoints": {
+      "/adventures": {
+        "Api": "Weikio.ApiFramework.Plugins.SqlServer",
+        "ApiVersion": "2.0.0",
+        "Configuration": {
+          "ConnectionString": "Server=tcp:adafydevtestdb001.database.windows.net,1433;User ID=docs;Password=3h1@*6PXrldU4F95;Integrated Security=false;Initial Catalog=adafyweikiodevtestdb001;",
+          "Tables": [
+            "Product*"
+          ]
+        }
+      }
+    }
+  }
+}
