@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Reflection.Metadata;
@@ -21,6 +22,15 @@ namespace Weikio.ApiFramework.ApiProviders.PluginFramework
         /// Gets or sets if system feeds should be used as secondary feeds for finding packages when feed url is defined.
         /// </summary>
         public bool IncludeSystemFeedsAsSecondary { get; set; } = true;
+
+        /// <summary>
+        /// Gets or sets the func which is used to get the root folder for APIs installed from nuget. Defaults to null, meaning we use the default logic
+        /// provided by Plugin Framework
+        /// </summary>
+        public Func<string, string, IServiceProvider, string> GetNugetApiInstallRoot { get; set; } = (packageName, packageVersion, serviceProvider) =>
+        {
+            return null;
+        };
 
         /// <summary>
         /// Gets or sets the criteria which is used when scanning assemblies or directories for APIs

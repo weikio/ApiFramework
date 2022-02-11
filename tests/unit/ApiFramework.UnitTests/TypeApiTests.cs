@@ -27,18 +27,18 @@ namespace ApiFramework.IntegrationTests
         [Fact]
         public async Task CanInitializeTypeBasedApi()
         {
-            var provider = new PluginFrameworkApiCatalog(new TypePluginCatalog(typeof(HelloWorldApi)), 
+            var provider = new PluginFrameworkApiCatalog(new TypePluginCatalog(typeof(HelloWorldApi)),
                 new ApiInitializationWrapperForUnitTests(),
                 new ApiHealthCheckWrapperForUnitTests(), new NullLogger<PluginFrameworkApiCatalog>(), new PluginFrameworkApiProviderOptions());
 
             await provider.Initialize(new CancellationToken());
 
             var all = provider.List();
-            
+
             // Assert
             Assert.NotEmpty(all);
         }
-        
+
         [Fact]
         public async Task CanGetTypeBasedApi()
         {
@@ -51,11 +51,11 @@ namespace ApiFramework.IntegrationTests
             // Assert doesn't throw
             provider.Get((typeof(HelloWorld.HelloWorldApi).FullName));
         }
-        
+
         [Fact]
         public async Task TypeBasedApiShouldHaveOnlyOneApi()
         {
-            var provider = new PluginFrameworkApiCatalog(new TypePluginCatalog(typeof(HelloWorldApi)), 
+            var provider = new PluginFrameworkApiCatalog(new TypePluginCatalog(typeof(HelloWorldApi)),
                 new ApiInitializationWrapperForUnitTests(),
                 new ApiHealthCheckWrapperForUnitTests(), new NullLogger<PluginFrameworkApiCatalog>(), new PluginFrameworkApiProviderOptions());
 

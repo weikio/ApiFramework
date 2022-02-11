@@ -25,5 +25,10 @@ namespace Weikio.ApiFramework.AspNetCore
         public AutoTidyUrlModeEnum AutoTidyUrls { get; set; } = AutoTidyUrlModeEnum.Automatic;
         
         public List<IApiCatalog> ApiCatalogs { get; set; } = new List<IApiCatalog>();
+        
+        /// <summary>
+        /// Gets or sets the API Version matching behaviour. Defaults currently to OnlyExact, will be changed to Lowest in next major release
+        /// </summary>
+        public ApiVersionMatchingBehaviour ApiVersionMatchingBehaviour { get; set; } = ApiVersionMatchingBehaviour.OnlyExact;
     }
 }

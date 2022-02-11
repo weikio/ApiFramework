@@ -35,5 +35,10 @@ namespace Weikio.ApiFramework.Core.Configuration
         /// Gets or sets if urls should be automatically tidied. Default = Automatic
         /// </summary>
         public AutoTidyUrlModeEnum AutoTidyUrls { get; set; } = AutoTidyUrlModeEnum.Automatic;
+
+        /// <summary>
+        /// Gets or sets the API Version matching behaviour. Defaults currently to OnlyExact, will be changed to Lowest in next major release
+        /// </summary>
+        public ApiVersionMatchingBehaviour ApiVersionMatchingBehaviour { get; set; } = ApiVersionMatchingBehaviour.OnlyExact;
     }
 }
