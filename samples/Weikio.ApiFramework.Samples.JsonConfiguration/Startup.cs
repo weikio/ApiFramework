@@ -1,13 +1,16 @@
 using System;
+using System.Diagnostics;
 using System.IO;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Weikio.ApiFramework.Abstractions;
 using Weikio.ApiFramework.ApiProviders.PluginFramework;
 using Weikio.ApiFramework.AspNetCore.StarterKit;
 using Weikio.ApiFramework.Core.Configuration;
+using Weikio.ApiFramework.Core.Endpoints;
 
 namespace Weikio.ApiFramework.Samples.JsonConfiguration
 {
@@ -38,6 +41,8 @@ namespace Weikio.ApiFramework.Samples.JsonConfiguration
                     return result;
                 };
             });
+
+            services.AddTransient<IEndpointStatusObserverFactory, CustomEndpointStatusObserverFactory>();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -57,6 +62,29 @@ namespace Weikio.ApiFramework.Samples.JsonConfiguration
             {
                 endpoints.MapDefaultControllerRoute();
             });
+        }
+    }
+    
+    public class CustomEndpointStatusObserver : IStatusObserver<EndpointStatusEnum>
+    {
+        private readonly Endpoint _endpoint;
+
+        public CustomEndpointStatusObserver(Endpoint endpoint)
+        {
+            _endpoint = endpoint;
+        }
+
+        public void Observe(StatusLog<EndpointStatusEnum> newStatus)
+        {
+            Debug.WriteLine(newStatus.ToString());
+        }
+    }
+    
+    public class CustomEndpointStatusObserverFactory : IEndpointStatusObserverFactory
+    {
+        public IStatusObserver<EndpointStatusEnum> Create(IServiceProvider serviceProvider, Endpoint endpoint)
+        {
+            return new CustomEndpointStatusObserver(endpoint);
         }
     }
 }

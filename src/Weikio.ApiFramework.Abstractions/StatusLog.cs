@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Globalization;
 
 namespace Weikio.ApiFramework.Abstractions
 {
@@ -20,5 +21,10 @@ namespace Weikio.ApiFramework.Abstractions
 
         public DateTime LogTime { get; }
         public string Message { get; }
+        
+        public override string ToString()
+        {
+            return $"{LogTime.ToLocalTime().ToString(CultureInfo.InvariantCulture)} - {Message}";
+        }
     }
 }

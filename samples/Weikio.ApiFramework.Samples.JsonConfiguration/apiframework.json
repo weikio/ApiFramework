@@ -8,6 +8,10 @@
       {
         "Name": "Weikio.ApiFramework.Plugins.OpenApi",
         "Version": "1.0.0"
+      },
+      {
+        "Name": "Weikio.ApiFramework.Samples.PluginLibrary",
+        "Version": "1.1.0"
       }
     ],
     "Endpoints": {
