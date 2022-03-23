@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Reflection;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
@@ -30,14 +30,16 @@ namespace Weikio.ApiFramework.SDK
 
         public static IServiceCollection RegisterPlugin(this IServiceCollection services, Assembly assembly, string endpoint, object configuration = null)
         {
-            Action<EndpointDefinition> configureEndpoint = null;
+            Func<ApiDefinition, EndpointDefinition> createEndpoint = null;
 
             if (!string.IsNullOrWhiteSpace(endpoint))
             {
-                configureEndpoint = new Action<EndpointDefinition>(definition =>
+                createEndpoint = new Func<ApiDefinition, EndpointDefinition>(api =>
                 {
-                    definition.Route = endpoint;
-                    definition.Configuration = configuration;
+                    return new EndpointDefinition(endpoint, api)
+                    { 
+                        Configuration = configuration
+                    };
                 });
             }
 
@@ -47,7 +49,7 @@ namespace Weikio.ApiFramework.SDK
                 configurationType = configuration.GetType();
             }
             
-            services.RegisterPlugin(assembly, configurationType, configureEndpoint);
+            services.RegisterPlugin(assembly, configurationType, createEndpoint);
 
             return services;
         }
@@ -62,10 +64,9 @@ namespace Weikio.ApiFramework.SDK
 
         public static IServiceCollection RegisterPlugin<TPluginType>(this IServiceCollection services, string endpoint, object configuration = null)
         {
-            var configureEndpoint = new Action<EndpointDefinition>(definition =>
+            var configureEndpoint = new Func<ApiDefinition, EndpointDefinition>(api =>
             {
-                definition.Route = endpoint;
-                definition.Configuration = configuration;
+                return new EndpointDefinition(endpoint, api);
             });
 
             Type configurationType = null;
@@ -79,24 +80,24 @@ namespace Weikio.ApiFramework.SDK
             return services;
         }
 
-        public static IApiFrameworkBuilder RegisterPlugin<TPluginType>(this IApiFrameworkBuilder builder, Type configurationType = null, Action<EndpointDefinition> configureEndpoint = null)
+        public static IApiFrameworkBuilder RegisterPlugin<TPluginType>(this IApiFrameworkBuilder builder, Type configurationType = null, Func<ApiDefinition, EndpointDefinition> createEndpoint = null)
         {
-            builder.Services.RegisterPlugin<TPluginType>(configurationType, configureEndpoint);
+            builder.Services.RegisterPlugin<TPluginType>(configurationType, createEndpoint);
 
             return builder;
         }
 
-        public static IServiceCollection RegisterPlugin<TPluginType>(this IServiceCollection services, Type configurationType = null, Action<EndpointDefinition> configureEndpoint = null)
+        public static IServiceCollection RegisterPlugin<TPluginType>(this IServiceCollection services, Type configurationType = null, Func<ApiDefinition, EndpointDefinition> createEndpoint = null)
         {
             var assembly = typeof(TPluginType).Assembly;
 
-            services.RegisterPlugin(assembly, configurationType, configureEndpoint);
+            services.RegisterPlugin(assembly, configurationType, createEndpoint);
 
             return services;
         }
 
         public static IServiceCollection RegisterPlugin(this IServiceCollection services, Assembly pluginAssembly = null, Type configurationType = null,
-            Action<EndpointDefinition> configureEndpoint = null)
+            Func<ApiDefinition, EndpointDefinition> createEndpoint = null)
         {
             if (pluginAssembly == null)
             {
@@ -127,23 +128,16 @@ namespace Weikio.ApiFramework.SDK
                 });
             }
 
-            if (configureEndpoint != null)
+            if (createEndpoint != null)
             {
                 services.AddSingleton(provider =>
                 {
+                    var apiProvider = provider.GetRequiredService<IApiByAssemblyProvider>();
+                    var api = apiProvider.GetApiByAssembly(pluginAssembly);
+
                     return new Func<EndpointDefinition>(() =>
                     {
-                        var endpointDefinition = new EndpointDefinition();
-                        configureEndpoint(endpointDefinition);
-
-                        if (endpointDefinition.Api == null)
-                        {
-                            var apiProvider = provider.GetRequiredService<IApiByAssemblyProvider>();
-                            var api = apiProvider.GetApiByAssembly(pluginAssembly);
-
-                            endpointDefinition.Api = api;
-                            // Todo: Throw if API still null
-                        }
+                        var endpointDefinition = createEndpoint(api);
 
                         return endpointDefinition;
                     });
