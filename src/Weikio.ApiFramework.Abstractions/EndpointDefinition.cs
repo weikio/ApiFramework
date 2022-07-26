@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 
@@ -6,13 +6,24 @@ namespace Weikio.ApiFramework.Abstractions
 {
     public class EndpointDefinition
     {
-        public EndpointDefinition()
-        {
-        }
-
         public EndpointDefinition(string route, ApiDefinition api, object configuration = null, Func<Endpoint, Task<IHealthCheck>> healthCheckFactory = null, 
             string groupName = null, string name = null, string description = null, string[] tags = null, string policyName = "")
         {
+            if (route == null)
+            { 
+                throw new ArgumentNullException(nameof(route));
+            }
+
+            if (string.IsNullOrWhiteSpace(route))
+            { 
+                throw new ArgumentException("Endpoint route cannot be empty or contain only whitespace characters.", nameof(route));
+            }
+
+            if (api == null)
+            {
+                throw new ArgumentNullException(nameof(api), $"There's no API defined for route '{route}'.");
+            }
+
             Route = route;
             Api = api;
             Configuration = configuration;
@@ -33,11 +44,6 @@ namespace Weikio.ApiFramework.Abstractions
         public string Description { get; set; }
         public string[] Tags { get; set; }
         public string Policy { get; set; }
-        
-        public static implicit operator EndpointDefinition(string route)
-        {
-            return new EndpointDefinition(route, null);
-        }
         
         public static implicit operator EndpointDefinition((string route, ApiDefinition apiDefinition) routeAndApi)
         {

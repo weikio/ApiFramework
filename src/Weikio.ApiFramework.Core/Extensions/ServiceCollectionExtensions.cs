@@ -233,28 +233,16 @@ namespace Weikio.ApiFramework
             return builder;
         }
         
-        public static IApiFrameworkBuilder AddEndpoint<TApiType>(this IApiFrameworkBuilder builder, string route, object configuration)
-        {
-            var endpointDefinition = new EndpointDefinition(route, null, configuration);
-
-            return builder.AddEndpoint<TApiType>(endpointDefinition);
-        }
-        
-        public static IApiFrameworkBuilder AddEndpoint<TApiType>(this IApiFrameworkBuilder builder, EndpointDefinition endpointDefinition)
+        public static IApiFrameworkBuilder AddEndpoint<TApiType>(this IApiFrameworkBuilder builder, string route, object configuration = null)
         {
             builder.Services.AddSingleton(provider =>
             {
                 return new Func<EndpointDefinition>(() =>
                 {
-                    if (endpointDefinition.Api == null)
-                    {
-                        var apiProvider = provider.GetRequiredService<IApiByAssemblyProvider>();
-                        var api = apiProvider.GetApiByType(typeof(TApiType));
+                    var apiProvider = provider.GetRequiredService<IApiByAssemblyProvider>();
+                    var api = apiProvider.GetApiByType(typeof(TApiType));
 
-                        endpointDefinition.Api = api;
-                    }
-
-                    return endpointDefinition;
+                    return new EndpointDefinition(route, api, configuration);
                 });
             });
 
