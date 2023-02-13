@@ -51,6 +51,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ApiFrameworkWithEventFramew
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Resources", "Resources", "{8555AF0C-F997-413B-A66A-B1F47C8BE31F}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Weikio.ApiFramework.Samples.JsonConfiguration", "..\samples\Weikio.ApiFramework.Samples.JsonConfiguration\Weikio.ApiFramework.Samples.JsonConfiguration.csproj", "{8991A31B-84EF-4493-84D3-57616231135B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -406,6 +408,24 @@ Global
 		{D2095B4A-4734-41D8-B468-5403AE6F09E0}.ReleaseTypeScriptStrict|x64.Build.0 = Debug|Any CPU
 		{D2095B4A-4734-41D8-B468-5403AE6F09E0}.ReleaseTypeScriptStrict|x86.ActiveCfg = Debug|Any CPU
 		{D2095B4A-4734-41D8-B468-5403AE6F09E0}.ReleaseTypeScriptStrict|x86.Build.0 = Debug|Any CPU
+		{8991A31B-84EF-4493-84D3-57616231135B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8991A31B-84EF-4493-84D3-57616231135B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8991A31B-84EF-4493-84D3-57616231135B}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{8991A31B-84EF-4493-84D3-57616231135B}.Debug|x64.Build.0 = Debug|Any CPU
+		{8991A31B-84EF-4493-84D3-57616231135B}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{8991A31B-84EF-4493-84D3-57616231135B}.Debug|x86.Build.0 = Debug|Any CPU
+		{8991A31B-84EF-4493-84D3-57616231135B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8991A31B-84EF-4493-84D3-57616231135B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8991A31B-84EF-4493-84D3-57616231135B}.Release|x64.ActiveCfg = Release|Any CPU
+		{8991A31B-84EF-4493-84D3-57616231135B}.Release|x64.Build.0 = Release|Any CPU
+		{8991A31B-84EF-4493-84D3-57616231135B}.Release|x86.ActiveCfg = Release|Any CPU
+		{8991A31B-84EF-4493-84D3-57616231135B}.Release|x86.Build.0 = Release|Any CPU
+		{8991A31B-84EF-4493-84D3-57616231135B}.ReleaseTypeScriptStrict|Any CPU.ActiveCfg = Debug|Any CPU
+		{8991A31B-84EF-4493-84D3-57616231135B}.ReleaseTypeScriptStrict|Any CPU.Build.0 = Debug|Any CPU
+		{8991A31B-84EF-4493-84D3-57616231135B}.ReleaseTypeScriptStrict|x64.ActiveCfg = Debug|Any CPU
+		{8991A31B-84EF-4493-84D3-57616231135B}.ReleaseTypeScriptStrict|x64.Build.0 = Debug|Any CPU
+		{8991A31B-84EF-4493-84D3-57616231135B}.ReleaseTypeScriptStrict|x86.ActiveCfg = Debug|Any CPU
+		{8991A31B-84EF-4493-84D3-57616231135B}.ReleaseTypeScriptStrict|x86.Build.0 = Debug|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

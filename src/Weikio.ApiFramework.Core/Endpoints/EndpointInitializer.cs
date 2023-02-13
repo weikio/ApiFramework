@@ -17,16 +17,21 @@ namespace Weikio.ApiFramework.Core.Endpoints
         private readonly ApiChangeNotifier _changeNotifier;
         private readonly IBackgroundTaskQueue _backgroundTaskQueue;
         private readonly IApiConfigurationTypeProvider _apiConfigurationTypeProvider;
+        private readonly IEnumerable<IEndpointStatusObserverFactory> _statusObserversFactories;
+        private readonly IServiceProvider _serviceProvider;
         private readonly ApiFrameworkOptions _options;
         private static string _initializationLock = "lock";
 
         public EndpointInitializer(ILogger<EndpointInitializer> logger, ApiChangeNotifier changeNotifier, IOptions<ApiFrameworkOptions> options,
-            IBackgroundTaskQueue backgroundTaskQueue, IApiConfigurationTypeProvider apiConfigurationTypeProvider)
+            IBackgroundTaskQueue backgroundTaskQueue, IApiConfigurationTypeProvider apiConfigurationTypeProvider, 
+            IEnumerable<IEndpointStatusObserverFactory> statusObserversFactories, IServiceProvider serviceProvider)
         {
             _logger = logger;
             _changeNotifier = changeNotifier;
             _backgroundTaskQueue = backgroundTaskQueue;
             _apiConfigurationTypeProvider = apiConfigurationTypeProvider;
+            _statusObserversFactories = statusObserversFactories;
+            _serviceProvider = serviceProvider;
             _options = options.Value;
         }
 
@@ -70,6 +75,28 @@ namespace Weikio.ApiFramework.Core.Endpoints
             if (endpoint == null)
             {
                 throw new ArgumentNullException(nameof(endpoint));
+            }
+            
+            // Attach status observers
+            if (endpoint.Status.HasStatusObserver == false)
+            {
+                var observerCount = 0;
+                foreach (var factory in _statusObserversFactories)
+                {
+                    var observer = factory.Create(_serviceProvider, endpoint);
+                    endpoint.Status.AddObserver(observer);
+
+                    observerCount += 1;
+                }
+
+                if (observerCount > 0)
+                {
+                    _logger.LogDebug("Added {Count} status observers to Endpoint {Endpoint}", observerCount, endpoint);
+                }
+                else
+                {
+                    _logger.LogTrace("No status observers available for Endpoint {Endpoint}", endpoint);
+                }
             }
 
             var endpointStatus = endpoint.Status;

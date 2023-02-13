@@ -1,4 +1,7 @@
-﻿using Microsoft.AspNetCore.Hosting;
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Weikio.ApiFramework.Abstractions;
@@ -12,10 +15,20 @@ namespace Weikio.ApiFramework
     {
         public static IWebHostBuilder AddApiFrameworkJsonConfigurationFile(this IWebHostBuilder webHostBuilder, string filePath = "apiframework.json")
         {
-            webHostBuilder.ConfigureAppConfiguration((context, configBuilder) =>
+            if (string.IsNullOrWhiteSpace(filePath))
             {
-                configBuilder.AddJsonFile(filePath, false, true);
-            });
+                throw new ArgumentNullException(filePath, nameof(filePath));
+            }
+
+            var filePaths = GetFilePaths(filePath);
+
+            foreach (var path in filePaths)
+            {
+                webHostBuilder.ConfigureAppConfiguration((context, configBuilder) =>
+                {
+                    configBuilder.AddJsonFile(path, true, true);
+                });
+            }
 
             webHostBuilder.ConfigureServices(services =>
             {
@@ -23,6 +36,46 @@ namespace Weikio.ApiFramework
             });
 
             return webHostBuilder;
+        }
+
+        private static List<string> GetFilePaths(string filePath)
+        {
+            var fileDirectory = new FileInfo(filePath).Directory?.FullName;
+
+            if (string.IsNullOrWhiteSpace(fileDirectory))
+            {
+                return new List<string>();
+            }
+
+            var isFileName = File.Exists(filePath);
+
+            if (isFileName)
+            {
+                return new List<string> { filePath };
+            }
+
+            var isDirectory = Directory.Exists(filePath);
+            string searchPattern;
+            var searchPath = fileDirectory;
+
+            if (isDirectory)
+            {
+                searchPath = filePath; 
+                searchPattern = "*";
+            }
+            else
+            {
+                searchPattern = Path.GetFileName(filePath);
+            }
+
+            if (string.IsNullOrWhiteSpace(searchPattern))
+            {
+                searchPattern = "*";
+            }
+
+            var jsonFilesInDirectory = Directory.GetFiles(searchPath, searchPattern);
+
+            return new List<string>(jsonFilesInDirectory);
         }
     }
 }

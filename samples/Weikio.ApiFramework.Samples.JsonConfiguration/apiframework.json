@@ -1,0 +1,40 @@
+{
+  "ApiFramework": {
+    "Apis": [
+      {
+        "Name": "Weikio.ApiFramework.Plugins.SqlServer",
+        "Version": "2.2.0"
+      },
+      {
+        "Name": "Weikio.ApiFramework.Plugins.OpenApi",
+        "Version": "1.0.0"
+      },
+      {
+        "Name": "Weikio.ApiFramework.Samples.PluginLibrary",
+        "Version": "1.1.0"
+      }
+    ],
+    "Endpoints": {
+      "/adventures": {
+        "Api": "Weikio.ApiFramework.Plugins.SqlServer",
+        "ApiVersion": "2.2.0",
+        "Configuration": {
+          "ConnectionString": "Server=tcp:adafydevtestdb001.database.windows.net,1433;User ID=docs;Password=3h1@*6PXrldU4F95;Integrated Security=false;Initial Catalog=adafyweikiodevtestdb001;",
+          "Tables": [
+            "Product*"
+          ]
+        }
+      },
+      "/petstore": {
+        "Api": "Weikio.ApiFramework.Plugins.OpenApi",
+        "Configuration": {
+          "SpecificationUrl": "https://petstore3.swagger.io/api/v3/openapi.json",
+          "ApiUrl": "https://petstore3.swagger.io/api/v3",
+          "IncludeHttpMethods": [
+            "GET"
+          ]
+        }
+      }
+    }
+  }
+}

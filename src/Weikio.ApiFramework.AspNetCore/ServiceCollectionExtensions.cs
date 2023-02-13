@@ -60,6 +60,7 @@ namespace Weikio.ApiFramework
                 options.AutoConvertFileToStream = apiFrameworkAspNetCoreOptions.AutoConvertFileToStream;
                 options.AutoTidyUrls = apiFrameworkAspNetCoreOptions.AutoTidyUrls;
                 options.ApiCatalogs = apiFrameworkAspNetCoreOptions.ApiCatalogs;
+                options.ApiVersionMatchingBehaviour = apiFrameworkAspNetCoreOptions.ApiVersionMatchingBehaviour;
             });
 
             builder.Services.Configure(setupApiFramework);
