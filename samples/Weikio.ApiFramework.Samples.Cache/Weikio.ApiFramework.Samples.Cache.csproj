@@ -5,7 +5,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\src\Weikio.ApiFramework.AspNetCore.StarterKit\Weikio.ApiFramework.AspNetCore.StarterKit.csproj"/>
+    <ProjectReference Include="..\..\src\Weikio.ApiFramework.AspNetCore.StarterKit\Weikio.ApiFramework.AspNetCore.StarterKit.csproj" />
   </ItemGroup>
+
 
 </Project>
