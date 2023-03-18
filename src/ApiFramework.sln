@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.28803.156
+# Visual Studio Version 17
+VisualStudioVersion = 17.1.31911.260
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Weikio.ApiFramework.Core", "Weikio.ApiFramework.Core\Weikio.ApiFramework.Core.csproj", "{F9E7779D-4DCE-4C98-AEEE-B5FA5D74FBBE}"
 EndProject
@@ -35,23 +35,23 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HelloWorld", "..\tests\Apis
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AnotherHelloWorld", "..\tests\Apis\AnotherHelloWorld\AnotherHelloWorld.csproj", "{2C56109C-F728-49AC-A929-6C21AB0A5681}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Weikio.ApiFramework.ResponceCache", "Weikio.ApiFramework.ResponceCache\Weikio.ApiFramework.ResponceCache.csproj", "{5CE2F2A0-8698-4F5D-A6E8-6910402B05D5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Weikio.ApiFramework.ResponceCache", "Weikio.ApiFramework.ResponceCache\Weikio.ApiFramework.ResponceCache.csproj", "{5CE2F2A0-8698-4F5D-A6E8-6910402B05D5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Weikio.ApiFramework.SDK", "Weikio.ApiFramework.SDK\Weikio.ApiFramework.SDK.csproj", "{0EBE2DE7-1258-4736-BEF3-C18266F503D6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Weikio.ApiFramework.SDK", "Weikio.ApiFramework.SDK\Weikio.ApiFramework.SDK.csproj", "{0EBE2DE7-1258-4736-BEF3-C18266F503D6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Weikio.ApiFramework.Abstractions.DependencyInjection", "Weikio.ApiFramework.Abstractions.DependencyInjection\Weikio.ApiFramework.Abstractions.DependencyInjection.csproj", "{64F5718A-8B0C-4704-8BD1-E7760192C7DD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Weikio.ApiFramework.Abstractions.DependencyInjection", "Weikio.ApiFramework.Abstractions.DependencyInjection\Weikio.ApiFramework.Abstractions.DependencyInjection.csproj", "{64F5718A-8B0C-4704-8BD1-E7760192C7DD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Weikio.ApiFramework.AspNetCore.NSwag", "Weikio.ApiFramework.AspNetCore.NSwag\Weikio.ApiFramework.AspNetCore.NSwag.csproj", "{69919484-FE76-42FD-A469-EF79A616069F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Weikio.ApiFramework.AspNetCore.NSwag", "Weikio.ApiFramework.AspNetCore.NSwag\Weikio.ApiFramework.AspNetCore.NSwag.csproj", "{69919484-FE76-42FD-A469-EF79A616069F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Weikio.ApiFramework.AspNetCore.StarterKit", "Weikio.ApiFramework.AspNetCore.StarterKit\Weikio.ApiFramework.AspNetCore.StarterKit.csproj", "{D6FC2323-A9E2-485B-818D-68BB5A543734}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Weikio.ApiFramework.AspNetCore.StarterKit", "Weikio.ApiFramework.AspNetCore.StarterKit\Weikio.ApiFramework.AspNetCore.StarterKit.csproj", "{D6FC2323-A9E2-485B-818D-68BB5A543734}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Weikio.ApiFramework.Samples.PluginLibrary", "..\samples\Weikio.ApiFramework.Samples.PluginLibrary\Weikio.ApiFramework.Samples.PluginLibrary.csproj", "{D45CF3F8-8603-41CA-A828-386423345AC8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Weikio.ApiFramework.Samples.PluginLibrary", "..\samples\Weikio.ApiFramework.Samples.PluginLibrary\Weikio.ApiFramework.Samples.PluginLibrary.csproj", "{D45CF3F8-8603-41CA-A828-386423345AC8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ApiFrameworkWithEventFrameworkTestBed", "..\tests\integration\WebSites\ApiFrameworkWithEventFrameworkTestBed\ApiFrameworkWithEventFrameworkTestBed.csproj", "{D2095B4A-4734-41D8-B468-5403AE6F09E0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ApiFrameworkWithEventFrameworkTestBed", "..\tests\integration\WebSites\ApiFrameworkWithEventFrameworkTestBed\ApiFrameworkWithEventFrameworkTestBed.csproj", "{D2095B4A-4734-41D8-B468-5403AE6F09E0}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Resources", "Resources", "{8555AF0C-F997-413B-A66A-B1F47C8BE31F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Weikio.ApiFramework.Samples.JsonConfiguration", "..\samples\Weikio.ApiFramework.Samples.JsonConfiguration\Weikio.ApiFramework.Samples.JsonConfiguration.csproj", "{8991A31B-84EF-4493-84D3-57616231135B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Weikio.ApiFramework.Samples.JsonConfiguration", "..\samples\Weikio.ApiFramework.Samples.JsonConfiguration\Weikio.ApiFramework.Samples.JsonConfiguration.csproj", "{4D575B8F-71BA-4888-B8E2-982A0FCCE76F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -408,24 +408,24 @@ Global
 		{D2095B4A-4734-41D8-B468-5403AE6F09E0}.ReleaseTypeScriptStrict|x64.Build.0 = Debug|Any CPU
 		{D2095B4A-4734-41D8-B468-5403AE6F09E0}.ReleaseTypeScriptStrict|x86.ActiveCfg = Debug|Any CPU
 		{D2095B4A-4734-41D8-B468-5403AE6F09E0}.ReleaseTypeScriptStrict|x86.Build.0 = Debug|Any CPU
-		{8991A31B-84EF-4493-84D3-57616231135B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{8991A31B-84EF-4493-84D3-57616231135B}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{8991A31B-84EF-4493-84D3-57616231135B}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{8991A31B-84EF-4493-84D3-57616231135B}.Debug|x64.Build.0 = Debug|Any CPU
-		{8991A31B-84EF-4493-84D3-57616231135B}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{8991A31B-84EF-4493-84D3-57616231135B}.Debug|x86.Build.0 = Debug|Any CPU
-		{8991A31B-84EF-4493-84D3-57616231135B}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{8991A31B-84EF-4493-84D3-57616231135B}.Release|Any CPU.Build.0 = Release|Any CPU
-		{8991A31B-84EF-4493-84D3-57616231135B}.Release|x64.ActiveCfg = Release|Any CPU
-		{8991A31B-84EF-4493-84D3-57616231135B}.Release|x64.Build.0 = Release|Any CPU
-		{8991A31B-84EF-4493-84D3-57616231135B}.Release|x86.ActiveCfg = Release|Any CPU
-		{8991A31B-84EF-4493-84D3-57616231135B}.Release|x86.Build.0 = Release|Any CPU
-		{8991A31B-84EF-4493-84D3-57616231135B}.ReleaseTypeScriptStrict|Any CPU.ActiveCfg = Debug|Any CPU
-		{8991A31B-84EF-4493-84D3-57616231135B}.ReleaseTypeScriptStrict|Any CPU.Build.0 = Debug|Any CPU
-		{8991A31B-84EF-4493-84D3-57616231135B}.ReleaseTypeScriptStrict|x64.ActiveCfg = Debug|Any CPU
-		{8991A31B-84EF-4493-84D3-57616231135B}.ReleaseTypeScriptStrict|x64.Build.0 = Debug|Any CPU
-		{8991A31B-84EF-4493-84D3-57616231135B}.ReleaseTypeScriptStrict|x86.ActiveCfg = Debug|Any CPU
-		{8991A31B-84EF-4493-84D3-57616231135B}.ReleaseTypeScriptStrict|x86.Build.0 = Debug|Any CPU
+		{4D575B8F-71BA-4888-B8E2-982A0FCCE76F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4D575B8F-71BA-4888-B8E2-982A0FCCE76F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4D575B8F-71BA-4888-B8E2-982A0FCCE76F}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{4D575B8F-71BA-4888-B8E2-982A0FCCE76F}.Debug|x64.Build.0 = Debug|Any CPU
+		{4D575B8F-71BA-4888-B8E2-982A0FCCE76F}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{4D575B8F-71BA-4888-B8E2-982A0FCCE76F}.Debug|x86.Build.0 = Debug|Any CPU
+		{4D575B8F-71BA-4888-B8E2-982A0FCCE76F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4D575B8F-71BA-4888-B8E2-982A0FCCE76F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4D575B8F-71BA-4888-B8E2-982A0FCCE76F}.Release|x64.ActiveCfg = Release|Any CPU
+		{4D575B8F-71BA-4888-B8E2-982A0FCCE76F}.Release|x64.Build.0 = Release|Any CPU
+		{4D575B8F-71BA-4888-B8E2-982A0FCCE76F}.Release|x86.ActiveCfg = Release|Any CPU
+		{4D575B8F-71BA-4888-B8E2-982A0FCCE76F}.Release|x86.Build.0 = Release|Any CPU
+		{4D575B8F-71BA-4888-B8E2-982A0FCCE76F}.ReleaseTypeScriptStrict|Any CPU.ActiveCfg = Release|Any CPU
+		{4D575B8F-71BA-4888-B8E2-982A0FCCE76F}.ReleaseTypeScriptStrict|Any CPU.Build.0 = Release|Any CPU
+		{4D575B8F-71BA-4888-B8E2-982A0FCCE76F}.ReleaseTypeScriptStrict|x64.ActiveCfg = Release|Any CPU
+		{4D575B8F-71BA-4888-B8E2-982A0FCCE76F}.ReleaseTypeScriptStrict|x64.Build.0 = Release|Any CPU
+		{4D575B8F-71BA-4888-B8E2-982A0FCCE76F}.ReleaseTypeScriptStrict|x86.ActiveCfg = Release|Any CPU
+		{4D575B8F-71BA-4888-B8E2-982A0FCCE76F}.ReleaseTypeScriptStrict|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -438,12 +438,12 @@ Global
 		{81229E6E-0DC8-4DFF-89C4-40215010FD03} = {53E78366-C5D5-4FA6-8C48-825D854D20AC}
 		{505BA79C-F520-45FB-81BA-1E70D503181F} = {81229E6E-0DC8-4DFF-89C4-40215010FD03}
 		{EFB5F0AE-D227-48BB-BD8A-71EDBAFC90C2} = {53E78366-C5D5-4FA6-8C48-825D854D20AC}
+		{BBA88EFE-DEE3-477E-B672-B273474326B5} = {8555AF0C-F997-413B-A66A-B1F47C8BE31F}
+		{2C56109C-F728-49AC-A929-6C21AB0A5681} = {8555AF0C-F997-413B-A66A-B1F47C8BE31F}
 		{D45CF3F8-8603-41CA-A828-386423345AC8} = {644107BC-4E85-43FF-B92C-E4667910EE05}
 		{D2095B4A-4734-41D8-B468-5403AE6F09E0} = {81229E6E-0DC8-4DFF-89C4-40215010FD03}
 		{8555AF0C-F997-413B-A66A-B1F47C8BE31F} = {53E78366-C5D5-4FA6-8C48-825D854D20AC}
-		{2C56109C-F728-49AC-A929-6C21AB0A5681} = {8555AF0C-F997-413B-A66A-B1F47C8BE31F}
-		{BBA88EFE-DEE3-477E-B672-B273474326B5} = {8555AF0C-F997-413B-A66A-B1F47C8BE31F}
-		{8991A31B-84EF-4493-84D3-57616231135B} = {644107BC-4E85-43FF-B92C-E4667910EE05}
+		{4D575B8F-71BA-4888-B8E2-982A0FCCE76F} = {644107BC-4E85-43FF-B92C-E4667910EE05}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {98FCEEE2-A45C-41E7-B2ED-1B14755E9067}
